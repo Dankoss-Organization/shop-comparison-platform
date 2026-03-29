@@ -1,223 +1,172 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-
-const languages = ["UA", "EN", "PL", "DE", "FR", "ES"];
-const catalogGroups = [
-  "Discounts",
-  "Products",
-  "Recipes",
-  "Stores",
-  "Collections",
-  "Seasonal picks",
-  "Recently viewed",
-  "Top rated",
-];
-
-const iconButtons = [
-  { key: "search", src: "/Search.svg", alt: "Search" },
-  { key: "favourites", src: "/Favourites.svg", alt: "Favourites" },
-  { key: "location", src: "/Location.svg", alt: "Location" },
-  { key: "user", src: "/User.svg", alt: "User" },
-];
+import { ChainIcon, Connection } from "@/components/ui/HeaderUI";
+import CatalogDropdown from "./header/CatalogDropdown";
+import { categories } from "@/data/catalog";
 
 export default function Header() {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("UA");
-  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
-  const headerRef = useRef<HTMLElement | null>(null);
 
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [lockedCategory, setLockedCategory] = useState<string | null>(null);
+
+  // Закриття dropdown по кліку поза ним
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      if (
+        !target.closest("#catalog-trigger") &&
+        !target.closest("#catalog-dropdown")
+      ) {
         setIsCatalogOpen(false);
-        setIsLangOpen(false);
+        setLockedCategory(null);
+        setActiveCategory(null);
       }
     };
 
-    window.addEventListener("click", handleClickOutside);
-    return () => window.removeEventListener("click", handleClickOutside);
-  }, []);
+    if (isCatalogOpen) {
+      window.addEventListener("click", handleClick);
+    }
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    }
+  }, [isCatalogOpen]);
 
   return (
-    <header
-      ref={headerRef}
-      className="relative w-full rounded-[2rem] border border-[#3a3339] bg-[#2b262c]/95 px-5 py-4 shadow-soft backdrop-blur-xl xl:px-8"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+    <header className="relative w-full bg-[#2B262C] border-b border-[#1A181C] font-sans">
+      <div className="flex items-center justify-between px-[20px] xl:px-[40px] py-[15px]">
+
+        {/* LEFT */}
+        <div className="flex items-center gap-[34px]">
           <button
-            onClick={(event) => {
-              event.stopPropagation();
-              setIsCatalogOpen((value) => !value);
-              setIsLangOpen(false);
+            id="catalog-trigger"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsCatalogOpen(!isCatalogOpen);
             }}
-            className="relative z-20 flex h-[46px] w-[46px] items-center justify-center rounded-[16px] border border-white/10 bg-[#3a3339] transition hover:border-brand-orange/45 hover:bg-[#433b43]"
-            aria-label="Open catalog"
+            className="shrink-0 hover:opacity-80 transition-opacity z-[50]"
           >
-            <Image src="/Catalog_logo.svg" alt="Catalog" width={24} height={24} />
+            <Image src="/Catalog_logo.svg" alt="catalog" width={30} height={30} />
           </button>
 
-          <div className="relative flex min-h-[60px] min-w-[220px] select-none items-center justify-center overflow-hidden rounded-[22px] border border-white/8 px-8 py-3">
-            <Image
-              src="/Dankoss_logo_bkg.svg"
-              alt="Logo background"
-              fill
-              priority
-              className="object-contain opacity-85"
+          {/* DROPDOWN */}
+          <div onClick={(e) => e.stopPropagation()}>
+            <CatalogDropdown
+              isOpen={isCatalogOpen}
+              categories={categories}
+              activeCategory={activeCategory}
+              lockedCategory={lockedCategory}
+              setActiveCategory={setActiveCategory}
+              setLockedCategory={setLockedCategory}
             />
-            <span className="relative z-10 flex items-center text-[30px] font-black tracking-[0.12em] text-[#f6d7b0]">
-              DANK
-              <span className="relative mx-[2px] flex h-[28px] w-[28px] items-center justify-center">
-                <span className="opacity-0">O</span>
-                <Image
-                  src="/Orange_logo.svg"
-                  alt="O"
-                  width={30}
-                  height={30}
-                  className="absolute"
-                />
-              </span>
-              SS
-            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="flex items-center">
-            <ChainIcon ariaLabel={iconButtons[0].alt}>
-              <Image src={iconButtons[0].src} alt={iconButtons[0].alt} width={20} height={20} />
-            </ChainIcon>
+        <div className="relative self-start flex items-center select-none px-10 py-4 min-w-[220px] justify-center">
+        <Image
+          src="/Dankoss_logo_bkg.svg"
+          alt="logo background"
+          fill
+          priority
+          className="z-0 object-contain scale-160"
+        />
 
-            <div className="ml-2 flex items-center">
-              <Connection />
+          <span className="relative z-10 text-[#F6D7B0] text-[35px] tracking-[0.1em] flex items-center font-bold">
+            DANK
+            <span className="relative flex items-center justify-center w-[28px] h-[28px] mx-[2px]">
+              <span className="opacity-0">O</span>
+              <Image
+                src="/Orange_logo.svg"
+                alt="O"
+                width={35}
+                height={35}
+                className="absolute"
+              />
+            </span>
+            SS
+          </span>
+        </div>
 
-              <ChainIcon ariaLabel={iconButtons[1].alt}>
-                <Image src={iconButtons[1].src} alt={iconButtons[1].alt} width={20} height={20} />
-              </ChainIcon>
+        <div className="flex items-center">
 
-              <Connection />
+          <div className="relative flex items-center z-10">
+            <input
+              type="text"
+              placeholder="SEARCH"
+              className="bg-[#3F363F] h-[42px] w-[300px] pl-[20px] pr-[50px] rounded-full text-[#FFDEBA] text-[14px] tracking-[0.1em] outline-none shadow-md placeholder:text-[#FFDEBA]/40"
+            />
 
-              <ChainIcon ariaLabel={iconButtons[2].alt}>
-                <Image src={iconButtons[2].src} alt={iconButtons[2].alt} width={22} height={22} />
-              </ChainIcon>
-
-              <Connection />
-
-              <div className="relative z-20">
-                <ChainIcon
-                  onClick={() => {
-                    setIsLangOpen((value) => !value);
-                    setIsCatalogOpen(false);
-                  }}
-                  ariaLabel={`Language ${currentLang}`}
-                >
-                  <span className="text-[13px] font-bold tracking-[0.14em] text-[#ffdeba]">
-                    {currentLang}
-                  </span>
-                </ChainIcon>
-
-                {isLangOpen ? (
-                  <div className="absolute left-1/2 top-[52px] z-30 w-[88px] -translate-x-1/2 overflow-hidden rounded-[24px] border border-white/10 bg-[#1a181c]/95 shadow-[0_18px_50px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-                    <div className="max-h-[180px] overflow-y-auto py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                      {languages.map((lang, index) => (
-                        <div key={lang}>
-                          <button
-                            onClick={() => {
-                              setCurrentLang(lang);
-                              setIsLangOpen(false);
-                            }}
-                            className={`w-full px-3 py-2 text-center text-sm font-semibold transition ${
-                              currentLang === lang
-                                ? "text-brand-orange"
-                                : "text-[#ffdeba]/80 hover:text-brand-orangeSoft"
-                            }`}
-                          >
-                            {lang}
-                          </button>
-                          {index < languages.length - 1 ? (
-                            <div className="mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-
-              <Connection />
-
-              <ChainIcon ariaLabel={iconButtons[3].alt}>
-                <Image src={iconButtons[3].src} alt={iconButtons[3].alt} width={20} height={20} />
+            <div className="absolute right-[2px] top-1/2 -translate-y-1/2 z-20">
+              <ChainIcon>
+                <Image src="/Search.svg" alt="search" width={20} height={20} />
               </ChainIcon>
             </div>
           </div>
+          <div className="flex items-center gap-0">
+            <Connection />
 
-          <button className="flex h-[44px] items-center gap-3 rounded-full border border-white/8 bg-[#4d444d] pl-1 pr-3 transition hover:border-brand-orange/40 hover:bg-[#5a505a]">
-            <Image src="/Orange_logo.svg" alt="" width={34} height={34} />
-            <div className="relative flex h-[36px] w-[36px] items-center justify-center">
-              <Image src="/Basket.svg" alt="Basket" width={32} height={32} />
-              <span className="absolute inset-0 flex items-center justify-center pb-3 text-sm font-bold text-[#ffdeba]">
+            <ChainIcon>
+              <Image src="/Favourites.svg" alt="fav" width={20} height={20} />
+            </ChainIcon>
+
+            <Connection />
+
+            <ChainIcon>
+              <Image src="/Location.svg" alt="loc" width={22} height={22} />
+            </ChainIcon>
+
+            <Connection />
+            <div className="relative flex items-center z-20">
+              <ChainIcon onClick={() => setIsLangOpen(!isLangOpen)}>
+                <span className="text-[#FFDEBA] text-[16px] font-semibold">
+                  {currentLang}
+                </span>
+              </ChainIcon>
+
+              {isLangOpen && (
+                <div className="absolute top-[46px] left-1/2 -translate-x-1/2 w-[60px] bg-[#1A181C]/90 backdrop-blur-xl rounded-[15px] flex flex-col items-center shadow-lg overflow-hidden py-1">
+                  {["EN", "PL", "FR", "ES", "DE", "IT", "UA"].map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        setCurrentLang(lang);
+                        setIsLangOpen(false);
+                      }}
+                      className="py-1.5 w-full text-center text-[13px] font-medium text-white/80 hover:text-[#FF7A00] hover:bg-white/5 transition-colors"
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Connection />
+
+            <ChainIcon>
+              <Image src="/User.svg" alt="user" width={20} height={20} />
+            </ChainIcon>
+          </div>
+          <div className="flex items-center justify-between bg-[#4D444D] w-[100px] h-[42px] rounded-full pl-[6px] pr-0 ml-4 shrink-0 shadow-inner relative">
+            <div className="flex items-center justify-center w-[30px] h-[30px] shrink-0">
+              <Image src="/Orange_logo.svg" alt="logo" width={28} height={28} className="object-contain" />
+            </div>
+
+            <div className="absolute right-[2px] top-[4px] flex items-center justify-center w-[44px] h-[44px] shrink-0 z-20">
+              <Image src="/Basket.svg" alt="basket" width={44} height={44} className="object-contain relative top-[6px]" />
+              <span className="absolute top-2/5 left-1/2 -translate-x-[50%] -translate-y-[20%] text-[#FDE3C8] font-black text-[12px] leading-none z-10 drop-shadow-md">
                 5
               </span>
             </div>
-          </button>
-        </div>
-      </div>
-
-      <div
-        onClick={(event) => event.stopPropagation()}
-        className={`absolute left-0 top-[calc(100%+10px)] w-full origin-top overflow-hidden rounded-[32px] border border-white/8 bg-[rgba(43,38,44,0.86)] backdrop-blur-[18px] transition-all duration-300 ${
-          isCatalogOpen
-            ? "pointer-events-auto translate-y-0 scale-y-100 opacity-100"
-            : "pointer-events-none -translate-y-2 scale-y-95 opacity-0"
-        }`}
-      >
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-orange to-transparent opacity-60" />
-        <div className="p-6 text-[#ffdeba] md:p-8">
-          <h2 className="mb-5 text-2xl font-semibold">Catalog</h2>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {catalogGroups.map((group) => (
-              <button
-                key={group}
-                className="rounded-[22px] border border-white/6 bg-white/5 px-4 py-4 text-left text-sm font-medium transition hover:border-brand-orange/35 hover:text-brand-orangeSoft"
-              >
-                {group}
-              </button>
-            ))}
           </div>
         </div>
       </div>
     </header>
-  );
-}
-
-function ChainIcon({
-  children,
-  onClick,
-  ariaLabel,
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-  ariaLabel: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={ariaLabel}
-      className="group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5a505a] shadow-md transition-all duration-300 hover:scale-105 hover:bg-brand-orange active:scale-95"
-      type="button"
-    >
-      <span className="transition-transform duration-300 group-hover:scale-110">{children}</span>
-    </button>
-  );
-}
-
-function Connection() {
-  return (
-    <div className="relative z-0 -mx-[4px] shrink-0 opacity-80">
-      <Image src="/Connection.svg" alt="" width={30} height={20} />
-    </div>
   );
 }
