@@ -14,7 +14,6 @@ export default function Header() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [lockedCategory, setLockedCategory] = useState<string | null>(null);
 
-  // Закриття dropdown по кліку поза ним
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -42,7 +41,6 @@ export default function Header() {
     <header className="relative w-full bg-[#2B262C] border-b border-[#1A181C] font-sans">
       <div className="flex items-center justify-between px-[20px] xl:px-[40px] py-[15px]">
 
-        {/* LEFT */}
         <div className="flex items-center gap-[34px]">
           <button
             id="catalog-trigger"
@@ -54,8 +52,6 @@ export default function Header() {
           >
             <Image src="/Catalog_logo.svg" alt="catalog" width={30} height={30} />
           </button>
-
-          {/* DROPDOWN */}
           <div onClick={(e) => e.stopPropagation()}>
             <CatalogDropdown
               isOpen={isCatalogOpen}

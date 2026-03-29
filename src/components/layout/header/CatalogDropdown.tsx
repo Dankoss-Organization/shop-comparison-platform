@@ -55,14 +55,11 @@ export default function CatalogDropdown({
         transition-all duration-500 delay-150
         ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
       `}>
-
-        {/* КОЛОНКА 1 ТА 2: ЄДИНИЙ БЛОК "КАТАЛОГ" */}
         <div 
           className="col-span-2 rounded-[40px] p-8 flex
             bg-[linear-gradient(135deg,rgba(70,65,70,0.35),rgba(40,36,40,0.35))] backdrop-blur-[25px]
             shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_8px_30px_rgba(0,0,0,0.25)]"
           
-          /* ДОДАНО: Скидаємо активну категорію, коли мишка залишає цей блок */
           onMouseLeave={() => {
             if (!lockedCategory) {
               setActiveCategory(null);
@@ -115,20 +112,17 @@ export default function CatalogDropdown({
               })}
             </div>
 
-            {/* Вертикальна лінія (ділитель) */}
             <div className="absolute right-0 top-0 bottom-0 w-[1px]
               bg-gradient-to-b from-transparent via-white/20 to-transparent"
             />
           </div>
 
-          {/* Права частина: Сабменю / Знижка */}
           <div className="w-1/2 pl-8 h-full">
             <div className="group w-full h-full bg-[#2A252A]/80 rounded-[30px] relative overflow-hidden flex flex-col
               shadow-[inset_0_1px_2px_rgba(255,255,255,0.06),0_15px_35px_rgba(0,0,0,0.4)]
               hover:shadow-[0_20px_45px_rgba(0,0,0,0.6)] transition-all duration-500 cursor-pointer"
             >
               {activeCategoryData ? (
-                // --- СТАН 1: СПИСОК ПІДКАТЕГОРІЙ ---
                 <div className="relative z-20 p-6 flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-300">
                   {activeCategoryData.subcategories.map((sub) => (
                     <div key={sub.name} className="flex items-center gap-3 group/item cursor-pointer">
@@ -140,7 +134,6 @@ export default function CatalogDropdown({
                   ))}
                 </div>
               ) : (
-                // --- СТАН 2: БЛОК ЗНИЖКИ ---
                 <div className="w-full h-full relative flex flex-col justify-end p-6 animate-in fade-in zoom-in-95 duration-300">
                   <Image
                     src="/Salmon.jpg" 
@@ -175,8 +168,6 @@ export default function CatalogDropdown({
             </div>
           </div>
         </div>
-
-        {/* КОЛОНКА 3: РЕЦЕПТИ ТА ПАРТНЕРСТВО */}
         <div className="col-span-1 grid grid-rows-2 gap-6 h-full">
           
           <div className="group bg-[#2A252A]/80 rounded-[30px] p-6 relative overflow-hidden flex flex-col justify-end cursor-pointer shadow-[0_15px_35px_rgba(0,0,0,0.4)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.6)] transition-all duration-500">
