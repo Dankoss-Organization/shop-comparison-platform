@@ -1,11 +1,11 @@
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import Banner from "@/components/sections/Banner";
-import Hero from "@/components/sections/Hero";
-import Newsletter from "@/components/sections/Newsletter";
-import ProductCarousel from "@/components/sections/ProductCarousel";
-import RecentlyViewed from "@/components/sections/RecentlyViewed";
-import StoreNav from "@/components/sections/StoreNav";
+import Header from "@/Components/Layout/Header";
+import Footer from "@/Components/Layout/Footer";
+import Banner from "@/Components/Sections/Banner";
+import Hero from "@/Components/Sections/Hero";
+import Newsletter from "@/Components/Sections/Newsletter";
+import ProductCarousel from "@/Components/Sections/ProductCarousel";
+import RecentlyViewed from "@/Components/Sections/RecentlyViewed";
+import StoreNav from "@/Components/Sections/StoreNav";
 import {
   dailyDiscounts,
   expiringDiscounts,
@@ -13,12 +13,12 @@ import {
   recentItems,
   seasonalRecipes,
   weekDiscounts,
-} from "@/data/home";
+} from "@/Data/home_data";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-night text-white">
-      <section className="relative overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
+      <section className="relative overflow-x-hidden overflow-y-visible border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
         <div className="mx-auto max-w-7xl px-6 pb-8 pt-6 lg:px-8">
           <Header />
           <div className="mt-5">

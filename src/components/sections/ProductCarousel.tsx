@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import type { DealCard } from "@/data/home";
+import type { DealCard } from "@/Data/home_data";
 
 export default function ProductCarousel({
   id,
@@ -70,7 +70,7 @@ export default function ProductCarousel({
                     onClick={(event) => event.stopPropagation()}
                     className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#201b20]/70 backdrop-blur-md transition hover:border-brand-orange/45 hover:bg-brand-orange/15"
                   >
-                    <Image src="/Heart.svg" alt="Favourite" width={18} height={18} />
+                    <Image src="/heart.svg" alt="Favourite" width={18} height={18} />
                   </button>
                 </div>
                 <div className="absolute bottom-4 left-4 flex items-center gap-2">

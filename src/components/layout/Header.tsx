@@ -1,27 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChainIcon, Connection } from "@/components/ui/HeaderUI";
-import CatalogDropdown from "./header/CatalogDropdown";
-import { categories } from "@/data/catalog";
+import { ChainIcon, Connection } from "@/Components/UI/HeaderUi";
+import CatalogDropdown from "./Header/CatalogDropdown";
+import { categories } from "@/Data/catalog_data";
 
 export default function Header() {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("UA");
-
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [lockedCategory, setLockedCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
 
-      if (
-        !target.closest("#catalog-trigger") &&
-        !target.closest("#catalog-dropdown")
-      ) {
+      if (!target.closest("#catalog-trigger") && !target.closest("#catalog-dropdown")) {
         setIsCatalogOpen(false);
         setLockedCategory(null);
         setActiveCategory(null);
@@ -34,25 +30,26 @@ export default function Header() {
 
     return () => {
       window.removeEventListener("click", handleClick);
-    }
+    };
   }, [isCatalogOpen]);
 
   return (
-    <header className="relative w-full bg-[#2B262C] border-b border-[#1A181C] font-sans">
-      <div className="flex items-center justify-between px-[20px] xl:px-[40px] py-[15px]">
-
+    <header className="relative z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans">
+      <div className="flex items-center justify-between px-[20px] py-[15px] xl:px-[40px]">
         <div className="flex items-center gap-[34px]">
           <button
             id="catalog-trigger"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={(event) => {
+              event.stopPropagation();
               setIsCatalogOpen(!isCatalogOpen);
             }}
-            className="shrink-0 hover:opacity-80 transition-opacity z-[50]"
+            className="z-[50] shrink-0 transition-opacity hover:opacity-80"
+            type="button"
           >
-            <Image src="/Catalog_logo.svg" alt="catalog" width={30} height={30} />
+            <Image src="/catalog_logo.svg" alt="catalog" width={30} height={30} />
           </button>
-          <div onClick={(e) => e.stopPropagation()}>
+
+          <div onClick={(event) => event.stopPropagation()}>
             <CatalogDropdown
               isOpen={isCatalogOpen}
               categories={categories}
@@ -64,69 +61,62 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="relative self-start flex items-center select-none px-10 py-4 min-w-[220px] justify-center">
-        <Image
-          src="/Dankoss_logo_bkg.svg"
-          alt="logo background"
-          fill
-          priority
-          className="z-0 object-contain scale-160"
-        />
+        <div className="relative flex min-w-[220px] select-none items-center justify-center self-start px-10 py-4">
+          <Image
+            src="/dankoss_logo_bkg.svg"
+            alt="logo background"
+            fill
+            priority
+            className="z-0 scale-160 object-contain"
+          />
 
-          <span className="relative z-10 text-[#F6D7B0] text-[35px] tracking-[0.1em] flex items-center font-bold">
+          <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-[#F6D7B0]">
             DANK
-            <span className="relative flex items-center justify-center w-[28px] h-[28px] mx-[2px]">
+            <span className="relative mx-[2px] flex h-[28px] w-[28px] items-center justify-center">
               <span className="opacity-0">O</span>
-              <Image
-                src="/Orange_logo.svg"
-                alt="O"
-                width={35}
-                height={35}
-                className="absolute"
-              />
+              <Image src="/orange_logo.svg" alt="O" width={35} height={35} className="absolute" />
             </span>
             SS
           </span>
         </div>
 
         <div className="flex items-center">
-
-          <div className="relative flex items-center z-10">
+          <div className="relative z-10 flex items-center">
             <input
               type="text"
               placeholder="SEARCH"
-              className="bg-[#3F363F] h-[42px] w-[300px] pl-[20px] pr-[50px] rounded-full text-[#FFDEBA] text-[14px] tracking-[0.1em] outline-none shadow-md placeholder:text-[#FFDEBA]/40"
+              className="h-[42px] w-[300px] rounded-full bg-[#3F363F] pl-[20px] pr-[50px] text-[14px] tracking-[0.1em] text-[#FFDEBA] shadow-md outline-none placeholder:text-[#FFDEBA]/40"
             />
 
-            <div className="absolute right-[2px] top-1/2 -translate-y-1/2 z-20">
+            <div className="absolute right-[2px] top-1/2 z-20 -translate-y-1/2">
               <ChainIcon>
-                <Image src="/Search.svg" alt="search" width={20} height={20} />
+                <Image src="/search.svg" alt="search" width={20} height={20} />
               </ChainIcon>
             </div>
           </div>
+
           <div className="flex items-center gap-0">
             <Connection />
 
             <ChainIcon>
-              <Image src="/Favourites.svg" alt="fav" width={20} height={20} />
+              <Image src="/favourites.svg" alt="fav" width={20} height={20} />
             </ChainIcon>
 
             <Connection />
 
             <ChainIcon>
-              <Image src="/Location.svg" alt="loc" width={22} height={22} />
+              <Image src="/location.svg" alt="loc" width={22} height={22} />
             </ChainIcon>
 
             <Connection />
-            <div className="relative flex items-center z-20">
+
+            <div className="relative z-20 flex items-center">
               <ChainIcon onClick={() => setIsLangOpen(!isLangOpen)}>
-                <span className="text-[#FFDEBA] text-[16px] font-semibold">
-                  {currentLang}
-                </span>
+                <span className="text-[16px] font-semibold text-[#FFDEBA]">{currentLang}</span>
               </ChainIcon>
 
-              {isLangOpen && (
-                <div className="absolute top-[46px] left-1/2 -translate-x-1/2 w-[60px] bg-[#1A181C]/90 backdrop-blur-xl rounded-[15px] flex flex-col items-center shadow-lg overflow-hidden py-1">
+              {isLangOpen ? (
+                <div className="absolute left-1/2 top-[46px] flex w-[60px] -translate-x-1/2 flex-col items-center overflow-hidden rounded-[15px] bg-[#1A181C]/90 py-1 shadow-lg backdrop-blur-xl">
                   {["EN", "PL", "FR", "ES", "DE", "IT", "UA"].map((lang) => (
                     <button
                       key={lang}
@@ -134,29 +124,37 @@ export default function Header() {
                         setCurrentLang(lang);
                         setIsLangOpen(false);
                       }}
-                      className="py-1.5 w-full text-center text-[13px] font-medium text-white/80 hover:text-[#FF7A00] hover:bg-white/5 transition-colors"
+                      className="w-full py-1.5 text-center text-[13px] font-medium text-white/80 transition-colors hover:bg-white/5 hover:text-[#FF7A00]"
+                      type="button"
                     >
                       {lang}
                     </button>
                   ))}
                 </div>
-              )}
+              ) : null}
             </div>
 
             <Connection />
 
             <ChainIcon>
-              <Image src="/User.svg" alt="user" width={20} height={20} />
+              <Image src="/user.svg" alt="user" width={20} height={20} />
             </ChainIcon>
           </div>
-          <div className="flex items-center justify-between bg-[#4D444D] w-[100px] h-[42px] rounded-full pl-[6px] pr-0 ml-4 shrink-0 shadow-inner relative">
-            <div className="flex items-center justify-center w-[30px] h-[30px] shrink-0">
-              <Image src="/Orange_logo.svg" alt="logo" width={28} height={28} className="object-contain" />
+
+          <div className="relative ml-4 flex h-[42px] w-[100px] shrink-0 items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner">
+            <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center">
+              <Image src="/orange_logo.svg" alt="logo" width={28} height={28} className="object-contain" />
             </div>
 
-            <div className="absolute right-[2px] top-[4px] flex items-center justify-center w-[44px] h-[44px] shrink-0 z-20">
-              <Image src="/Basket.svg" alt="basket" width={44} height={44} className="object-contain relative top-[6px]" />
-              <span className="absolute top-2/5 left-1/2 -translate-x-[50%] -translate-y-[20%] text-[#FDE3C8] font-black text-[12px] leading-none z-10 drop-shadow-md">
+            <div className="absolute right-[2px] top-[4px] z-20 flex h-[44px] w-[44px] shrink-0 items-center justify-center">
+              <Image
+                src="/basket.svg"
+                alt="basket"
+                width={44}
+                height={44}
+                className="relative top-[6px] object-contain"
+              />
+              <span className="absolute left-1/2 top-2/5 z-10 -translate-x-[50%] -translate-y-[20%] text-[12px] font-black leading-none text-[#FDE3C8] drop-shadow-md">
                 5
               </span>
             </div>

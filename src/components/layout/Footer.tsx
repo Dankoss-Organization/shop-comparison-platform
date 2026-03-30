@@ -5,17 +5,17 @@ import Image from "next/image";
 const companyLinks = ["About Us", "Reviews", "FAQ"];
 const pressLinks = ["Privacy Policy", "Cookie Policy", "FAQ"];
 const contacts = [
-  { icon: "/Phone.svg", alt: "Phone", text: "084524145547" },
-  { icon: "/Email.svg", alt: "Email", text: "arshakir132@gmail.com" },
-  { icon: "/Location.svg", alt: "Location", text: "Texas, USA" },
+  { icon: "/phone.svg", alt: "Phone", text: "084524145547" },
+  { icon: "/email.svg", alt: "Email", text: "arshakir132@gmail.com" },
+  { icon: "/location.svg", alt: "Location", text: "Texas, USA" },
 ];
 const socials = [
-  { href: "#", iconSrc: "/Github.svg", alt: "GitHub" },
-  { href: "#", iconSrc: "/Instagram.svg", alt: "Instagram" },
-  { href: "#", iconSrc: "/Telegram.svg", alt: "Telegram" },
-  { href: "#", iconSrc: "/Linkedin.svg", alt: "LinkedIn" },
-  { href: "#", iconSrc: "/Whatsapp.svg", alt: "WhatsApp" },
-  { href: "#", iconSrc: "/X.svg", alt: "X" },
+  { href: "#", iconSrc: "/github.svg", alt: "GitHub" },
+  { href: "#", iconSrc: "/instagram.svg", alt: "Instagram" },
+  { href: "#", iconSrc: "/telegram.svg", alt: "Telegram" },
+  { href: "#", iconSrc: "/linkedin.svg", alt: "LinkedIn" },
+  { href: "#", iconSrc: "/whatsapp.svg", alt: "WhatsApp" },
+  { href: "#", iconSrc: "/x.svg", alt: "X" },
 ];
 
 export default function Footer() {
@@ -32,7 +32,7 @@ export default function Footer() {
           className="pointer-events-none absolute inset-0 z-0"
           style={{
             background:
-              "radial-gradient(63.91% 236.28% at 48.45% -40.51%, #EC5800 32.69%, #242024 79.81%)",
+              "radial-gradient(63.91% 236.28% at 48.45% -40.51%, #D31D05 32.69%, #242024 79.81%)",
             filter: "blur(27px)",
           }}
         />
@@ -82,7 +82,7 @@ export default function Footer() {
         <div>
           <div className="mb-4 flex items-center leading-none">
             <span className="text-[42px] font-semibold text-[#FFDEBA] md:text-[46px]">DANK</span>
-            <Image src="/Orange_logo.svg" alt="O" width={44} height={44} className="mx-[2px]" />
+            <Image src="/orange_logo.svg" alt="O" width={44} height={44} className="mx-[2px]" />
             <span className="text-[42px] font-semibold text-[#FFDEBA] md:text-[46px]">SS</span>
           </div>
 
@@ -112,7 +112,7 @@ export default function Footer() {
 
                 {index < contacts.length - 1 ? (
                   <div className="flex w-[45px] justify-center -my-[4px]">
-                    <Image src="/Connection.svg" alt="" width={24} height={24} className="rotate-90" />
+                    <Image src="/connection.svg" alt="" width={24} height={24} className="rotate-90" />
                   </div>
                 ) : null}
               </div>
@@ -131,7 +131,7 @@ export default function Footer() {
             <div key={social.alt} className="flex items-center">
               <SocialBubble href={social.href} iconSrc={social.iconSrc} alt={social.alt} />
               {index < socials.length - 1 ? (
-                <Image src="/Connection.svg" alt="" width={24} height={12} className="-mx-[4px]" />
+                <Image src="/connection.svg" alt="" width={24} height={12} className="-mx-[4px]" />
               ) : null}
             </div>
           ))}
