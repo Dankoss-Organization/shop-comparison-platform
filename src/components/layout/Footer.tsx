@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ChainIcon, Connection } from "@/components/ui/IconUI";
 
 const companyLinks = ["About Us", "Reviews", "FAQ"];
 const pressLinks = ["Privacy Policy", "Cookie Policy", "FAQ"];
@@ -104,9 +105,9 @@ export default function Footer() {
             {contacts.map((item, index) => (
               <div key={item.text}>
                 <div className="flex items-center gap-[14px]">
-                  <Bubble>
-                    <Image src={item.icon} alt={item.alt} width={24} height={24} className="object-contain" />
-                  </Bubble>
+                  <ChainIcon>
+                    <Image src={item.icon} alt={item.alt} width={24} height={24} />
+                  </ChainIcon>
                   <span className="text-[15px] leading-5 text-[#FFDEBA]">{item.text}</span>
                 </div>
 
@@ -124,18 +125,27 @@ export default function Footer() {
       <div className="mx-auto mb-5 max-w-[1400px] border-t border-[#FFDEBA]" />
 
       <div className="mx-auto flex max-w-[1400px] flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <p className="text-[15px] text-[#FFDEBA]">2026 DANKOSS. | terms and conditions</p>
+        <p className="text-[15px] text-[#FFDEBA]">© 2026 DANKOSS. | terms and conditions</p>
 
         <div className="flex items-center">
-          {socials.map((social, index) => (
-            <div key={social.alt} className="flex items-center">
-              <SocialBubble href={social.href} iconSrc={social.iconSrc} alt={social.alt} />
-              {index < socials.length - 1 ? (
-                <Image src="/connection.svg" alt="" width={24} height={12} className="-mx-[4px]" />
-              ) : null}
-            </div>
-          ))}
-        </div>
+  {socials.map((social, index) => (
+    <div key={social.alt} className="flex items-center">
+      <a href={social.href}>
+        <ChainIcon>
+          <Image
+            src={social.iconSrc}
+            alt={social.alt}
+            width={28}
+            height={28}
+            className="object-contain"
+          />
+        </ChainIcon>
+      </a>
+
+      {index < socials.length - 1 ? <Connection /> : null}
+    </div>
+  ))}
+</div>
       </div>
     </footer>
   );
@@ -187,19 +197,3 @@ function Bubble({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SocialBubble({ href, iconSrc, alt }: { href: string; iconSrc: string; alt: string }) {
-  return (
-    <a
-      href={href}
-      className="group relative z-10 flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-full bg-[rgba(90,80,90,0.7)] backdrop-blur-[4px] transition-all duration-300 hover:h-[50px] hover:w-[50px] hover:rotate-[0.19deg] hover:bg-[#EC5800]"
-    >
-      <Image
-        src={iconSrc}
-        alt={alt}
-        width={32}
-        height={32}
-        className="object-contain transition-all duration-300 group-hover:h-[35px] group-hover:w-[35px]"
-      />
-    </a>
-  );
-}

@@ -13,7 +13,7 @@ export function ChainIcon({
     <button
       onClick={onClick}
       type="button"
-      className="group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5A505A]/70 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-[#FF7A00] active:scale-95 shadow-md"
+      className="group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5A505A]/70 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-[#EC5800] active:scale-95 shadow-md"
     >
       {children}
     </button>
