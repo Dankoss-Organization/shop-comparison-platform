@@ -6,9 +6,27 @@ import { ChainIcon, Connection } from "@/components/ui/IconUI";
 const companyLinks = ["About Us", "Reviews", "FAQ"];
 const pressLinks = ["Privacy Policy", "Cookie Policy", "FAQ"];
 const contacts = [
-  { icon: "/phone.svg", alt: "Phone", text: "084524145547" },
-  { icon: "/email.svg", alt: "Email", text: "arshakir132@gmail.com" },
-  { icon: "/location.svg", alt: "Location", text: "Texas, USA" },
+  {
+    icon: "/phone.svg",
+    alt: "Phone",
+    text: "084524145547",
+    href: "tel:084524145547",
+    tooltip: "Call us",
+  },
+  {
+    icon: "/email.svg",
+    alt: "Email",
+    text: "arshakir132@gmail.com",
+    href: "mailto:arshakir132@gmail.com",
+    tooltip: "Send email",
+  },
+  {
+    icon: "/location.svg",
+    alt: "Location",
+    text: "Kyiv, Ukraine",
+    href: "https://maps.google.com/?q=Kyiv, Ukraine",
+    tooltip: "Open map",
+  },
 ];
 const socials = [
   { href: "#", iconSrc: "/github.svg", alt: "GitHub" },
@@ -101,24 +119,38 @@ export default function Footer() {
             Contacts
           </h3>
 
-          <div className="flex flex-col">
-            {contacts.map((item, index) => (
-              <div key={item.text}>
-                <div className="flex items-center gap-[14px]">
-                  <ChainIcon>
-                    <Image src={item.icon} alt={item.alt} width={24} height={24} />
-                  </ChainIcon>
-                  <span className="text-[15px] leading-5 text-[#FFDEBA]">{item.text}</span>
-                </div>
+          <div className="flex flex-col items-start">
+  {contacts.map((item, index) => (
+    <div key={item.text} className="flex flex-col items-start">
+      
+      {/* Рядок */}
+      <div className="flex items-center gap-[16px]">
+        <div className="group relative z-10 hover:z-50">
+          <a href={item.href}>
+            <ChainIcon>
+              <Image src={item.icon} alt={item.alt} width={22} height={22} />
+            </ChainIcon>
+          </a>
 
-                {index < contacts.length - 1 ? (
-                  <div className="flex w-[45px] justify-center -my-[4px]">
-                    <Image src="/connection.svg" alt="" width={24} height={24} className="rotate-90" />
-                  </div>
-                ) : null}
-              </div>
-            ))}
-          </div>
+          <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#1A181C] px-3 py-1 text-xs text-[#FFDEBA] opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-1 scale-95 group-hover:scale-100">
+            {item.tooltip}
+          </span>
+        </div>
+
+        <span className="text-[15px] leading-5 text-[#FFDEBA]">
+          {item.text}
+        </span>
+      </div>
+
+      {/* Connection */}
+      {index < contacts.length - 1 && (
+        <div className="my-[-8px]">
+          <Connection vertical />
+        </div>
+      )}
+    </div>
+  ))}
+</div>
         </div>
       </div>
 
@@ -127,25 +159,19 @@ export default function Footer() {
       <div className="mx-auto flex max-w-[1400px] flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <p className="text-[15px] text-[#FFDEBA]">© 2026 DANKOSS. | terms and conditions</p>
 
-        <div className="flex items-center">
-  {socials.map((social, index) => (
-    <div key={social.alt} className="flex items-center">
-      <a href={social.href}>
-        <ChainIcon>
-          <Image
-            src={social.iconSrc}
-            alt={social.alt}
-            width={28}
-            height={28}
-            className="object-contain"
-          />
-        </ChainIcon>
-      </a>
+        <div className="group flex items-center">
+        {socials.map((social, index) => (
+          <>
+            <a key={social.alt} href={social.href}>
+              <ChainIcon>
+                <Image src={social.iconSrc} alt={social.alt} width={28} height={28} />
+              </ChainIcon>
+            </a>
 
-      {index < socials.length - 1 ? <Connection /> : null}
-    </div>
-  ))}
-</div>
+              {index < socials.length - 1 ? <Connection /> : null}
+            </>
+        ))}
+        </div>
       </div>
     </footer>
   );
@@ -185,14 +211,6 @@ function FooterLinkColumn({ title, links }: { title: string; links: string[] }) 
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-function Bubble({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative z-10 flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-full bg-[rgba(90,80,90,0.7)] backdrop-blur-[4px] transition-colors duration-200 hover:text-[#EC5800]">
-      {children}
     </div>
   );
 }

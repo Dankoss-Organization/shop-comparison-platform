@@ -20,10 +20,22 @@ export function ChainIcon({
   );
 }
 
-export function Connection() {
+export function Connection({ vertical = false }: { vertical?: boolean }) {
   return (
-    <div className="relative z-0 -mx-[4px] shrink-0">
-      <Image src="/connection.svg" alt="" width={30} height={20} style={{ height: "auto" }} />
+    <div
+      className={`
+        relative z-0 shrink-0 flex items-center justify-center
+        ${vertical ? "h-[36px] w-[45px]" : "mx-[-4px]"}
+      `}
+    >
+      <Image
+        src="/connection.svg"
+        alt=""
+        width={30}
+        height={20}
+        className={vertical ? "rotate-90" : ""}
+        style={{ height: "auto" }}
+      />
     </div>
   );
 }
