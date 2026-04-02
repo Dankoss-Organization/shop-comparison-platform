@@ -41,14 +41,12 @@ export default function Footer() {
   return (
     <footer className="bg-[#1E1B1E] px-6 pb-6 pt-10 text-[#FFDEBA] lg:px-12">
       
-      {/* --- БЛОК ФОРМИ --- */}
       <div
         className="relative mx-auto mb-14 max-w-[1400px] overflow-hidden rounded-[45px] border border-[#3A2216] px-6 py-8 shadow-soft md:px-10 lg:px-[60px] lg:pb-10 lg:pt-9"
         style={{
           background: "linear-gradient(180deg, #1A171A 0%, #100E10 100%)",
         }}
       >
-        {/* Ліве мідне сяйво (ЯСКРАВІШЕ, розмір той самий) */}
         <div
           className="pointer-events-none absolute -bottom-[40%] -left-[20%] -top-[40%] w-[40%] z-0 rounded-full"
           style={{
@@ -58,7 +56,6 @@ export default function Footer() {
           }}
         />
 
-        {/* Праве мідне сяйво (ЯСКРАВІШЕ, розмір той самий) */}
         <div
           className="pointer-events-none absolute -bottom-[40%] -right-[20%] -top-[40%] w-[40%] z-0 rounded-full"
           style={{
@@ -82,7 +79,7 @@ export default function Footer() {
             <textarea
               placeholder="Message"
               required
-              className="h-[110px] w-full resize-none rounded-[16px] border-none px-5 py-3 text-base text-[rgba(255,222,186,0.87)] outline-none transition placeholder:text-[rgba(255,222,186,0.87)] focus:ring-2 focus:ring-[#EC5800]/50"
+              className="h-[110px] w-full resize-none rounded-[16px] border-none px-5 py-3 text-base text-[#FFDEBA] outline-none transition placeholder:text-[#FFDEBA]/70 focus:ring-2 focus:ring-[#EC5800]/50"
               style={{
                 background: "rgba(45, 40, 45, 0.4)",
                 boxShadow: "2px 2px 1px #EC5800",
@@ -92,23 +89,26 @@ export default function Footer() {
             />
 
             <div className="mt-2 flex justify-center">
-              <button
-                type="submit"
-                className="h-[44px] w-full max-w-[260px] rounded-[22px] border border-transparent text-xl font-medium text-[#FFDEBA] transition-all duration-200 hover:bg-[rgba(236,88,0,0.15)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
-                style={{
-                  background: "rgba(45, 40, 45, 0.15)",
-                  boxShadow: "2px 2px 1px #EC5800",
-                  backdropFilter: "blur(25px)",
-                  WebkitBackdropFilter: "blur(25px)",
-                }}
-              >
+            <button
+              type="submit"
+              className="group relative flex h-[44px] w-full max-w-[260px] items-center justify-center overflow-hidden rounded-[22px] border border-transparent text-xl font-medium text-[#FFDEBA] shadow-[2px_2px_1px_#EC5800] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
+              style={{
+                background: "rgba(45, 40, 45, 0.4)",
+                backdropFilter: "blur(25px)",
+                WebkitBackdropFilter: "blur(25px)",
+              }}
+            >
+              <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
                 Submit now
-              </button>
-            </div>
+              </span>
+              <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover:left-[150%]">
+                <div className="h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[rgba(255,222,186,0.25)] to-transparent" />
+              </div>
+            </button>
+          </div>
           </form>
         </div>
       </div>
-      {/* --- КІНЕЦЬ БЛОКУ ФОРМИ --- */}
 
       <div className="mx-auto mb-12 grid max-w-[1400px] gap-10 lg:grid-cols-[1.6fr_1fr_1fr_1.1fr] lg:gap-[30px]">
         <div>
