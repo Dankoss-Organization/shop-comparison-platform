@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import type { DealCard } from "@/Data/home_data";
+import DealCardView from "@/Components/UI/DealCard";
 
 export default function ProductCarousel({
   id,
@@ -53,67 +53,12 @@ export default function ProductCarousel({
 
         <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">
           {items.map((item) => (
-            <article
+            <DealCardView
               key={`${title}-${item.title}`}
+              item={item}
               onClick={() => setSelectedItem(item)}
-              className="min-w-[320px] cursor-pointer snap-start overflow-hidden rounded-[1.85rem] border border-white/10 bg-[#342e34] shadow-soft transition hover:-translate-y-1 hover:border-brand-orange/25 md:min-w-[360px]"
-            >
-              <div className="relative h-[220px]">
-                <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#342e34] via-[#342e34]/18 to-transparent" />
-                <div className="absolute left-4 right-4 top-4 flex items-center justify-between">
-                  <span className="rounded-full bg-[#201b20]/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-orangeSoft backdrop-blur-md">
-                    {item.market}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(event) => event.stopPropagation()}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#201b20]/70 backdrop-blur-md transition hover:border-brand-orange/45 hover:bg-brand-orange/15"
-                  >
-                    <Image src="/heart.svg" alt="Favourite" width={18} height={18} />
-                  </button>
-                </div>
-                <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                  <span className="rounded-full bg-brand-orange px-3 py-1 text-xs font-semibold text-white">
-                    {item.discount}
-                  </span>
-                  <span className="rounded-full bg-[#201b20]/80 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur-md">
-                    Rating {item.rating}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-5">
-                <h3 className="text-2xl font-black text-white">{item.title}</h3>
-                <p className="mt-3 min-h-[72px] text-sm leading-6 text-white/60">{item.description}</p>
-
-                <div className="mt-4 flex items-center gap-3 text-sm">
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-white/65">
-                    {item.quantity}
-                  </span>
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-white/65">
-                    Market: {item.market}
-                  </span>
-                </div>
-
-                <div className="mt-5 flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-3xl font-black text-brand-orange">{item.price}</p>
-                    <div className="mt-1 flex items-center gap-2 text-sm">
-                      <span className="text-white/35 line-through">{item.oldPrice}</span>
-                      <span className="text-brand-orangeSoft">{item.discount}</span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={(event) => event.stopPropagation()}
-                    className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-brand-night transition hover:bg-brand-orange hover:text-white"
-                  >
-                    Add to cart
-                  </button>
-                </div>
-              </div>
-            </article>
+              className="min-w-[320px] snap-start md:min-w-[360px]"
+            />
           ))}
         </div>
       </section>

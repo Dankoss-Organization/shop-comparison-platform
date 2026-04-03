@@ -10,7 +10,6 @@ import {
   dailyDiscounts,
   expiringDiscounts,
   peopleLiked,
-  recentItems,
   seasonalRecipes,
   weekDiscounts,
 } from "@/Data/home_data";
@@ -80,7 +79,7 @@ export default function Home() {
         items={peopleLiked}
       />
 
-      <RecentlyViewed items={recentItems} />
+      <RecentlyViewed />
       <Newsletter />
       <Footer />
     </main>
