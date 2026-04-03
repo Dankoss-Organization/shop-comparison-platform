@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChainIcon, Connection } from "@/Components/UI/HeaderUi";
-import CatalogDropdown from "./Header/CatalogDropdown";
+import { ChainIcon, Connection } from "@/components/ui/IconUI";
+import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 
 export default function Header() {

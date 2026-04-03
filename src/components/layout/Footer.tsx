@@ -1,13 +1,32 @@
 "use client";
 
 import Image from "next/image";
+import { ChainIcon, Connection } from "@/components/ui/IconUI";
 
-const companyLinks = ["About Us", "Reviews", "FAQ"];
-const pressLinks = ["Privacy Policy", "Cookie Policy", "FAQ"];
+const companyLinks = ["About Us", "How it works", "Partners"];
+const supportLinks = ["FAQ", "Privacy Policy", "Cookie Policy"];
 const contacts = [
-  { icon: "/phone.svg", alt: "Phone", text: "084524145547" },
-  { icon: "/email.svg", alt: "Email", text: "arshakir132@gmail.com" },
-  { icon: "/location.svg", alt: "Location", text: "Texas, USA" },
+  {
+    icon: "/phone.svg",
+    alt: "Phone",
+    text: "084524145547",
+    href: "tel:084524145547",
+    tooltip: "Call us",
+  },
+  {
+    icon: "/email.svg",
+    alt: "Email",
+    text: "arshakir132@gmail.com",
+    href: "mailto:arshakir132@gmail.com?subject=Питання%20з%20сайту",
+    tooltip: "Send email",
+  },
+  {
+    icon: "/location.svg",
+    alt: "Location",
+    text: "Kyiv, Ukraine",
+    href: "https://maps.google.com/?q=Kyiv, Ukraine",
+    tooltip: "Open map",
+  },
 ];
 const socials = [
   { href: "#", iconSrc: "/github.svg", alt: "GitHub" },
@@ -21,19 +40,28 @@ const socials = [
 export default function Footer() {
   return (
     <footer className="bg-[#1E1B1E] px-6 pb-6 pt-10 text-[#FFDEBA] lg:px-12">
+      
       <div
-        className="relative mx-auto mb-14 max-w-[1400px] overflow-hidden rounded-[35px] border border-[#5a3823] px-6 py-8 shadow-soft md:px-10 lg:px-[60px] lg:pb-10 lg:pt-9"
+        className="relative mx-auto mb-14 max-w-[1400px] overflow-hidden rounded-[45px] border border-[#3A2216] px-6 py-8 shadow-soft md:px-10 lg:px-[60px] lg:pb-10 lg:pt-9"
         style={{
-          background:
-            "radial-gradient(54.44% 201.28% at 48.45% -40.51%, #EC5800 25.8%, #D34205 32.69%, #242024 79.81%)",
+          background: "linear-gradient(180deg, #1A171A 0%, #100E10 100%)",
         }}
       >
         <div
-          className="pointer-events-none absolute inset-0 z-0"
+          className="pointer-events-none absolute -bottom-[40%] -left-[20%] -top-[40%] w-[40%] z-0 rounded-full"
           style={{
-            background:
-              "radial-gradient(63.91% 236.28% at 48.45% -40.51%, #D31D05 32.69%, #242024 79.81%)",
-            filter: "blur(27px)",
+            background: "radial-gradient(circle at center, #EC5800 2%, #D34205 25%, transparent 85%)",
+            filter: "blur(90px)",
+            opacity: 0.7,
+          }}
+        />
+
+        <div
+          className="pointer-events-none absolute -bottom-[40%] -right-[20%] -top-[40%] w-[40%] z-0 rounded-full"
+          style={{
+            background: "radial-gradient(circle at center, #EC5800 2%, #D34205 25%, transparent 85%)",
+            filter: "blur(90px)",
+            opacity: 0.7,
           }}
         />
 
@@ -51,29 +79,33 @@ export default function Footer() {
             <textarea
               placeholder="Message"
               required
-              className="h-[110px] w-full resize-none rounded-[16px] border-none px-5 py-3 text-base text-[rgba(255,222,186,0.87)] outline-none transition placeholder:text-[rgba(255,222,186,0.87)] focus:ring-2 focus:ring-[#EC5800]/50"
+              className="h-[110px] w-full resize-none rounded-[16px] border-none px-5 py-3 text-base text-[#FFDEBA] outline-none transition placeholder:text-[#FFDEBA]/70 focus:ring-2 focus:ring-[#EC5800]/50"
               style={{
                 background: "rgba(45, 40, 45, 0.4)",
-                boxShadow: "2px 2px 1px #F78F45",
+                boxShadow: "2px 2px 1px #EC5800",
                 backdropFilter: "blur(1px)",
                 WebkitBackdropFilter: "blur(1px)",
               }}
             />
 
             <div className="mt-2 flex justify-center">
-              <button
-                type="submit"
-                className="h-[44px] w-full max-w-[260px] rounded-[22px] border border-transparent text-xl font-medium text-[#FFDEBA] transition-all duration-200 hover:bg-[rgba(236,88,0,0.15)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
-                style={{
-                  background: "rgba(45, 40, 45, 0.15)",
-                  boxShadow: "2px 2px 1px #FF9447",
-                  backdropFilter: "blur(25px)",
-                  WebkitBackdropFilter: "blur(25px)",
-                }}
-              >
+            <button
+              type="submit"
+              className="group relative flex h-[44px] w-full max-w-[260px] items-center justify-center overflow-hidden rounded-[22px] border border-transparent text-xl font-medium text-[#FFDEBA] shadow-[2px_2px_1px_#EC5800] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
+              style={{
+                background: "rgba(45, 40, 45, 0.4)",
+                backdropFilter: "blur(25px)",
+                WebkitBackdropFilter: "blur(25px)",
+              }}
+            >
+              <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
                 Submit now
-              </button>
-            </div>
+              </span>
+              <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover:left-[150%]">
+                <div className="h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[rgba(255,222,186,0.25)] to-transparent" />
+              </div>
+            </button>
+          </div>
           </form>
         </div>
       </div>
@@ -93,28 +125,40 @@ export default function Footer() {
         </div>
 
         <FooterLinkColumn title="Company" links={companyLinks} />
-        <FooterLinkColumn title="Press" links={pressLinks} />
+        <FooterLinkColumn title="Support & Legal" links={supportLinks} />
 
         <div>
           <h3 className="mb-5 text-[28px] font-bold leading-[34px] tracking-[2px] text-[#EC5800]">
             Contacts
           </h3>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col items-start">
             {contacts.map((item, index) => (
-              <div key={item.text}>
-                <div className="flex items-center gap-[14px]">
-                  <Bubble>
-                    <Image src={item.icon} alt={item.alt} width={24} height={24} className="object-contain" />
-                  </Bubble>
-                  <span className="text-[15px] leading-5 text-[#FFDEBA]">{item.text}</span>
+              <div key={item.text} className="flex flex-col items-start">
+                
+                <div className="flex items-center gap-[16px]">
+                  <div className="group relative z-10 hover:z-50">
+                    <a href={item.href}>
+                      <ChainIcon>
+                        <Image src={item.icon} alt={item.alt} width={22} height={22} />
+                      </ChainIcon>
+                    </a>
+
+                    <span className="pointer-events-none absolute z-50 left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#1A181C] px-3 py-1 text-xs text-[#FFDEBA] opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-1 scale-95 group-hover:scale-100">
+                      {item.tooltip}
+                    </span>
+                  </div>
+
+                  <span className="text-[15px] leading-5 text-[#FFDEBA]">
+                    {item.text}
+                  </span>
                 </div>
 
-                {index < contacts.length - 1 ? (
-                  <div className="flex w-[45px] justify-center -my-[4px]">
-                    <Image src="/connection.svg" alt="" width={24} height={24} className="rotate-90" />
+                {index < contacts.length - 1 && (
+                  <div className="flex w-[42px] justify-center my-[-6px] relative z-0">
+                    <Connection vertical />
                   </div>
-                ) : null}
+                )}
               </div>
             ))}
           </div>
@@ -124,15 +168,18 @@ export default function Footer() {
       <div className="mx-auto mb-5 max-w-[1400px] border-t border-[#FFDEBA]" />
 
       <div className="mx-auto flex max-w-[1400px] flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <p className="text-[15px] text-[#FFDEBA]">2026 DANKOSS. | terms and conditions</p>
+        <p className="text-[15px] text-[#FFDEBA]">© 2026 DANKOSS. | terms and conditions</p>
 
-        <div className="flex items-center">
+        <div className="group flex items-center">
           {socials.map((social, index) => (
             <div key={social.alt} className="flex items-center">
-              <SocialBubble href={social.href} iconSrc={social.iconSrc} alt={social.alt} />
-              {index < socials.length - 1 ? (
-                <Image src="/connection.svg" alt="" width={24} height={12} className="-mx-[4px]" />
-              ) : null}
+              <a href={social.href}>
+                <ChainIcon>
+                  <Image src={social.iconSrc} alt={social.alt} width={28} height={28} />
+                </ChainIcon>
+              </a>
+
+              {index < socials.length - 1 ? <Connection /> : null}
             </div>
           ))}
         </div>
@@ -150,7 +197,7 @@ function FooterInput({ type, placeholder }: { type: string; placeholder: string 
       className="h-[40px] flex-1 rounded-[16px] border-none px-5 text-base text-[#FFDEBA] outline-none transition placeholder:text-[#FFDEBA]/70 focus:ring-2 focus:ring-[#EC5800]/50"
       style={{
         background: "rgba(45, 40, 45, 0.4)",
-        boxShadow: "2px 2px 1px #F78F45",
+        boxShadow: "2px 2px 1px #EC5800",
         backdropFilter: "blur(5px)",
         WebkitBackdropFilter: "blur(5px)",
       }}
@@ -165,7 +212,7 @@ function FooterLinkColumn({ title, links }: { title: string; links: string[] }) 
       <ul className="m-0 list-none p-0">
         {links.map((item) => (
           <li key={item} className="mb-[10px] flex items-center gap-[10px]">
-            <span className="text-[22px] leading-none text-[#FFDEBA]">&bull;</span>
+            <span className="text-[22px] leading-none text-[#FFDEBA]">•</span>
             <a
               href="#"
               className="text-[20px] font-medium leading-[30px] tracking-[-1px] text-[#FFDEBA] transition-colors duration-200 hover:text-[#EC5800]"
@@ -176,30 +223,5 @@ function FooterLinkColumn({ title, links }: { title: string; links: string[] }) 
         ))}
       </ul>
     </div>
-  );
-}
-
-function Bubble({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative z-10 flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-full bg-[rgba(90,80,90,0.7)] backdrop-blur-[4px] transition-colors duration-200 hover:text-[#EC5800]">
-      {children}
-    </div>
-  );
-}
-
-function SocialBubble({ href, iconSrc, alt }: { href: string; iconSrc: string; alt: string }) {
-  return (
-    <a
-      href={href}
-      className="group relative z-10 flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-full bg-[rgba(90,80,90,0.7)] backdrop-blur-[4px] transition-all duration-300 hover:h-[50px] hover:w-[50px] hover:rotate-[0.19deg] hover:bg-[#EC5800]"
-    >
-      <Image
-        src={iconSrc}
-        alt={alt}
-        width={32}
-        height={32}
-        className="object-contain transition-all duration-300 group-hover:h-[35px] group-hover:w-[35px]"
-      />
-    </a>
   );
 }
