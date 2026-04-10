@@ -34,58 +34,64 @@ export default function Header() {
   }, [isCatalogOpen]);
 
   return (
-    <header className="relative z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans">
-      <div className="flex items-center justify-between px-[20px] py-[15px] xl:px-[40px]">
-        <div className="flex items-center gap-[34px]">
-          <button
-            id="catalog-trigger"
-            onClick={(event) => {
-              event.stopPropagation();
-              setIsCatalogOpen(!isCatalogOpen);
-            }}
-            className="z-[50] shrink-0 transition-opacity hover:opacity-80"
-            type="button"
-          >
-            <Image src="/catalog_logo.svg" alt="catalog" width={30} height={30} />
-          </button>
+    <header className="relative z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
+      <div className="relative flex w-full items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px]">
+        
+        <div className="flex items-center gap-8 xl:gap-[60px]">
+          
+          <div className="flex items-center">
+            <button
+              id="catalog-trigger"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIsCatalogOpen(!isCatalogOpen);
+              }}
+              className="z-[50] shrink-0 transition-opacity hover:opacity-80"
+              type="button"
+            >
+              <Image src="/catalog_logo.svg" alt="catalog" width={30} height={30} />
+            </button>
 
-          <div onClick={(event) => event.stopPropagation()}>
-            <CatalogDropdown
-              isOpen={isCatalogOpen}
-              categories={categories}
-              activeCategory={activeCategory}
-              lockedCategory={lockedCategory}
-              setActiveCategory={setActiveCategory}
-              setLockedCategory={setLockedCategory}
-            />
+            <div onClick={(event) => event.stopPropagation()}>
+              <CatalogDropdown
+                isOpen={isCatalogOpen}
+                categories={categories}
+                activeCategory={activeCategory}
+                lockedCategory={lockedCategory}
+                setActiveCategory={setActiveCategory}
+                setLockedCategory={setLockedCategory}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="relative flex min-w-[220px] select-none items-center justify-center self-start px-10 py-4">
-          <Image
-            src="/dankoss_logo_bkg.svg"
-            alt="logo background"
-            fill
-            priority
-            className="z-0 scale-160 object-contain"
-          />
+          <div className="relative flex min-w-[220px] select-none items-center justify-center py-2">
+            <Image
+              src="/dankoss_logo_bkg.svg"
+              alt="logo background"
+              fill
+              priority
+              className="z-0 scale-[1.2] object-contain"
+            />
 
-          <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-[#F6D7B0]">
-            DANK
-            <span className="relative mx-[2px] flex h-[28px] w-[28px] items-center justify-center">
-              <span className="opacity-0">O</span>
-              <Image src="/orange_logo.svg" alt="O" width={35} height={35} className="absolute" />
+            <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-[#F6D7B0]">
+              DANK
+              <span className="relative mx-[2px] flex h-[28px] w-[28px] items-center justify-center">
+                <span className="opacity-0">O</span>
+                <Image src="/orange_logo.svg" alt="O" width={35} height={35} className="absolute" />
+              </span>
+              SS
             </span>
-            SS
-          </span>
+          </div>
+          
         </div>
 
-        <div className="flex items-center">
-          <div className="relative z-10 flex items-center">
+        <div className="flex flex-1 items-center justify-end">
+          
+          <div className="relative z-10 hidden items-center lg:flex">
             <input
               type="text"
               placeholder="SEARCH"
-              className="h-[42px] w-[300px] rounded-full bg-[#3F363F] pl-[20px] pr-[50px] text-[14px] tracking-[0.1em] text-[#FFDEBA] shadow-md outline-none placeholder:text-[#FFDEBA]/40"
+              className="h-[42px] w-[250px] xl:w-[300px] rounded-full bg-[#3F363F] pl-[20px] pr-[50px] text-[14px] tracking-[0.1em] text-[#FFDEBA] shadow-md outline-none placeholder:text-[#FFDEBA]/40"
             />
 
             <div className="absolute right-[2px] top-1/2 z-20 -translate-y-1/2">
@@ -96,7 +102,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-0">
-            <Connection />
+            <div className="hidden lg:block"><Connection /></div>
 
             <ChainIcon>
               <Image src="/favourites.svg" alt="fav" width={20} height={20} />
@@ -141,7 +147,7 @@ export default function Header() {
             </ChainIcon>
           </div>
 
-          <div className="relative ml-4 flex h-[42px] w-[100px] shrink-0 items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner">
+          <div className="relative ml-8 xl:ml-[50px] flex h-[42px] w-[100px] shrink-0 items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner">
             <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center">
               <Image src="/orange_logo.svg" alt="logo" width={28} height={28} className="object-contain" />
             </div>

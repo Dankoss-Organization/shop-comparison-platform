@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { DealCard } from "@/Data/home_data";
-import DealCardView from "@/Components/UI/DealCard";
+import DealCardView from "@/components/ui/DealCard";
 
 export default function ProductCarousel({
   id,
@@ -11,7 +11,7 @@ export default function ProductCarousel({
   description,
   items,
 }: {
-  id?: string;
+  id?: string; 
   eyebrow: string;
   title: string;
   description: string;
@@ -40,7 +40,7 @@ export default function ProductCarousel({
 
   return (
     <>
-      <section id={id} className="mx-auto max-w-7xl px-6 py-6 lg:px-8">
+      <section id={id} className="w-full px-4 py-6 md:px-8 lg:px-12 2xl:px-[60px]">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-orange/70">
@@ -57,7 +57,7 @@ export default function ProductCarousel({
               key={`${title}-${item.title}`}
               item={item}
               onClick={() => setSelectedItem(item)}
-              className="min-w-[320px] snap-start md:min-w-[360px]"
+              className="w-[320px] min-w-[320px] shrink-0 snap-start md:w-[360px] md:min-w-[360px]"
             />
           ))}
         </div>

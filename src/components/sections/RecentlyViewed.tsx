@@ -1,5 +1,5 @@
 import { useId } from "react";
-import DealCardView from "@/Components/UI/DealCard";
+import DealCardView from "@/components/ui/DealCard";
 import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data";
 
 const recentDiscount = expiringDiscounts[2];
@@ -7,7 +7,7 @@ const recentRecipe = peopleLiked[1];
 
 export default function RecentlyViewed() {
   return (
-    <section className="mx-auto flex max-w-[1540px] justify-center px-2 py-12 sm:px-3 lg:px-4">
+    <section className="mx-auto flex w-full justify-center px-2 py-12 sm:px-3 lg:px-4">
       <div className="grid shrink-0 grid-cols-1 justify-items-center gap-8 lg:gap-10 xl:gap-12 min-[1100px]:grid-cols-2">
         <RecentlyViewedPanel item={recentDiscount} accent="знижки" />
         <RecentlyViewedPanel item={recentRecipe} accent="рецепти" />
