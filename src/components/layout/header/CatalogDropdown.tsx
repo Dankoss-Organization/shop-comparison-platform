@@ -262,8 +262,9 @@ export default function CatalogDropdown({
             </div>
 
             <div className="relative z-20 mt-auto flex justify-start pt-4">
+              {/* ОНОВЛЕНА КНОПКА З АНІМАЦІЄЮ ВІДБЛИСКУ */}
               <button
-                className="flex h-[36px] items-center justify-center rounded-[12px] border-none px-4 text-[13px] font-medium text-[#FFDEBA] transition-all duration-300 hover:-translate-y-[2px] active:scale-95 group-hover:text-white"
+                className="group/btn relative overflow-hidden flex h-[36px] items-center justify-center rounded-[12px] border border-transparent px-4 text-[13px] font-medium text-[#FFDEBA] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white active:scale-95"
                 style={{
                   background: "rgba(45, 40, 45, 0.4)",
                   boxShadow: "2px 2px 1px #EC5800",
@@ -271,7 +272,13 @@ export default function CatalogDropdown({
                   WebkitBackdropFilter: "blur(5px)",
                 }}
               >
-                Become a partner
+                <span className="relative z-10 transition-transform duration-300 group-hover/btn:scale-105">
+                  Become a partner
+                </span>
+                
+                <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover/btn:left-[150%]">
+                  <div className="h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[rgba(255,222,186,0.25)] to-transparent" />
+                </div>
               </button>
             </div>
           </div>        

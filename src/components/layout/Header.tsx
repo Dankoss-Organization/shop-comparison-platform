@@ -8,7 +8,7 @@ import { categories } from "@/Data/catalog_data";
 
 export default function Header() {
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState("UA");
+  const [currentLang, setCurrentLang] = useState("EN");
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [lockedCategory, setLockedCategory] = useState<string | null>(null);
