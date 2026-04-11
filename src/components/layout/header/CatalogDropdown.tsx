@@ -262,7 +262,6 @@ export default function CatalogDropdown({
             </div>
 
             <div className="relative z-20 mt-auto flex justify-start pt-4">
-              {/* ОНОВЛЕНА КНОПКА З АНІМАЦІЄЮ ВІДБЛИСКУ */}
               <button
                 className="group/btn relative overflow-hidden flex h-[36px] items-center justify-center rounded-[12px] border border-transparent px-4 text-[13px] font-medium text-[#FFDEBA] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white active:scale-95"
                 style={{

@@ -13,7 +13,6 @@ export function ChainIcon({
     <button
       onClick={onClick}
       type="button"
-      // Повернули старий bg-[#5A505A]/70, але залишили нові hover/active ефекти
       className="group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5A505A]/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-[#EC5800] hover:shadow-[0_8px_20px_rgba(236,88,0,0.4)] active:scale-90 active:translate-y-0"
     >
       <span className="transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
