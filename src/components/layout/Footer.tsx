@@ -42,7 +42,7 @@ export default function Footer() {
     <footer className="bg-[#1E1B1E] px-6 pb-6 pt-10 text-[#FFDEBA] lg:px-12">
       
       <div
-        className="relative mx-auto mb-14 max-w-[1400px] overflow-hidden rounded-[45px] border border-[#3A2216] px-6 py-8 shadow-soft md:px-10 lg:px-[60px] lg:pb-10 lg:pt-9"
+        className="relative mx-auto mb-14 w-full overflow-hidden rounded-[45px] border border-[#3A2216] px-6 py-8 shadow-soft md:px-10 lg:px-[60px] lg:pb-10 lg:pt-9"
         style={{
           background: "linear-gradient(180deg, #1A171A 0%, #100E10 100%)",
         }}
