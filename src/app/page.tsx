@@ -1,11 +1,11 @@
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import Banner from "@/components/sections/Banner";
-import Hero from "@/components/sections/Hero";
-import Newsletter from "@/components/sections/Newsletter";
-import ProductCarousel from "@/components/sections/ProductCarousel";
-import RecentlyViewed from "@/components/sections/RecentlyViewed";
-import StoreNav from "@/components/sections/StoreNav";
+import Header from "@/Components/Layout/Header";
+import Footer from "@/Components/Layout/Footer";
+import Banner from "@/Components/Sections/Banner";
+import Hero from "@/Components/Sections/Hero";
+import Newsletter from "@/Components/Sections/Newsletter";
+import ProductCarousel from "@/Components/Sections/ProductCarousel";
+import RecentlyViewed from "@/Components/Sections/RecentlyViewed";
+import StoreNav from "@/Components/Sections/StoreNav";
 import {
   dailyDiscounts,
   expiringDiscounts,

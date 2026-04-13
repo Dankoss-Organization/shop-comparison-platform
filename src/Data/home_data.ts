@@ -18,6 +18,8 @@ export type DealCard = {
   description: string;
   quantity: string;
   nutrition: NutritionFacts;
+  allergens?: string[];
+  notes?: string[];
 };
 
 function makeNutrition(
@@ -43,6 +45,8 @@ export const weekDiscounts: DealCard[] = [
     description: "Fresh chilled salmon with a strong weekly drop and premium dinner value.",
     quantity: "2 pcs",
     nutrition: makeNutrition("208 kcal", "0 g", "13 g", "20 g", "0 g", "0 g"),
+    allergens: ["Fish"],
+    notes: ["Keep refrigerated", "Best for pan-searing"],
   },
   {
     title: "Barilla Pasta",
@@ -55,6 +59,8 @@ export const weekDiscounts: DealCard[] = [
     description: "A pantry staple that works well for budget recipes and quick weekday meals.",
     quantity: "500 g",
     nutrition: makeNutrition("371 kcal", "75 g", "1.5 g", "13 g", "3 g", "3 g"),
+    allergens: ["Gluten"],
+    notes: ["Dry storage", "Works with creamy sauces"],
   },
   {
     title: "Cream Cheese",
@@ -67,6 +73,8 @@ export const weekDiscounts: DealCard[] = [
     description: "Smooth breakfast spread with a visible discount and high shopper save rate.",
     quantity: "2 pcs",
     nutrition: makeNutrition("342 kcal", "6 g", "34 g", "6 g", "0 g", "4 g"),
+    allergens: ["Milk"],
+    notes: ["Spreadable texture", "Good for breakfast snacks"],
   },
   {
     title: "Nescafe Gold",
@@ -79,6 +87,8 @@ export const weekDiscounts: DealCard[] = [
     description: "Popular instant coffee deal with dependable savings and high return demand.",
     quantity: "190 g",
     nutrition: makeNutrition("352 kcal", "74 g", "0.2 g", "7 g", "0 g", "2 g"),
+    allergens: [],
+    notes: ["Long shelf life", "High repeat purchase"],
   },
 ];
 
@@ -94,6 +104,8 @@ export const dailyDiscounts: DealCard[] = [
     description: "Protein-rich yogurt that is practical for breakfasts, bowls, and sauces.",
     quantity: "850 g",
     nutrition: makeNutrition("97 kcal", "4 g", "5 g", "9 g", "0 g", "4 g"),
+    allergens: ["Milk"],
+    notes: ["High protein", "Breakfast staple"],
   },
   {
     title: "Cherry Tomatoes",
@@ -106,6 +118,8 @@ export const dailyDiscounts: DealCard[] = [
     description: "Sweet and bright tomatoes that push recipe conversions when they go on sale.",
     quantity: "500 g",
     nutrition: makeNutrition("18 kcal", "3.9 g", "0.2 g", "0.9 g", "1.2 g", "2.6 g"),
+    allergens: [],
+    notes: ["Best fresh", "Good for salads"],
   },
   {
     title: "Olive Oil",
@@ -118,6 +132,8 @@ export const dailyDiscounts: DealCard[] = [
     description: "Premium kitchen item with enough savings to shift users toward a better brand.",
     quantity: "1 bottle",
     nutrition: makeNutrition("119 kcal", "0 g", "13.5 g", "0 g", "0 g", "0 g"),
+    allergens: [],
+    notes: ["Cold use and roasting", "Pantry essential"],
   },
   {
     title: "Chicken Fillet",
@@ -130,6 +146,8 @@ export const dailyDiscounts: DealCard[] = [
     description: "Reliable protein offer that supports quick dinner planning and bulk shopping.",
     quantity: "1 kg",
     nutrition: makeNutrition("120 kcal", "0 g", "2.6 g", "22.5 g", "0 g", "0 g"),
+    allergens: [],
+    notes: ["Cook thoroughly", "Meal prep friendly"],
   },
 ];
 
@@ -145,6 +163,8 @@ export const expiringDiscounts: DealCard[] = [
     description: "Fresh produce offer ending soon and perfect for salads, bowls, and toast.",
     quantity: "2 pcs",
     nutrition: makeNutrition("160 kcal", "8.5 g", "14.7 g", "2 g", "6.7 g", "0.7 g"),
+    allergens: [],
+    notes: ["Ripens after purchase", "Good for toast and bowls"],
   },
   {
     title: "Orange Juice",
@@ -157,6 +177,8 @@ export const expiringDiscounts: DealCard[] = [
     description: "A quick-moving family drink discount with only a short promo window left.",
     quantity: "1 L",
     nutrition: makeNutrition("45 kcal", "10.4 g", "0.2 g", "0.7 g", "0.2 g", "8.4 g"),
+    allergens: [],
+    notes: ["Serve chilled", "Family pack size"],
   },
   {
     title: "Dark Chocolate",
@@ -169,6 +191,8 @@ export const expiringDiscounts: DealCard[] = [
     description: "Popular snack discount with strong rating and a very visible price cut.",
     quantity: "100 g",
     nutrition: makeNutrition("546 kcal", "61 g", "31 g", "4.9 g", "7 g", "48 g"),
+    allergens: ["Soy", "Milk", "May contain nuts"],
+    notes: ["Snack format", "Ends soon"],
   },
   {
     title: "Rice Pack",
@@ -181,6 +205,8 @@ export const expiringDiscounts: DealCard[] = [
     description: "Last-day staple discount that pairs naturally with many weekly recipes.",
     quantity: "800 g",
     nutrition: makeNutrition("360 kcal", "79 g", "0.6 g", "6.7 g", "1.3 g", "0.1 g"),
+    allergens: [],
+    notes: ["Long shelf life", "Base ingredient"],
   },
 ];
 
@@ -196,6 +222,8 @@ export const seasonalRecipes: DealCard[] = [
     description: "A light seasonal bowl assembled around discounted greens, oranges, and soft cheese.",
     quantity: "2 servings",
     nutrition: makeNutrition("290 kcal", "24 g", "15 g", "14 g", "6 g", "10 g"),
+    allergens: ["Milk"],
+    notes: ["Fresh seasonal recipe", "Serve chilled"],
   },
   {
     title: "Roasted Market Tray",
@@ -208,6 +236,8 @@ export const seasonalRecipes: DealCard[] = [
     description: "An easy oven tray recipe based on seasonal vegetables with current discounts.",
     quantity: "3 servings",
     nutrition: makeNutrition("245 kcal", "28 g", "10 g", "8 g", "7 g", "9 g"),
+    allergens: [],
+    notes: ["Family-friendly", "Oven-ready"],
   },
   {
     title: "Creamy Pasta Night",
@@ -220,6 +250,8 @@ export const seasonalRecipes: DealCard[] = [
     description: "Comfort pasta using discounted pantry goods and crowd-approved flavor balance.",
     quantity: "4 servings",
     nutrition: makeNutrition("410 kcal", "52 g", "14 g", "16 g", "4 g", "6 g"),
+    allergens: ["Gluten", "Milk"],
+    notes: ["Dinner favorite", "Creamy texture"],
   },
 ];
 
@@ -235,6 +267,8 @@ export const peopleLiked: DealCard[] = [
     description: "A fan-favorite recipe that turns a chicken promo into a practical lunch option.",
     quantity: "2 wraps",
     nutrition: makeNutrition("360 kcal", "31 g", "12 g", "28 g", "4 g", "7 g"),
+    allergens: ["Gluten"],
+    notes: ["Lunch-friendly", "Portable meal"],
   },
   {
     title: "Mushroom Toast Stack",
@@ -247,6 +281,8 @@ export const peopleLiked: DealCard[] = [
     description: "A highly saved comfort dish built from bread, mushrooms, herbs, and soft cheese.",
     quantity: "2 portions",
     nutrition: makeNutrition("275 kcal", "22 g", "14 g", "13 g", "3 g", "4 g"),
+    allergens: ["Gluten", "Milk"],
+    notes: ["Comfort dish", "Pairs well with salad"],
   },
   {
     title: "Salmon Rice Plate",
@@ -259,6 +295,8 @@ export const peopleLiked: DealCard[] = [
     description: "A premium-feeling dinner recipe users revisit when salmon and rice deals line up.",
     quantity: "2 servings",
     nutrition: makeNutrition("430 kcal", "34 g", "17 g", "32 g", "2 g", "5 g"),
+    allergens: ["Fish", "Soy"],
+    notes: ["Dinner centerpiece", "High protein"],
   },
 ];
 

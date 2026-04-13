@@ -1,83 +1,67 @@
 "use client";
 
-import Image from "next/image";
+import { MouseEvent, useState } from "react";
 import type { DealCard as DealCardType } from "@/Data/home_data";
+import { cardSizes } from "@/Components/ui/CardConfig";
+import SmartImage from "@/Components/ui/SmartImage";
 
 type DealCardProps = {
   item: DealCardType;
   onClick?: () => void;
   compact?: boolean;
-  variant?: "default" | "recent";
+  variant?: "default" | "recent" | "compact";
   className?: string;
+  favourite?: boolean;
+  onToggleFavourite?: (value: boolean) => void;
 };
 
-export default function DealCard({
+export default function DealCardFactory(props: DealCardProps) {
+  const activeVariant = props.variant || (props.compact ? "compact" : "default");
+  const sizeConfig = cardSizes[activeVariant];
+
+  return <BaseDealCard {...props} size={sizeConfig} compact={activeVariant === "compact"} />;
+}
+
+function BaseDealCard({
   item,
   onClick,
-  compact = false,
-  variant = "default",
+  compact,
   className = "",
-}: DealCardProps) {
-  const size =
-    variant === "recent"
-      ? {
-          wrapper: "rounded-[1.95rem]",
-          image: "h-[160px]",
-          container: "p-4",
-          title: "text-[1.34rem]",
-          description: "text-[0.78rem] leading-[1.58] min-h-[48px]",
-          meta: "text-[11.5px]",
-          price: "text-[1.7rem]",
-          cta: "px-3.5 py-1.5 text-[11.5px]",
-          badge: "text-[10.5px] px-2.5 py-1",
-          icon: "h-8 w-8",
-        }
-      : compact
-    ? {
-        wrapper: "rounded-[1.9rem]",
-        image: "h-[138px]",
-        container: "p-3.5",
-        title: "text-[1.08rem]",
-        description: "text-[0.62rem] leading-[1.55] min-h-[28px]",
-        meta: "text-[10px]",
-        price: "text-[1.28rem]",
-        cta: "px-3 py-1.5 text-[10px]",
-        badge: "text-[9px] px-2.5 py-1",
-        icon: "h-8 w-8",
-      }
-    : {
-        wrapper: "rounded-[1.85rem]",
-        image: "h-[220px]",
-        container: "p-5",
-        title: "text-2xl",
-        description: "text-sm leading-6 min-h-[72px]",
-        meta: "text-sm",
-        price: "text-3xl",
-        cta: "px-5 py-3 text-sm",
-        badge: "text-xs px-3 py-1",
-        icon: "h-10 w-10",
-      };
-
+  favourite,
+  onToggleFavourite,
+  size,
+}: DealCardProps & { size: typeof cardSizes.default }) {
+  const [localFavourite, setLocalFavourite] = useState(false);
+  const isFavourite = favourite ?? localFavourite;
   const clickable = Boolean(onClick);
+
+  const handleFavourite = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    const nextValue = !isFavourite;
+    if (favourite === undefined) setLocalFavourite(nextValue);
+    onToggleFavourite?.(nextValue);
+  };
 
   return (
     <article
       onClick={onClick}
       className={[
-        "overflow-hidden border border-white/10 bg-[#342e34] shadow-soft",
+        "group relative isolate overflow-hidden border border-[#ffffff14] bg-[#342e34] shadow-[0_16px_36px_#0000002e,0_0_0_1px_#ffffff08] [transform:translateZ(0)] [backface-visibility:hidden] will-change-transform",
         size.wrapper,
-        clickable ? "cursor-pointer transition hover:-translate-y-1 hover:border-brand-orange/25" : "",
+        clickable
+          ? "cursor-pointer transform-gpu transition duration-300 hover:[transform:translate3d(0,-4px,0)] hover:border-[#ec580066] hover:shadow-[0_24px_42px_#00000042,0_10px_22px_#ec580030]"
+          : "",
         className,
       ].join(" ")}
     >
       <div className={["relative overflow-hidden", size.image].join(" ")}>
-        <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#342e34] via-[#342e34]/18 to-transparent" />
+        <SmartImage src={item.image} alt={item.title} />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#342e34] via-[#342e34]/18 to-transparent pointer-events-none" />
 
         <div className={compact ? "absolute left-3 right-3 top-3 flex items-center justify-between" : "absolute left-4 right-4 top-4 flex items-center justify-between"}>
           <span
             className={[
-              "rounded-full bg-[#201b20]/80 font-semibold uppercase tracking-[0.18em] text-brand-orangeSoft backdrop-blur-md",
+              "rounded-full border border-[#ffffff12] bg-[#171316CC] font-semibold uppercase tracking-[0.18em] text-[#FFDEBA] backdrop-blur-md shadow-[0_4px_12px_#00000036]",
               size.badge,
             ].join(" ")}
           >
@@ -85,62 +69,74 @@ export default function DealCard({
           </span>
           <button
             type="button"
-            onClick={(event) => event.stopPropagation()}
+            onClick={handleFavourite}
             className={[
-              "flex items-center justify-center rounded-full border border-white/15 bg-[#201b20]/70 backdrop-blur-md transition hover:border-brand-orange/45 hover:bg-brand-orange/15",
+              "flex items-center justify-center rounded-full border border-[#ffffff14] bg-[#161215CC] text-[#FFDEBA] backdrop-blur-md shadow-[0_4px_12px_#00000036] transition duration-300 hover:border-[#ec58007a] hover:shadow-[0_6px_14px_#00000038,0_0_12px_#ec580028] hover:text-[#EC5800]",
               size.icon,
+              isFavourite ? "border-[#ec580085] bg-[#2b1712] text-[#EC5800]" : "",
             ].join(" ")}
           >
-            <Image src="/heart.svg" alt="Favourite" width={compact ? 14 : 18} height={compact ? 14 : 18} />
+            <HeartIcon filled={isFavourite} size={size.iconSize} />
           </button>
         </div>
 
         <div className={compact ? "absolute bottom-3 left-3 flex items-center gap-1.5" : "absolute bottom-4 left-4 flex items-center gap-2"}>
-          <span className={["rounded-full bg-brand-orange font-semibold text-white", size.badge].join(" ")}>
+          <span className={["rounded-full bg-[#EC5800]/90 font-semibold text-white", size.badge].join(" ")}>
             {item.discount}
           </span>
           <span
             className={[
-              "rounded-full bg-[#201b20]/80 font-semibold text-white/80 backdrop-blur-md",
+              "rounded-full bg-[#171316B8] font-semibold text-white/78 backdrop-blur-md shadow-[0_4px_12px_#00000026]",
               size.badge,
             ].join(" ")}
           >
-            Rating {item.rating}
+            ★ {item.rating}
           </span>
         </div>
       </div>
 
-      <div className={size.container}>
+      <div className={["relative z-[1] -mt-px bg-[#342e34]", size.container].join(" ")}>
         <h3 className={[size.title, "font-black leading-[1.06] text-white"].join(" ")}>{item.title}</h3>
         <p className={["mt-2 text-white/60", size.description].join(" ")}>{item.description}</p>
 
         <div className={["mt-3 flex items-center gap-2", size.meta].join(" ")}>
-          <span className={compact ? "rounded-full border border-white/10 px-2.5 py-1 text-white/65" : "rounded-full border border-white/10 px-3 py-1 text-white/65"}>{item.quantity}</span>
-          <span className={compact ? "rounded-full border border-white/10 px-2.5 py-1 text-white/65" : "rounded-full border border-white/10 px-3 py-1 text-white/65"}>
-            Market: {item.market}
+          <span className={compact ? "rounded-full border border-white/10 px-2 py-1 text-white/65" : "rounded-full border border-white/10 px-3 py-1 text-white/65"}>
+            {item.quantity}
           </span>
         </div>
 
         <div className={compact ? "mt-3 flex items-end justify-between gap-3" : "mt-5 flex items-end justify-between gap-4"}>
           <div>
-            <p className={[size.price, "font-black text-brand-orange"].join(" ")}>{item.price}</p>
+            <p className={[size.price, "font-black text-[#EC5800]"].join(" ")}>{item.price}</p>
             <div className={["mt-1 flex items-center gap-2", size.meta].join(" ")}>
               <span className="text-white/35 line-through">{item.oldPrice}</span>
-              <span className="text-brand-orangeSoft">{item.discount}</span>
             </div>
           </div>
           <button
             type="button"
             onClick={(event) => event.stopPropagation()}
             className={[
-              "rounded-full bg-white font-semibold text-brand-night transition hover:bg-brand-orange hover:text-white",
+              "rounded-full bg-[#fff4eb] font-semibold text-[#2D282D] shadow-[0_8px_18px_#0000001f] transition duration-300 hover:-translate-y-0.5 hover:bg-[#EC5800] hover:text-[#FFDEBA] hover:shadow-[0_12px_20px_#5e1f0033,0_0_14px_#ec580022]",
               size.cta,
             ].join(" ")}
           >
-            Add to cart
+            Buy
           </button>
         </div>
       </div>
     </article>
+  );
+}
+
+function HeartIcon({ filled, size }: { filled: boolean; size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
