@@ -208,7 +208,7 @@ export default function Header() {
 
               <div className="relative z-50 flex items-center justify-center">
                 <ChainIcon onClick={() => setIsLangOpen(!isLangOpen)}>
-                  <span className={`text-[16px] font-semibold transition-colors duration-300 ${isLangOpen ? "text-[#EC5800]" : "text-[#FFDEBA] hover:text-white"}`}>
+                  <span className={`text-[16px] font-semibold transition-colors duration-300 ${isLangOpen ? "text-white" : "text-[#FFDEBA] hover:text-white"}`}>
                     {currentLang}
                   </span>
                 </ChainIcon>
@@ -217,6 +217,7 @@ export default function Header() {
               <AnimatePresence>
                 {isLangOpen && (
                   <motion.div
+                    key="lang-dropdown" 
                     initial={{ opacity: 0, scale: 0.85, y: -20, x: "-50%" }}
                     animate={{ opacity: 1, scale: 1, y: 0, x: "-50%" }}
                     exit={{ opacity: 0, scale: 0.9, y: -15, x: "-50%" }}
