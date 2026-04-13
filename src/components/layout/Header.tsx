@@ -159,9 +159,9 @@ function HeaderContent() {
               />
               
               <div className="absolute right-0 top-0 z-20 flex h-[42px] items-center transition-transform duration-300 group-focus-within/search:scale-105">
-                <button 
-                  type="button" 
-                  className="outline-none cursor-pointer"
+                
+                <div 
+                  className="outline-none cursor-pointer rounded-full"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     if (document.activeElement === searchInputRef.current) {
@@ -177,7 +177,7 @@ function HeaderContent() {
                   <ChainIcon>
                     <Image src="/search.svg" alt="search" width={18} height={18} />
                   </ChainIcon>
-                </button>
+                </div>
               </div>
             </div>
 
