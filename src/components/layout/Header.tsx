@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ChainIcon, Connection } from "@/components/ui/IconUI";
 import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -196,28 +197,64 @@ export default function Header() {
 
             <Connection />
 
-            <div className="relative z-20 flex items-center">
-              <ChainIcon onClick={() => setIsLangOpen(!isLangOpen)}>
-                <span className="text-[16px] font-semibold text-[#FFDEBA]">{currentLang}</span>
-              </ChainIcon>
+            <div className="relative z-50 flex items-center justify-center h-[42px] w-[42px]">
+              
+              {isLangOpen && (
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsLangOpen(false)}
+                />
+              )}
 
-              {isLangOpen ? (
-                <div className="animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-200 absolute left-1/2 top-[46px] flex w-[60px] -translate-x-1/2 flex-col items-center overflow-hidden rounded-[15px] border border-[#FFDEBA]/10 bg-[rgba(38,34,38,0.95)] py-1 shadow-[0_10px_25px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-                  {["EN", "PL", "FR", "ES", "DE", "IT", "UA"].map((lang) => (
-                    <button
-                      key={lang}
-                      onClick={() => {
-                        setCurrentLang(lang);
-                        setIsLangOpen(false);
+              <div className="relative z-50 flex items-center justify-center">
+                <ChainIcon onClick={() => setIsLangOpen(!isLangOpen)}>
+                  <span className={`text-[16px] font-semibold transition-colors duration-300 ${isLangOpen ? "text-[#EC5800]" : "text-[#FFDEBA] hover:text-white"}`}>
+                    {currentLang}
+                  </span>
+                </ChainIcon>
+              </div>
+
+              <AnimatePresence>
+                {isLangOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.85, y: -20, x: "-50%" }}
+                    animate={{ opacity: 1, scale: 1, y: 0, x: "-50%" }}
+                    exit={{ opacity: 0, scale: 0.9, y: -15, x: "-50%" }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25,
+                      duration: 0.3
+                    }}
+                    className="absolute top-[18px] left-1/2 z-40 flex w-[42px] h-[145px] flex-col items-center overflow-hidden rounded-b-[21px] bg-[#1A181C]/50 backdrop-blur-xl pt-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.7)] shadow-t-transparent"
+                  >
+                    <div 
+                      className="flex w-full flex-col items-center overflow-y-auto pb-[16px] [&::-webkit-scrollbar]:hidden"
+                      style={{ 
+                        scrollbarWidth: "none", 
+                        WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)", 
+                        maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)" 
                       }}
-                      className="w-full py-1.5 text-center text-[13px] font-medium text-[#FFDEBA]/80 transition-colors hover:bg-[#EC5800]/20 hover:text-[#EC5800]"
-                      type="button"
                     >
-                      {lang}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
+                      {["EN", "PL", "FR", "ES", "DE", "IT", "UA"]
+                        .filter((lang) => lang !== currentLang)
+                        .map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => {
+                              setCurrentLang(lang);
+                              setIsLangOpen(false);
+                            }}
+                            className="group flex h-[34px] w-full shrink-0 items-center justify-center text-[13px] font-medium text-[#FFDEBA]/70 outline-none transition-all duration-300 hover:bg-[#EC5800]/20 hover:text-[#EC5800]"
+                            type="button"
+                          >
+                            <span className="transition-transform duration-300 group-hover:scale-110">{lang}</span>
+                          </button>
+                        ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <Connection />
@@ -226,6 +263,7 @@ export default function Header() {
               <Image src="/user.svg" alt="user" width={20} height={20} />
             </ChainIcon>
           </div>
+          
           <div className="group/basket relative ml-8 xl:ml-[50px] flex h-[42px] w-[100px] shrink-0 cursor-pointer items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner border border-transparent transition-all duration-300 hover:border-[#EC5800]/40 hover:bg-[#3A323A] hover:shadow-[0_0_15px_rgba(236,88,0,0.2)] active:scale-95">
             
             <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover/basket:scale-[1.15]">
