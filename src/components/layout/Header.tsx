@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { ChainIcon, Connection } from "@/components/ui/IconUI";
 import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 
 export default function Header() {
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
@@ -141,16 +142,39 @@ export default function Header() {
         <div className="flex flex-1 items-center justify-end">
           
           <div className="flex items-center gap-0">
-            
             <div className="relative z-10 hidden items-center lg:flex group/search mr-0">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="SEARCH"
-                className="h-[42px] w-[180px] xl:w-[220px] rounded-full bg-[#3F363F] border border-transparent pl-[20px] pr-[46px] text-[14px] tracking-[0.1em] text-[#FFDEBA] shadow-inner outline-none placeholder:text-[#FFDEBA]/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-[#EC5800]/60 focus:bg-[#2A252A] focus:shadow-[0_0_20px_rgba(236,88,0,0.3)] focus:w-[260px] xl:focus:w-[320px]"
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    searchInputRef.current?.blur();
+                  }
+                  if (e.key === 'Enter') {
+                    console.log("Searching for:", searchInputRef.current?.value);
+                    searchInputRef.current?.blur();
+                  }
+                }}
+                className="peer h-[42px] w-[180px] xl:w-[220px] rounded-full bg-[#3F363F] border border-transparent pl-[20px] pr-[46px] text-[14px] tracking-[0.1em] text-[#FFDEBA] shadow-inner outline-none placeholder:text-[#FFDEBA]/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-[#EC5800]/60 focus:bg-[#2A252A] focus:shadow-[0_0_20px_rgba(236,88,0,0.3)] focus:w-[260px] xl:focus:w-[320px] cursor-text"
               />
               
               <div className="absolute right-0 top-0 z-20 flex h-[42px] items-center transition-transform duration-300 group-focus-within/search:scale-105">
-                <button type="button" className="outline-none">
+                <button 
+                  type="button" 
+                  className="outline-none cursor-pointer"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    if (document.activeElement === searchInputRef.current) {
+                      if (searchInputRef.current?.value.trim()) {
+                         console.log("Searching for:", searchInputRef.current?.value);
+                      }
+                      searchInputRef.current?.blur();
+                    } else {
+                      searchInputRef.current?.focus();
+                    }
+                  }}
+                >
                   <ChainIcon>
                     <Image src="/search.svg" alt="search" width={18} height={18} />
                   </ChainIcon>
@@ -202,7 +226,6 @@ export default function Header() {
               <Image src="/user.svg" alt="user" width={20} height={20} />
             </ChainIcon>
           </div>
-
           <div className="group/basket relative ml-8 xl:ml-[50px] flex h-[42px] w-[100px] shrink-0 cursor-pointer items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner border border-transparent transition-all duration-300 hover:border-[#EC5800]/40 hover:bg-[#3A323A] hover:shadow-[0_0_15px_rgba(236,88,0,0.2)] active:scale-95">
             
             <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover/basket:scale-[1.15]">
