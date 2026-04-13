@@ -6,23 +6,28 @@ import { ChainIcon, Connection } from "@/components/ui/IconUI";
 import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { CatalogProvider, useCatalog } from "@/context/CatalogContext"; 
 export default function Header() {
+  return (
+    <CatalogProvider>
+      <HeaderContent />
+    </CatalogProvider>
+  );
+}
+
+function HeaderContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");
-  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [lockedCategory, setLockedCategory] = useState<string | null>(null);
+
+  const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
       if (!target.closest("#catalog-trigger") && !target.closest("#catalog-dropdown")) {
-        setIsCatalogOpen(false);
-        setLockedCategory(null);
-        setActiveCategory(null);
+        closeCatalog(); 
       }
     };
 
@@ -33,7 +38,7 @@ export default function Header() {
     return () => {
       window.removeEventListener("click", handleClick);
     };
-  }, [isCatalogOpen]);
+  }, [isCatalogOpen, closeCatalog]);
 
   return (
     <header className="relative z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
@@ -71,17 +76,10 @@ export default function Header() {
             </button>
 
             <div onClick={(event) => event.stopPropagation()}>
-              <CatalogDropdown
-                isOpen={isCatalogOpen}
-                categories={categories}
-                activeCategory={activeCategory}
-                lockedCategory={lockedCategory}
-                setActiveCategory={setActiveCategory}
-                setLockedCategory={setLockedCategory}
-              />
+              <CatalogDropdown categories={categories} />
             </div>
           </div>
-
+          
           <div className="relative flex min-w-[220px] select-none items-center justify-center py-2 cursor-pointer group/logo">
             <Image
               src="/dankoss_logo_bkg.svg"

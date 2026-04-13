@@ -3,24 +3,20 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Category } from "@/Data/catalog_data";
-
+import { useCatalog } from "@/context/CatalogContext"; 
 interface Props {
-  isOpen: boolean;
   categories: Category[];
-  activeCategory: string | null;
-  lockedCategory: string | null;
-  setActiveCategory: (name: string | null) => void;
-  setLockedCategory: (name: string | null) => void;
 }
 
-export default function CatalogDropdown({
-  isOpen,
-  categories,
-  activeCategory,
-  lockedCategory,
-  setActiveCategory,
-  setLockedCategory,
-}: Props) {
+export default function CatalogDropdown({ categories }: Props) {
+  const { 
+    isCatalogOpen: isOpen, 
+    activeCategory, 
+    lockedCategory, 
+    setActiveCategory, 
+    setLockedCategory 
+  } = useCatalog();
+
   const currentActiveCategoryName = lockedCategory || activeCategory;
   const activeCategoryData = categories.find((category) => category.name === currentActiveCategoryName);
 
