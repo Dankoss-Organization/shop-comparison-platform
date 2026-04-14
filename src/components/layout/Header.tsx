@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { ChainIcon, Connection } from "@/components/ui/IconUI";
+import { ChainIcon, Connection } from "@/Components/ui/IconUI";
 import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,7 +46,7 @@ function HeaderContent() {
   }, [isCatalogOpen, closeCatalog]);
 
   return (
-    <header className="relative z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
+    <header className="sticky top-0 z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
       <div className="relative flex w-full items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px]">
         
         <div className="flex items-center gap-8 xl:gap-[60px]">

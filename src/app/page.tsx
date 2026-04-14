@@ -21,8 +21,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-brand-night text-white">
       <CartDrawer />
-      <section className="relative overflow-x-hidden overflow-y-visible border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
       <Header />
+      <section className="relative overflow-x-hidden overflow-y-visible border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
+      
       <div>
           <StoreNav />
       </div>

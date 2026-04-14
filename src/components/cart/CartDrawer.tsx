@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/use_cart_store";
+import Image from "next/image";
 import { CartItemUI } from "./CartItemUI";
 import { CheckoutButton } from "./CheckoutButton";
 import { cn } from "@/lib/utils";
@@ -41,23 +42,45 @@ export function CartDrawer() {
           <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
             {items.length === 0 ? (
               
-              <div className="flex h-full flex-col items-center justify-center px-6 text-center animate-in fade-in duration-700">
-                <div className="mb-6 flex h-32 w-32 items-center justify-center rounded-full border border-white/5 bg-black/20 shadow-inner">
-                  <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-[#FFDEBA]/20" strokeWidth="1.5">
-                    <path d="M4 8h16M5 8l2 12h10l2-12M9 8v12M15 8v12M5 12h14M6 16h12" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <h3 className="mb-3 text-xl font-black tracking-tight text-[#FFDEBA]">The court is empty</h3>
-                <p className="mb-8 text-sm leading-relaxed text-[#FFDEBA66]">
-                  You haven't added any hits to your basket yet. Let's find some solid deals to score.
-                </p>
-                <button 
-                  onClick={() => setOpen(false)}
-                  className="rounded-full bg-[#EC5800]/10 px-8 py-3.5 text-xs font-black tracking-widest text-[#EC5800] transition-all hover:bg-[#EC5800] hover:text-white hover:shadow-[0_0_20px_rgba(236,88,0,0.4)] active:scale-95"
-                >
-                  BROWSE HITS
-                </button>
+            <div className="flex h-full flex-col items-center justify-center px-6 text-center animate-in fade-in duration-700">
+              
+              <div className="relative mb-8 flex h-36 w-36 items-center justify-center rounded-full border border-white/5 bg-[#1f1a1f] shadow-inner">
+                <Image 
+                  src="/basket.svg" 
+                  alt="Empty basket" 
+                  width={64} 
+                  height={64} 
+                  className="opacity-20 grayscale filter transition-all duration-500 hover:scale-110 hover:opacity-40"
+                />
+                <span className="absolute bottom-6 right-6 flex h-7 w-7 items-center justify-center rounded-full border-[2px] border-[#1a171a] bg-[#2d282d] text-[11px] font-black text-white/40 shadow-sm">
+                  0
+                </span>
               </div>
+
+              <h3 className="mb-3 text-2xl font-black tracking-tight text-[#FFDEBA]">The court is empty</h3>
+              <p className="mb-10 text-sm leading-relaxed text-[#FFDEBA66] max-w-[280px]">
+                You haven't added any hits to your basket yet. Let's find some solid deals to score.
+              </p>
+
+              <button 
+                onClick={() => setOpen(false)}
+                className="group relative flex h-[48px] w-full max-w-[260px] items-center justify-center overflow-hidden rounded-[24px] border border-transparent text-[13px] font-black tracking-[0.2em] text-[#FFDEBA] shadow-[2px_2px_1px_#EC5800] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
+                style={{
+                  background: "rgba(45, 40, 45, 0.4)",
+                  backdropFilter: "blur(25px)",
+                  WebkitBackdropFilter: "blur(25px)",
+                }}
+              >
+                <span className="relative z-10 transition-transform duration-300 group-hover:scale-105 flex items-center gap-2">
+                  BROWSE HITS
+                  <svg className="transition-transform duration-300 group-hover:translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+                </span>
+                
+                <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover:left-[150%]">
+                  <div className="h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[rgba(255,222,186,0.25)] to-transparent" />
+                </div>
+              </button>
+            </div>
 
             ) : (
               
