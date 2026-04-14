@@ -1,9 +1,10 @@
 "use client";
 
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import type { DealCard as DealCardType } from "@/Data/home_data";
 import { cardSizes } from "@/Components/ui/CardConfig";
 import SmartImage from "@/Components/ui/SmartImage";
+import { useFavoritesStore } from "@/store/use_favourites_store";
 
 type DealCardProps = {
   item: DealCardType;
@@ -11,8 +12,6 @@ type DealCardProps = {
   compact?: boolean;
   variant?: "default" | "recent" | "compact";
   className?: string;
-  favourite?: boolean;
-  onToggleFavourite?: (value: boolean) => void;
 };
 
 export default function DealCardFactory(props: DealCardProps) {
@@ -27,19 +26,18 @@ function BaseDealCard({
   onClick,
   compact,
   className = "",
-  favourite,
-  onToggleFavourite,
   size,
 }: DealCardProps & { size: typeof cardSizes.default }) {
-  const [localFavourite, setLocalFavourite] = useState(false);
-  const isFavourite = favourite ?? localFavourite;
+  
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+  const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+  const isFavourite = isMounted ? isFavoriteGlobal : false;
   const clickable = Boolean(onClick);
-
   const handleFavourite = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const nextValue = !isFavourite;
-    if (favourite === undefined) setLocalFavourite(nextValue);
-    onToggleFavourite?.(nextValue);
+    toggleFavorite(item.title);
   };
 
   return (

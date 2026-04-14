@@ -6,7 +6,9 @@ import { ChainIcon, Connection } from "@/components/ui/IconUI";
 import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 import { motion, AnimatePresence } from "framer-motion";
-import { CatalogProvider, useCatalog } from "@/context/CatalogContext"; 
+import { CatalogProvider, useCatalog } from "@/context/CatalogContext";
+import { useFavoritesStore } from "@/store/use_favourites_store";
+
 export default function Header() {
   return (
     <CatalogProvider>
@@ -19,8 +21,10 @@ function HeaderContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");
-
   const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
+  const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -79,20 +83,15 @@ function HeaderContent() {
               <CatalogDropdown categories={categories} />
             </div>
           </div>
-          
+
           <div className="relative flex min-w-[220px] select-none items-center justify-center py-2 cursor-pointer group/logo">
-            <Image
-              src="/dankoss_logo_bkg.svg"
-              alt="logo background"
-              fill
-              priority
-              className="z-0 scale-[1.2] object-contain transition-all duration-700 ease-out group-hover/logo:scale-[1.3] group-hover/logo:opacity-100 opacity-80"
-            />
+            <Image src="/dankoss_logo_bkg.svg" alt="logo background" fill priority className="z-0 scale-[1.2] object-contain transition-all duration-700 ease-out group-hover/logo:scale-[1.3] group-hover/logo:opacity-100 opacity-80" />
             <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-[#F6D7B0] transition-colors duration-500 group-hover/logo:text-white group-hover/logo:drop-shadow-[0_0_10px_rgba(236,88,0,0.3)]">
               DANK
               <span className="relative mx-[2px] flex h-[35px] w-[35px] items-center justify-center">
                 <div className="absolute inset-0 m-auto w-[25px] h-[25px] rounded-full bg-[#EC5800] opacity-0 blur-[12px] transition-opacity duration-500 group-hover/logo:opacity-50" />
                 <span className="opacity-0 absolute">O</span>
+                {/* ПОВНИЙ ЛОГОТИП */}
                 <svg viewBox="0 0 61 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute w-[45px] h-[45px] top-[-5px] transition-transform duration-500 group-hover/logo:scale-105">
                   <g filter="url(#filter0_d_486_1007)">
                     <circle cx="28.6267" cy="36.9091" r="25.1365" fill="url(#paint0_radial_486_1007)"/>
@@ -184,7 +183,20 @@ function HeaderContent() {
             <div className="hidden lg:block ml-[-2px]"><Connection /></div>
 
             <ChainIcon>
-              <Image src="/favourites.svg" alt="fav" width={20} height={20} />
+              <div className="relative flex items-center justify-center">
+                <Image 
+                  src="/favourites.svg" 
+                  alt="fav" 
+                  width={20} 
+                  height={20} 
+                  className={favoriteCount > 0 ? "opacity-100" : "opacity-80"} 
+                />
+                {isMounted && favoriteCount > 0 && (
+                  <span className="absolute -top-[10px] -right-[12px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#EC5800] px-1 text-[10px] font-black leading-none text-white shadow-[0_0_10px_#ec580080] animate-in zoom-in duration-300">
+                    {favoriteCount}
+                  </span>
+                )}
+              </div>
             </ChainIcon>
 
             <Connection />
