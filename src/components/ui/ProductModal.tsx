@@ -35,7 +35,10 @@ export function ProductModal({ item, onClose, children }: { item: DealCard; onCl
 
   return (
     <ProductModalContext.Provider value={{ item, onClose }}>
-      <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#120f12]/80 p-4 backdrop-blur-md" onClick={onClose}>
+      <div 
+        className="fixed inset-0 z-[120] flex items-start justify-center bg-[#120f12]/85 p-4 pt-14 pb-12 backdrop-blur-md overflow-y-auto" 
+        onClick={onClose}
+      >
         {children}
       </div>
     </ProductModalContext.Provider>
@@ -44,14 +47,23 @@ export function ProductModal({ item, onClose, children }: { item: DealCard; onCl
 
 ProductModal.Window = function Window({ children }: { children: ReactNode }) {
   const { onClose } = useProductModal();
+
+  const handleFullView = () => {
+    alert("Full product page is coming soon!");
+  };
+
   return (
     <div
-      className="relative h-[86vh] w-[90vw] max-w-[1240px] overflow-hidden rounded-[2rem] border border-[#ffffff10] bg-[#2D282D] text-[#FFDEBA] shadow-[0_36px_90px_#00000073]"
+      className="relative mb-12 min-h-[500px] w-[90vw] max-w-[1240px] overflow-hidden rounded-[2.5rem] border border-[#ffffff10] bg-[#2D282D] text-[#FFDEBA] shadow-[0_36px_90px_#000000] lg:h-[86vh]"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="absolute right-5 top-5 z-30 rounded-full border border-[#ffffff10] bg-[#8B87901F] px-2.5 py-2 shadow-[0_12px_24px_#00000026] backdrop-blur-md">
+      <div className="absolute right-6 top-6 z-30 rounded-full border border-[#ffffff10] bg-[#8B87901F] px-3 py-2.5 shadow-[0_12px_24px_#00000026] backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <ActionIconButton label="Open in separate page" onClick={() => undefined} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} />
+          <ActionIconButton 
+            label="Open in separate page" 
+            onClick={handleFullView} 
+            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} 
+          />
           <ActionIconButton label="Close" onClick={onClose} icon={<span className="text-xl leading-none">×</span>} />
         </div>
       </div>
@@ -360,3 +372,4 @@ function HeartBadge({ filled }: { filled: boolean }) {
     </svg>
   );
 }
+export default ProductModal;

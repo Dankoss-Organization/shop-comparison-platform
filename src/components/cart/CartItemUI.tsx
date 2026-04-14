@@ -4,26 +4,32 @@ export function CartItemUI({
   item, 
   onIncrease, 
   onDecrease, 
-  onRemove 
+  onRemove,
+  onClick
 }: { 
   item: any; 
   onIncrease: () => void; 
   onDecrease: () => void; 
   onRemove: () => void;
+  onClick: () => void;
+  
 }) {
   return (
     <div className="flex gap-4 border-b border-white/5 py-5 last:border-0">
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#1f1a1f] border border-white/5 shadow-inner">
+      <div 
+        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#1f1a1f] border border-white/5 shadow-inner cursor-pointer transition-transform hover:scale-105"
+        onClick={onClick}
+      >
         <Image src={item.image} alt={item.title} fill className="object-cover" />
       </div>
       
       <div className="flex flex-1 flex-col justify-between py-0.5">
         <div className="flex justify-between items-start">
-          <div>
-            <h4 className="font-bold text-[#FFDEBA] leading-tight">{item.title}</h4>
+          <div className="cursor-pointer group" onClick={onClick}>
+            <h4 className="font-bold text-[#FFDEBA] leading-tight transition-colors group-hover:text-[#EC5800]">{item.title}</h4>
             <p className="text-[10px] uppercase tracking-wider text-[#FFDEBA66] mt-1">{item.market}</p>
           </div>
-          <button onClick={onRemove} className="text-[#FFDEBA33] hover:text-[#EC5800] transition-colors">
+          <button onClick={onRemove} className="text-[#FFDEBA33 hover:text-[#EC5800] transition-colors">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>

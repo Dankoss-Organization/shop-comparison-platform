@@ -1,13 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/use_cart_store";
 import Image from "next/image";
 import { CartItemUI } from "./CartItemUI";
 import { CheckoutButton } from "./CheckoutButton";
+import { ProductModal } from "../ui/ProductModal";
+import { type DealCard as DealCardType } from "@/Data/home_data";
 import { cn } from "@/lib/utils";
 
 export function CartDrawer() {
   const { items, isOpen, setOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
+  const [isMounted, setIsMounted] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<DealCardType | null>(null);
+
+  useEffect(() => setIsMounted(true), []);
+
+  if (!isMounted) return null;
 
   return (
     <>
@@ -21,8 +30,8 @@ export function CartDrawer() {
 
       <aside 
         className={cn(
-          "fixed right-0 top-0 z-[101] h-full w-full max-w-[420px] overflow-hidden bg-[#2d282d]/60 p-6 shadow-[-30px_0_60px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          isOpen ? "translate-x-0" : "translate-x-full"
+          "fixed right-0 top-0 z-[101] h-full w-full max-w-[420px] overflow-hidden bg-[#2d282d]/60 p-6 backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          isOpen ? "translate-x-0 shadow-[-30px_0_60px_rgba(0,0,0,0.6)]" : "translate-x-full shadow-none"
         )}
       >
         <div className="pointer-events-none absolute -right-20 -top-20 z-0 h-[300px] w-[300px] rounded-full bg-[#EC5800] opacity-[0.12] blur-[80px]" />
@@ -85,15 +94,15 @@ export function CartDrawer() {
             ) : (
               
               items.map((item) => (
-                <CartItemUI 
-                  key={item.title} 
-                  item={item}
-                  onIncrease={() => updateQuantity(item.title, 1)}
-                  onDecrease={() => updateQuantity(item.title, -1)}
-                  onRemove={() => removeItem(item.title)}
-                />
-              ))
-            )}
+              <CartItemUI 
+                key={item.title} 
+                item={item}
+                onIncrease={() => updateQuantity(item.title, 1)}
+                onDecrease={() => updateQuantity(item.title, -1)}
+                onRemove={() => removeItem(item.title)}
+                onClick={() => setSelectedItem(item as DealCardType)} 
+              />
+            )))}
           </div>
 
           {items.length > 0 && (
@@ -109,6 +118,21 @@ export function CartDrawer() {
           )}
         </div>
       </aside>
+      {selectedItem && (
+        <ProductModal item={selectedItem} onClose={() => setSelectedItem(null)}>
+          <ProductModal.Window>
+            <ProductModal.LeftColumn>
+              <ProductModal.ImageGallery />
+              <ProductModal.Reviews />
+            </ProductModal.LeftColumn>
+            <ProductModal.RightColumn>
+              <ProductModal.Header categoryTitle="Groceries" />
+              <ProductModal.Actions categoryTitle="Groceries" />
+              <ProductModal.Details categoryTitle="Groceries" />
+            </ProductModal.RightColumn>
+          </ProductModal.Window>
+        </ProductModal>
+      )}
     </>
   );
 }
