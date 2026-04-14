@@ -189,10 +189,14 @@ function HeaderContent() {
                   alt="fav" 
                   width={20} 
                   height={20} 
-                  className={favoriteCount > 0 ? "opacity-100" : "opacity-80"} 
+                  className={favoriteCount > 0 ? "opacity-100 text-[#EC5800]" : "opacity-80"} 
+                  style={favoriteCount > 0 ? { filter: 'drop-shadow(0 0 8px rgba(236,88,0,0.5))' } : {}}
                 />
                 {isMounted && favoriteCount > 0 && (
-                  <span className="absolute -top-[10px] -right-[12px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#EC5800] px-1 text-[10px] font-black leading-none text-white shadow-[0_0_10px_#ec580080] animate-in zoom-in duration-300">
+                  <span 
+                    key={favoriteCount}
+                    className="absolute -top-[15px] -right-[15px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-[2px] border-[#2B262C] bg-[#EC5800] px-[4px] text-[9px] font-black leading-none text-white animate-in zoom-in duration-300"
+                  >
                     {favoriteCount}
                   </span>
                 )}
