@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import type { DealCard } from "@/Data/home_data";
 import SmartImage from "./SmartImage";
+import { useFavoritesStore } from "@/store/use_favourites_store";
+import { cn } from "@/lib/utils";
 
 interface ProductModalContextType {
   item: DealCard;
@@ -68,21 +70,43 @@ ProductModal.RightColumn = function RightColumn({ children }: { children: ReactN
   return <div className="h-full overflow-y-auto px-5 pb-6 pt-6 lg:px-8 lg:pb-8 lg:pt-8 custom-scrollbar"><div className="max-w-[580px]">{children}</div></div>;
 };
 
-ProductModal.ImageGallery = function ImageGallery({ favourite, onToggleFavourite }: { favourite: boolean; onToggleFavourite: (val: boolean) => void }) {
+ProductModal.ImageGallery = function ImageGallery() {
   const { item } = useProductModal();
+  
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+  const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
+  
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
+  const favourite = isMounted ? isFavoriteGlobal : false;
+
   return (
     <div className="relative overflow-hidden rounded-[1.7rem] border border-[#ffffff0f] bg-[linear-gradient(180deg,#3a343a_0%,#241f24_100%)] p-5 shadow-[0_20px_36px_#00000022]">
       <div className="absolute left-5 top-5 z-10 flex items-center gap-2">
-        <span className="rounded-full bg-[#171316E6] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA]">{item.market}</span>
-        <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">{item.discount}</span>
+        <span className="rounded-full bg-[#171316E6] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA]">
+          {item.market}
+        </span>
+        <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
+          {item.discount}
+        </span>
       </div>
+      
       <button
         type="button"
-        onClick={() => onToggleFavourite(!favourite)}
-        className={`absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-[#ffffff12] bg-[#161215D9] text-[#FFDEBA] shadow-[0_10px_18px_#0000001f] transition ${favourite ? "border-[#EC580077] text-[#EC5800]" : "hover:border-[#EC580055]"}`}
+        onClick={() => toggleFavorite(item.title)}
+        className={cn(
+          "absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 active:scale-75",
+          favourite
+            ? "bg-[#EC5800] text-white shadow-[0_4px_15px_rgba(236,88,0,0.5)] border border-[#EC5800]"
+            : "bg-black/30 backdrop-blur-md border border-white/20 text-white/90 hover:bg-black/50 hover:text-white"
+        )}
       >
-        <HeartBadge filled={favourite} />
+        <div className={cn("transition-transform duration-300", favourite ? "scale-110" : "scale-100")}>
+          <HeartBadge filled={favourite} />
+        </div>
       </button>
+
       <div className="mx-auto aspect-[4/4.8] h-[48vh] max-w-full overflow-hidden rounded-[1rem]">
         <SmartImage src={item.image} alt={item.title} />
       </div>

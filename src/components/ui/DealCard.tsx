@@ -1,9 +1,11 @@
 "use client";
 
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import type { DealCard as DealCardType } from "@/Data/home_data";
 import { cardSizes } from "@/Components/ui/CardConfig";
 import SmartImage from "@/Components/ui/SmartImage";
+import { useFavoritesStore } from "@/store/use_favourites_store";
+import { cn } from "@/lib/utils";
 
 type DealCardProps = {
   item: DealCardType;
@@ -11,8 +13,6 @@ type DealCardProps = {
   compact?: boolean;
   variant?: "default" | "recent" | "compact";
   className?: string;
-  favourite?: boolean;
-  onToggleFavourite?: (value: boolean) => void;
 };
 
 export default function DealCardFactory(props: DealCardProps) {
@@ -27,19 +27,18 @@ function BaseDealCard({
   onClick,
   compact,
   className = "",
-  favourite,
-  onToggleFavourite,
   size,
 }: DealCardProps & { size: typeof cardSizes.default }) {
-  const [localFavourite, setLocalFavourite] = useState(false);
-  const isFavourite = favourite ?? localFavourite;
+  
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+  const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+  const isFavourite = isMounted ? isFavoriteGlobal : false;
   const clickable = Boolean(onClick);
-
   const handleFavourite = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const nextValue = !isFavourite;
-    if (favourite === undefined) setLocalFavourite(nextValue);
-    onToggleFavourite?.(nextValue);
+    toggleFavorite(item.title);
   };
 
   return (
@@ -70,13 +69,17 @@ function BaseDealCard({
           <button
             type="button"
             onClick={handleFavourite}
-            className={[
-              "flex items-center justify-center rounded-full border border-[#ffffff14] bg-[#161215CC] text-[#FFDEBA] backdrop-blur-md shadow-[0_4px_12px_#00000036] transition duration-300 hover:border-[#ec58007a] hover:shadow-[0_6px_14px_#00000038,0_0_12px_#ec580028] hover:text-[#EC5800]",
+            className={cn(
+              "flex items-center justify-center rounded-full transition-all duration-300 active:scale-75",
               size.icon,
-              isFavourite ? "border-[#ec580085] bg-[#2b1712] text-[#EC5800]" : "",
-            ].join(" ")}
+              isFavourite
+                ? "bg-[#EC5800] text-white shadow-[0_4px_15px_rgba(236,88,0,0.5)] border border-[#EC5800]"
+                : "bg-black/30 backdrop-blur-md border border-white/20 text-white/90 hover:bg-black/50 hover:text-white"
+            )}
           >
-            <HeartIcon filled={isFavourite} size={size.iconSize} />
+            <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}>
+              <HeartIcon filled={isFavourite} size={size.iconSize} />
+            </div>
           </button>
         </div>
 
