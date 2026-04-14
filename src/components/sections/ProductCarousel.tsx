@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { DealCard } from "@/Data/home_data";
 import DealCardFactory from "@/Components/ui/DealCard";
-import { ProductModal } from "@/Components/ui/ProductModal"; 
+import { ProductModal } from "@/Components/ui/ProductModal";
 
 export default function ProductCarousel({
   id,
@@ -19,11 +19,6 @@ export default function ProductCarousel({
   items: DealCard[];
 }) {
   const [selectedItem, setSelectedItem] = useState<DealCard | null>(null);
-  
-  const [favourites, setFavourites] = useState<Record<string, boolean>>({});
-  const setFavourite = (itemTitle: string, value: boolean) => {
-    setFavourites((current) => ({ ...current, [itemTitle]: value }));
-  };
 
   return (
     <>
@@ -44,8 +39,6 @@ export default function ProductCarousel({
               key={`${title}-${item.title}`}
               item={item}
               onClick={() => setSelectedItem(item)}
-              favourite={Boolean(favourites[item.title])}
-              onToggleFavourite={(value) => setFavourite(item.title, value)}
               className="snap-start"
             />
           ))}
@@ -55,12 +48,8 @@ export default function ProductCarousel({
       {selectedItem ? (
         <ProductModal item={selectedItem} onClose={() => setSelectedItem(null)}>
           <ProductModal.Window>
-            
             <ProductModal.LeftColumn>
-              <ProductModal.ImageGallery 
-                favourite={Boolean(favourites[selectedItem.title])}
-                onToggleFavourite={(val) => setFavourite(selectedItem.title, val)}
-              />
+              <ProductModal.ImageGallery />
               <ProductModal.Reviews />
             </ProductModal.LeftColumn>
 
@@ -69,7 +58,6 @@ export default function ProductCarousel({
               <ProductModal.Actions categoryTitle={title} />
               <ProductModal.Details categoryTitle={title} />
             </ProductModal.RightColumn>
-
           </ProductModal.Window>
         </ProductModal>
       ) : null}
