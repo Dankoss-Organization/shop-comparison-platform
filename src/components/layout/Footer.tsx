@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ChainIcon, Connection } from "@/components/ui/IconUI";
+import { ChainIcon, Connection } from "@/Components/ui/IconUI";
 
 const companyLinks = ["About Us", "How it works", "Partners"];
 const supportLinks = ["FAQ", "Privacy Policy", "Cookie Policy"];

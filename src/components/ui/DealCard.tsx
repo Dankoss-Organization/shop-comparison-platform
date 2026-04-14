@@ -5,6 +5,7 @@ import type { DealCard as DealCardType } from "@/Data/home_data";
 import { cardSizes } from "@/Components/ui/CardConfig";
 import SmartImage from "@/Components/ui/SmartImage";
 import { useFavoritesStore } from "@/store/use_favourites_store";
+import { useCartStore } from "@/store/use_cart_store";
 import { cn } from "@/lib/utils";
 
 type DealCardProps = {
@@ -32,6 +33,7 @@ function BaseDealCard({
   
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
+  const addItem = useCartStore((state) => state.addItem);
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
   const isFavourite = isMounted ? isFavoriteGlobal : false;
@@ -117,11 +119,14 @@ function BaseDealCard({
           </div>
           <button
             type="button"
-            onClick={(event) => event.stopPropagation()}
-            className={[
+            onClick={(event) => {
+              event.stopPropagation();
+              addItem(item); 
+            }}
+            className={cn(
               "rounded-full bg-[#fff4eb] font-semibold text-[#2D282D] shadow-[0_8px_18px_#0000001f] transition duration-300 hover:-translate-y-0.5 hover:bg-[#EC5800] hover:text-[#FFDEBA] hover:shadow-[0_12px_20px_#5e1f0033,0_0_14px_#ec580022]",
-              size.cta,
-            ].join(" ")}
+              size.cta
+            )}
           >
             Buy
           </button>

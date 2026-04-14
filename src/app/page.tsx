@@ -6,6 +6,8 @@ import Newsletter from "@/Components/Sections/Newsletter";
 import ProductCarousel from "@/Components/Sections/ProductCarousel";
 import RecentlyViewed from "@/Components/Sections/RecentlyViewed";
 import StoreNav from "@/Components/Sections/StoreNav";
+import { CartDrawer } from "@/Components/cart/CartDrawer"; 
+
 import {
   dailyDiscounts,
   expiringDiscounts,
@@ -18,8 +20,10 @@ import {
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-night text-white">
-      <section className="relative overflow-x-hidden overflow-y-visible border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
+      <CartDrawer />
       <Header />
+      <section className="relative overflow-x-hidden overflow-y-visible border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
+      
       <div>
           <StoreNav />
       </div>

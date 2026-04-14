@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { ChainIcon, Connection } from "@/components/ui/IconUI";
+import { ChainIcon, Connection } from "@/Components/ui/IconUI";
 import CatalogDropdown from "./header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 import { motion, AnimatePresence } from "framer-motion";
 import { CatalogProvider, useCatalog } from "@/context/CatalogContext";
 import { useFavoritesStore } from "@/store/use_favourites_store";
+import { CartHeaderWidget } from "./header/CartHeaderWidget";
 
 export default function Header() {
   return (
@@ -45,7 +46,7 @@ function HeaderContent() {
   }, [isCatalogOpen, closeCatalog]);
 
   return (
-    <header className="relative z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
+    <header className="sticky top-0 z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
       <div className="relative flex w-full items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px]">
         
         <div className="flex items-center gap-8 xl:gap-[60px]">
@@ -278,27 +279,7 @@ function HeaderContent() {
               <Image src="/user.svg" alt="user" width={20} height={20} />
             </ChainIcon>
           </div>
-          
-          <div className="group/basket relative ml-8 xl:ml-[50px] flex h-[42px] w-[100px] shrink-0 cursor-pointer items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner border border-transparent transition-all duration-300 hover:border-[#EC5800]/40 hover:bg-[#3A323A] hover:shadow-[0_0_15px_rgba(236,88,0,0.2)] active:scale-95">
-            
-            <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover/basket:scale-[1.15]">
-              <Image src="/orange_logo.svg" alt="logo" width={28} height={28} className="object-contain" />
-            </div>
-
-            <div className="absolute right-[2px] top-[4px] z-20 flex h-[44px] w-[44px] shrink-0 items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/basket:-translate-y-[4px] group-hover/basket:scale-105">
-              <Image
-                src="/basket.svg"
-                alt="basket"
-                width={44}
-                height={44}
-                className="relative top-[6px] object-contain transition-transform duration-300 group-hover/basket:-rotate-2"
-              />
-              <span className="absolute left-1/2 top-2/5 z-10 -translate-x-[50%] -translate-y-[20%] text-[12px] font-black leading-none text-[#FDE3C8] transition-all duration-300 group-hover/basket:text-white group-hover/basket:drop-shadow-[0_0_6px_#EC5800]">
-                5
-              </span>
-            </div>
-
-          </div>
+          <CartHeaderWidget />
         </div>
       </div>
     </header>
