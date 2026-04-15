@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, useMemo, ReactNode } fr
 import type { DealCard } from "@/Data/home_data";
 import SmartImage from "./SmartImage";
 import { useFavoritesStore } from "@/store/use_favourites_store";
-import { cn } from "@/lib/utils";
+import { cn, parseQuantity } from "@/lib/utils";
 
 interface ProductModalContextType {
   item: DealCard;
@@ -266,22 +266,6 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
     </div>
   );
 };
-
-
-function parseQuantity(quantity: string) {
-  const lower = quantity.toLowerCase().replace(',', '.');
-  const match = lower.match(/^([\d\.]+)\s*(.*)$/);
-  let value = 1, unit = "pcs", isWeight = false;
-  if (match) {
-    const num = Number.parseFloat(match[1]);
-    if (Number.isFinite(num)) value = num;
-    const rawUnit = match[2]?.trim() || "";
-    if (["kg", "кг"].includes(rawUnit)) { unit = "kg"; isWeight = true; }
-    else if (["g", "г"].includes(rawUnit)) { unit = "g"; isWeight = true; }
-    else if (rawUnit) unit = rawUnit;
-  }
-  return { baseValue: value, baseUnit: unit, isWeight };
-}
 
 function OptionBlock({ label, content }: { label: string; content: ReactNode }) {
   return (
