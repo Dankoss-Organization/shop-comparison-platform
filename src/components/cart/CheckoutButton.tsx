@@ -1,3 +1,11 @@
+/**
+ * @file CheckoutButton.tsx
+ * @description A checkout button component managing asynchronous payment transitions.
+ * @pattern State (Finite State Machine): The component alters its behavior and UI 
+ * based on its internal state (IDLE, LOADING, SUCCESS). This encapsulates state-specific 
+ * logic and strictly prevents invalid actions like double-submissions during the LOADING phase.
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -6,11 +14,20 @@ import { useCartStore } from "@/store/use_cart_store";
 
 type CheckoutStatus = "IDLE" | "LOADING" | "SUCCESS";
 
+/**
+ * CheckoutButton Component.
+ * Acts as the context for the State pattern, changing its UI based on `CheckoutStatus`.
+ */
+
 export function CheckoutButton() {
   const [status, setStatus] = useState<CheckoutStatus>("IDLE");
   const clearCart = useCartStore(state => state.clearCart);
   const setOpen = useCartStore(state => state.setOpen);
 
+  /**
+   * Handles the state transitions for the checkout process.
+   * Simulates an async network request: IDLE -> LOADING -> SUCCESS -> IDLE.
+   */
   const handleCheckout = async () => {
     if (status !== "IDLE") return;
 

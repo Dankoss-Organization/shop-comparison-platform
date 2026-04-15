@@ -1,3 +1,10 @@
+/**
+ * @file use_cart_store.ts
+ * @description Global state management for the shopping cart using Zustand.
+ * @pattern Singleton: Ensures a single source of truth for cart state across the app.
+ * @pattern Facade: Provides a simplified interface for complex cart operations.
+ */
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DealCard as DealCardType } from '@/Data/home_data';
@@ -18,6 +25,11 @@ interface CartState {
 getTotalItems: () => number;
 }
 
+
+/**
+ * Hook for managing the shopping cart state.
+ * Encapsulates logic for adding, removing, and updating product quantities.
+ */
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
@@ -25,6 +37,10 @@ export const useCartStore = create<CartState>()(
       isOpen: false,
       setOpen: (isOpen) => set({ isOpen }),
 
+      /**
+       * Adds a product to the cart or increments quantity if it exists.
+       * @param {DealCard} product - The product object to add.
+       */
       addItem: (product) => {
         const { items } = get();
         const existingItem = items.find((i) => i.title === product.title);
@@ -52,6 +68,10 @@ export const useCartStore = create<CartState>()(
 
       clearCart: () => set({ items: [] }),
 
+      /**
+       * Calculates the total price of all items in the cart.
+       * @returns {number} The formatted total price.
+       */
       getTotalPrice: () => {
         return get().items.reduce((acc, item) => {
           const price = parseFloat(item.price.replace('$', ''));
