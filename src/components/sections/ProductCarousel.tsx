@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { DealCard } from "@/Data/home_data";
 import DealCardFactory from "@/Components/ui/DealCard";
 import { ProductModal } from "@/Components/ui/ProductModal";
@@ -11,48 +13,113 @@ export default function ProductCarousel({
   title,
   description,
   items,
+  viewAllLink, 
+  directLink = false 
 }: {
   id?: string; 
   eyebrow: string;
   title: string;
   description: string;
   items: DealCard[];
+  viewAllLink?: string;
+  directLink?: boolean;
 }) {
+  const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<DealCard | null>(null);
+
+  const getSmartLink = () => {
+    if (viewAllLink) return viewAllLink;
+
+    const t = (title || "").toLowerCase();
+    const e = (eyebrow || "").toLowerCase();
+    const i = (id || "").toLowerCase();
+    
+    let tab = "products";
+    let cat = "all";
+
+    if (t.includes("season") || e.includes("season") || i.includes("season")) {
+      tab = "recipes"; cat = "seasonal-recipes";
+    } 
+    else if (t.includes("like") || t.includes("people") || e.includes("like") || i.includes("like")) {
+      tab = "recipes"; cat = "people-liked";
+    } 
+    else if (t.includes("recipe") || e.includes("recipe") || i.includes("recipe")) {
+      tab = "recipes"; cat = "all";
+    } 
+    else if (t.includes("week") || e.includes("week") || i.includes("week")) {
+      tab = "products"; cat = "week-discounts";
+    } 
+    else if (t.includes("daily") || t.includes("day") || e.includes("daily") || i.includes("daily") || t.includes("just discounts")) {
+      tab = "products"; cat = "daily-discounts";
+    } 
+    else if (t.includes("expir") || t.includes("end") || e.includes("end") || i.includes("expir")) {
+      tab = "products"; cat = "expiring-discounts";
+    }
+
+    return `/catalog?tab=${tab}&category=${cat}`;
+  };
+
+  const finalViewAllLink = getSmartLink();
 
   return (
     <>
       <section id={id} className="w-full px-4 py-6 md:px-8 lg:px-12 2xl:px-[60px]">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
+        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div className="flex-1">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#EC5800]/80">
               {eyebrow}
             </p>
             <h2 className="mt-3 max-w-2xl text-3xl font-black text-white md:text-4xl">{title}</h2>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-white/60">{description}</p>
           </div>
-          <p className="max-w-xl text-sm leading-6 text-white/60">{description}</p>
+          
+          <Link 
+            href={finalViewAllLink}
+            className="group flex h-11 w-max shrink-0 items-center gap-2 rounded-full border border-[#ffffff15] bg-[#342e34] px-6 text-sm font-semibold text-[#FFDEBA] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#EC5800]/50 hover:bg-[#EC5800]/10 hover:text-[#EC5800] hover:shadow-[0_8px_20px_rgba(236,88,0,0.15)] active:scale-95"
+          >
+            View All
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </Link>
         </div>
 
-        <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pt-3 pb-6">
-          {items.map((item) => (
+        <div className="custom-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pt-3 pb-6">
+          {items.map((item, idx) => (
             <DealCardFactory
-              key={`${title}-${item.title}`}
+              key={`${title}-${item.title}-${idx}`}
               item={item}
-              onClick={() => setSelectedItem(item)}
+              onClick={() => {
+                if (directLink) {
+                  router.push(`/product/${encodeURIComponent(item.title)}`);
+                } else {
+                  setSelectedItem(item);
+                }
+              }}
               className="snap-start"
             />
           ))}
         </div>
       </section>
 
-      {selectedItem ? (
+      {!directLink && selectedItem ? (
         <ProductModal item={selectedItem} onClose={() => setSelectedItem(null)}>
           <ProductModal.Window>
             <ProductModal.LeftColumn>
               <ProductModal.ImageGallery />
               <ProductModal.Reviews />
             </ProductModal.LeftColumn>
-
             <ProductModal.RightColumn>
               <ProductModal.Header categoryTitle={title} />
               <ProductModal.Actions categoryTitle={title} />
@@ -63,7 +130,7 @@ export default function ProductCarousel({
       ) : null}
       
       <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ffffff15; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #ffffff25; }

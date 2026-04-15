@@ -1,97 +1,180 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import type { DealCard } from "@/Data/home_data";
-import SmartImage from "./SmartImage";
+import React, { useEffect, useState, useMemo, ReactNode } from "react";
+import { useParams, useRouter, usePathname } from "next/navigation";
+import Header from "@/Components/Layout/Header";
+import Footer from "@/Components/Layout/Footer";
+import SmartImage from "@/Components/ui/SmartImage";
+import ProductCarousel from "@/Components/Sections/ProductCarousel";
 import { useFavoritesStore } from "@/store/use_favourites_store";
 import { useCartStore } from "@/store/use_cart_store";
 import { cn } from "@/lib/utils";
+import { CartDrawer } from "@/Components/cart/CartDrawer"; 
 
-interface ProductModalContextType {
-  item: DealCard;
-  onClose: () => void;
+import { 
+  weekDiscounts, 
+  dailyDiscounts, 
+  expiringDiscounts, 
+  seasonalRecipes, 
+  peopleLiked,
+  type DealCard 
+} from "@/Data/home_data";
+
+interface HistoryItem {
+  title: string;
+  url: string;
 }
 
-const ProductModalContext = createContext<ProductModalContextType | undefined>(undefined);
-
-function useProductModal() {
-  const context = useContext(ProductModalContext);
-  if (!context) throw new Error("ProductModal components must be used within <ProductModal>");
-  return context;
-}
-
-export function ProductModal({ item, onClose, children }: { item: DealCard; onClose: () => void; children: ReactNode }) {
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [onClose]);
-
-  return (
-    <ProductModalContext.Provider value={{ item, onClose }}>
-      <div 
-        className="fixed inset-0 z-[120] flex items-start justify-center bg-[#120f12]/85 p-4 pt-14 pb-12 backdrop-blur-md overflow-y-auto transition-opacity" 
-        onClick={onClose}
-      >
-        {children}
-      </div>
-    </ProductModalContext.Provider>
-  );
-}
-
-ProductModal.Window = function Window({ children }: { children: ReactNode }) {
-  const { item, onClose } = useProductModal();
+export default function ProductPage() {
+  const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+  const setOpen = useCartStore((state) => state.setOpen);
+  
+  const rawId = Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const decodedId = rawId ? decodeURIComponent(rawId) : "";
 
-  const handleFullView = () => {
-    onClose();
-    router.push(`/product/${encodeURIComponent(item.title)}`);
+  const [item, setItem] = useState<DealCard | null>(null);
+  const [similarItems, setSimilarItems] = useState<DealCard[]>([]);
+  const [categoryTitle, setCategoryTitle] = useState("Premium Selection");
+  const [historyTrail, setHistoryTrail] = useState<HistoryItem[]>([]);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname, setOpen]);
+
+  useEffect(() => {
+    if (!decodedId) {
+      setIsReady(true);
+      return;
+    }
+
+    const allProducts = [
+      ...weekDiscounts.map(i => ({ ...i, _catTitle: "Week Discounts", _isRecipe: false })),
+      ...dailyDiscounts.map(i => ({ ...i, _catTitle: "Daily Discounts", _isRecipe: false })),
+      ...expiringDiscounts.map(i => ({ ...i, _catTitle: "Expiring Discounts", _isRecipe: false })),
+      ...seasonalRecipes.map(i => ({ ...i, _catTitle: "Seasonal Recipes", _isRecipe: true })),
+      ...peopleLiked.map(i => ({ ...i, _catTitle: "People Also Liked", _isRecipe: true }))
+    ];
+    
+    const matchId = decodedId.toLowerCase().replace(/\s+/g, '-');
+    let match = allProducts.find((i) => 
+      i.title === decodedId || 
+      i.title.toLowerCase().replace(/\s+/g, '-') === matchId ||
+      encodeURIComponent(i.title) === decodedId
+    );
+
+    if (!match) match = allProducts[0];
+
+    const related = allProducts.filter((i) => i.title !== match?.title).slice(0, 10);
+
+    setItem(match);
+    setSimilarItems(related);
+    setCategoryTitle((match as any)._catTitle || "Premium Selection");
+
+    try {
+      const storedHistory = sessionStorage.getItem("productHistoryTrail");
+      let parsed: HistoryItem[] = storedHistory ? JSON.parse(storedHistory) : [];
+      
+      const existingIdx = parsed.findIndex((p) => p.title === match?.title);
+      if (existingIdx !== -1) {
+        parsed = parsed.slice(0, existingIdx + 1);
+      } else {
+        parsed.push({ title: match.title, url: `/product/${encodeURIComponent(match.title)}` });
+        if (parsed.length > 6) parsed.shift();
+      }
+      
+      setHistoryTrail(parsed);
+      sessionStorage.setItem("productHistoryTrail", JSON.stringify(parsed));
+    } catch (e) {}
+
+    setIsReady(true);
+  }, [decodedId]);
+
+  if (!isReady || !item) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#2d282d]">
+         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#EC5800] border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  const handleBackToBrowsing = () => {
+    sessionStorage.removeItem("productHistoryTrail");
+    const isRecipe = (item as any)?._isRecipe || item?.title.toLowerCase().includes("recipe") || item?.title.toLowerCase().includes("pasta");
+    router.push(isRecipe ? "/#recipes" : "/#products");
   };
 
   return (
-    <div
-      className="relative mb-12 min-h-[500px] w-[90vw] max-w-[1240px] overflow-hidden rounded-[2.5rem] border border-[#ffffff10] bg-[#2D282D] text-[#FFDEBA] shadow-[0_36px_90px_#000000] lg:h-[86vh] animate-in zoom-in-95 fade-in duration-300"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="absolute right-6 top-6 z-30 rounded-full border border-[#ffffff10] bg-[#8B87901F] px-3 py-2.5 shadow-[0_12px_24px_#00000026] backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <ActionIconButton 
-            label="Open in separate page" 
-            onClick={handleFullView} 
-            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} 
-          />
-          <ActionIconButton label="Close" onClick={onClose} icon={<span className="text-xl leading-none">×</span>} />
+    <div className="flex min-h-screen flex-col bg-[#2d282d]">
+      <div className="fixed left-0 right-0 top-0 z-50 bg-[rgba(45,40,45,0.8)] border-b border-white/5 backdrop-blur-xl">
+        <Header />
+      </div>
+
+      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-[80px] md:px-8 lg:px-12 2xl:px-[60px]">
+        
+        <nav className="mb-4 mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-[#FFDEBA]/60">
+          <button
+            onClick={handleBackToBrowsing}
+            className="group flex items-center gap-1.5 transition-colors hover:text-[#EC5800]"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:-translate-x-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to browsing
+          </button>
+          
+          {historyTrail.map((h, i) => (
+            <React.Fragment key={`crumb-${i}`}>
+              <span className="text-white/20">/</span>
+              {i === historyTrail.length - 1 ? (
+                <span className="text-[#EC5800]">{h.title}</span>
+              ) : (
+                <button onClick={() => router.push(h.url)} className="transition-colors hover:text-[#FFDEBA] hover:underline">
+                  {h.title}
+                </button>
+              )}
+            </React.Fragment>
+          ))}
+        </nav>
+
+        <div className="mb-16 flex flex-col gap-8 lg:flex-row lg:gap-10">
+          <div className="flex w-full flex-col gap-4 lg:w-[45%] xl:w-1/2">
+            <ImageGallery item={item} />
+            <Reviews item={item} />
+          </div>
+
+          <div className="flex w-full flex-col gap-5 lg:w-[55%] xl:w-1/2">
+            <ProductHeader item={item} categoryTitle={categoryTitle} />
+            <ProductActions item={item} categoryTitle={categoryTitle} />
+            <ProductDetails item={item} categoryTitle={categoryTitle} />
+          </div>
         </div>
-      </div>
-      <div className="grid h-full overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
-        {children}
-      </div>
+
+        {similarItems.length > 0 && (
+          <div className="-mx-4 border-t border-white/5 pt-8 md:-mx-8 lg:-mx-12 2xl:-mx-[60px]">
+            <ProductCarousel
+              id="related-products"
+              eyebrow="More to Explore"
+              title="You might also like"
+              description="Discover similar products hand-picked for you based on your current selection."
+              items={similarItems}
+              directLink={true}
+            />
+          </div>
+        )}
+      </main>
+
+      <Footer />
+      <CartDrawer />
     </div>
   );
-};
+}
 
-ProductModal.LeftColumn = function LeftColumn({ children }: { children: ReactNode }) {
-  return <div className="h-full overflow-y-auto border-r border-[#ffffff0d] px-5 pb-6 pt-6 lg:px-6 lg:pb-8 lg:pt-8 custom-scrollbar"><div className="flex flex-col gap-4">{children}</div></div>;
-};
 
-ProductModal.RightColumn = function RightColumn({ children }: { children: ReactNode }) {
-  return <div className="h-full overflow-y-auto px-5 pb-6 pt-6 lg:px-8 lg:pb-8 lg:pt-8 custom-scrollbar"><div className="max-w-[580px]">{children}</div></div>;
-};
-
-ProductModal.ImageGallery = function ImageGallery() {
-  const { item } = useProductModal();
+function ImageGallery({ item }: { item: DealCard }) {
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
   const [isMounted, setIsMounted] = useState(false);
-  
   useEffect(() => setIsMounted(true), []);
   const favourite = isMounted ? isFavoriteGlobal : false;
 
@@ -116,10 +199,9 @@ ProductModal.ImageGallery = function ImageGallery() {
       </div>
     </div>
   );
-};
+}
 
-ProductModal.Reviews = function Reviews() {
-  const { item } = useProductModal();
+function Reviews({ item }: { item: DealCard }) {
   const [open, setOpen] = useState(true);
   const reviewCards = useMemo(() => [
     { author: "Anna M.", stars: 5, text: `Looks premium and the ${item.discount || "price"} really feels worth it. Great pick for a quick basket.` },
@@ -148,32 +230,26 @@ ProductModal.Reviews = function Reviews() {
       </AccordionBlock>
     </>
   );
-};
+}
 
-ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
-  const { item } = useProductModal();
+function ProductHeader({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   return (
-    <>
-      <div className="flex items-start justify-between gap-4 pr-20">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
-          <h3 className="mt-3 text-[2rem] font-black leading-[1.02] text-[#FFDEBA]">{item.title}</h3>
-        </div>
-      </div>
+    <div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
+      <h1 className="mt-3 text-[2rem] font-black leading-[1.02] text-[#FFDEBA]">{item.title}</h1>
       <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2">
         <p className="text-[2rem] font-black text-[#FFDEBA]">{item.price}</p>
         {item.oldPrice && <span className="text-base text-[#FFDEBA66] line-through">{item.oldPrice}</span>}
       </div>
       <p className="mt-4 text-sm leading-6 text-[#FFDEBAA6]">{item.description}</p>
-    </>
+    </div>
   );
-};
+}
 
-ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: string }) {
-  const { item } = useProductModal();
+function ProductActions({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
-
+  
   const parsedQuantity = useMemo(() => {
     try {
       const q = (item.quantity || "1 pc").toLowerCase();
@@ -183,7 +259,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
       return { isWeight: false, baseUnit: "pc", baseValue: 1 };
     }
   }, [item.quantity]);
-  
+
   const [amount, setAmount] = useState(() => parsedQuantity.isWeight ? 100 : 1);
 
   const handleDecrease = () => setAmount((a) => parsedQuantity.isWeight ? Math.max(100, a - 100) : Math.max(1, a - 1));
@@ -191,13 +267,11 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
 
   const handleAddToCart = () => {
     const qtyToAdd = parsedQuantity.isWeight ? Math.max(1, Math.floor(amount / 100)) : Math.max(1, amount);
-    
     for (let i = 0; i < qtyToAdd; i++) {
       addItem(item);
     }
-    
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 2000); 
   };
 
   const amountDisplay = parsedQuantity.isWeight ? (amount >= 1000 ? `${Number((amount / 1000).toFixed(3))} kg` : `${amount} g`) : `${amount} ${amount === 1 ? "pack" : "packs"}`;
@@ -226,7 +300,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
           <div className="flex flex-wrap gap-2"><SoftTag>{item.quantity || "1 pc"}</SoftTag><SoftTag>{categoryTitle}</SoftTag></div>
         } />
       </div>
-
+      
       <div className="mt-6">
         <button 
           type="button" 
@@ -243,10 +317,9 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
       </div>
     </>
   );
-};
+}
 
-ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: string }) {
-  const { item } = useProductModal();
+function ProductDetails({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   const [expanded, setExpanded] = useState({ description: true, nutrition: true, details: false });
   const toggle = (key: keyof typeof expanded) => setExpanded(p => ({ ...p, [key]: !p[key] }));
 
@@ -283,7 +356,7 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
       </AccordionBlock>
     </div>
   );
-};
+}
 
 function OptionBlock({ label, content }: { label: string; content: ReactNode }) {
   return (
@@ -350,13 +423,6 @@ function ReviewCard({ author, stars, text }: { author: string; stars: number; te
       </div>
       <p className="mt-3 text-sm leading-6 text-[#FFDEBAA6]">{text}</p>
     </div>
-  );
-}
-function ActionIconButton({ label, onClick, icon }: { label: string; onClick: () => void; icon: ReactNode }) {
-  return (
-    <button type="button" aria-label={label} onClick={onClick} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#ffffff10] bg-[#8B87901A] text-[#FFDEBA] transition hover:border-[#EC5800] hover:bg-[#8B879024] hover:text-[#EC5800]">
-      {icon}
-    </button>
   );
 }
 function HeartBadge({ filled }: { filled: boolean }) {
