@@ -46,4 +46,27 @@ describe('Cart Store Business Logic', () => {
     store.removeItem("Milk");
     expect(useCartStore.getState().items.length).toBe(0);
   });
+
+  test('should calculate total items count correctly', () => {
+    const store = useCartStore.getState();
+    
+    store.addItem(testItem);
+    expect(useCartStore.getState().getTotalItems()).toBe(1);
+    
+    useCartStore.getState().updateQuantity("Milk", 3);
+    expect(useCartStore.getState().getTotalItems()).toBe(4);
+
+    useCartStore.getState().updateQuantity("Milk", -1);
+    expect(useCartStore.getState().getTotalItems()).toBe(3);
+  });
+
+  test('should not allow item quantity to drop below 1 via updateQuantity', () => {
+    const store = useCartStore.getState();
+    store.addItem(testItem); 
+    useCartStore.getState().updateQuantity("Milk", -5);
+    
+    const milkInCart = useCartStore.getState().items.find(i => i.title === "Milk");
+    
+    expect(milkInCart?.cartQuantity).toBeGreaterThanOrEqual(1);
+  });
 });
