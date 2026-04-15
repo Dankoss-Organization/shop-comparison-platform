@@ -23,9 +23,7 @@ function useProductModal() {
 
 export function ProductModal({ item, onClose, children }: { item: DealCard; onClose: () => void; children: ReactNode }) {
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
+    const handleEscape = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleEscape);
@@ -63,11 +61,7 @@ ProductModal.Window = function Window({ children }: { children: ReactNode }) {
     >
       <div className="absolute right-6 top-6 z-30 rounded-full border border-[#ffffff10] bg-[#8B87901F] px-3 py-2.5 shadow-[0_12px_24px_#00000026] backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <ActionIconButton 
-            label="Open in separate page" 
-            onClick={handleFullView} 
-            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} 
-          />
+          <ActionIconButton label="Open in separate page" onClick={handleFullView} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} />
           <ActionIconButton label="Close" onClick={onClose} icon={<span className="text-xl leading-none">×</span>} />
         </div>
       </div>
@@ -153,19 +147,15 @@ ProductModal.Reviews = function Reviews() {
 ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
   const { item } = useProductModal();
   return (
-    <>
-      <div className="flex items-start justify-between gap-4 pr-20">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
-          <h3 className="mt-3 text-[2rem] font-black leading-[1.02] text-[#FFDEBA]">{item.title}</h3>
-        </div>
-      </div>
+    <div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
+      <h1 className="mt-3 text-[2rem] font-black leading-[1.02] text-[#FFDEBA]">{item.title}</h1>
       <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2">
         <p className="text-[2rem] font-black text-[#FFDEBA]">{item.price}</p>
         {item.oldPrice && <span className="text-base text-[#FFDEBA66] line-through">{item.oldPrice}</span>}
       </div>
       <p className="mt-4 text-sm leading-6 text-[#FFDEBAA6]">{item.description}</p>
-    </>
+    </div>
   );
 };
 
@@ -173,7 +163,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
   const { item } = useProductModal();
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
-
+  
   const parsedQuantity = useMemo(() => {
     try {
       const q = (item.quantity || "1 pc").toLowerCase();
@@ -183,7 +173,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
       return { isWeight: false, baseUnit: "pc", baseValue: 1 };
     }
   }, [item.quantity]);
-  
+
   const [amount, setAmount] = useState(() => parsedQuantity.isWeight ? 100 : 1);
 
   const handleDecrease = () => setAmount((a) => parsedQuantity.isWeight ? Math.max(100, a - 100) : Math.max(1, a - 1));
@@ -191,13 +181,11 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
 
   const handleAddToCart = () => {
     const qtyToAdd = parsedQuantity.isWeight ? Math.max(1, Math.floor(amount / 100)) : Math.max(1, amount);
-    
     for (let i = 0; i < qtyToAdd; i++) {
       addItem(item);
     }
-    
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 2000); 
   };
 
   const amountDisplay = parsedQuantity.isWeight ? (amount >= 1000 ? `${Number((amount / 1000).toFixed(3))} kg` : `${amount} g`) : `${amount} ${amount === 1 ? "pack" : "packs"}`;
@@ -226,7 +214,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
           <div className="flex flex-wrap gap-2"><SoftTag>{item.quantity || "1 pc"}</SoftTag><SoftTag>{categoryTitle}</SoftTag></div>
         } />
       </div>
-
+      
       <div className="mt-6">
         <button 
           type="button" 

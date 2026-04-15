@@ -8,19 +8,43 @@ import { useFavoritesStore } from "@/store/use_favourites_store";
 import { useCartStore } from "@/store/use_cart_store";
 import { cn } from "@/lib/utils";
 
-type DealCardProps = {
+type DealCardContext = "carousel" | "grid" | "sidebar";
+
+export type DealCardFactoryProps = {
   item: DealCardType;
-  onClick?: () => void;
-  compact?: boolean;
+  context?: DealCardContext;
   variant?: "default" | "recent" | "compact";
+  compact?: boolean;
+  onClick?: () => void;
   className?: string;
 };
 
-export default function DealCardFactory(props: DealCardProps) {
-  const activeVariant = props.variant || (props.compact ? "compact" : "default");
-  const sizeConfig = cardSizes[activeVariant];
+export default function DealCardFactory({
+  item,
+  context = "grid",
+  variant,
+  compact,
+  onClick,
+  className,
+}: DealCardFactoryProps) {
+  let activeVariant: "default" | "recent" | "compact" = variant || (compact ? "compact" : "default");
 
-  return <BaseDealCard {...props} size={sizeConfig} compact={activeVariant === "compact"} />;
+  if (!variant && !compact) {
+    if (context === "sidebar") activeVariant = "compact";
+    if (context === "carousel") activeVariant = "recent";
+  }
+
+  const sizeConfig = cardSizes[activeVariant] || cardSizes["default"];
+
+  return (
+    <BaseDealCard 
+      item={item} 
+      size={sizeConfig} 
+      compact={activeVariant === "compact"} 
+      onClick={onClick} 
+      className={className} 
+    />
+  );
 }
 
 function BaseDealCard({
@@ -29,15 +53,24 @@ function BaseDealCard({
   compact,
   className = "",
   size,
-}: DealCardProps & { size: typeof cardSizes.default }) {
+}: { 
+  item: DealCardType; 
+  onClick?: () => void; 
+  compact?: boolean; 
+  className?: string; 
+  size: any 
+}) {
   
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
   const addItem = useCartStore((state) => state.addItem);
+  
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
+  
   const isFavourite = isMounted ? isFavoriteGlobal : false;
   const clickable = Boolean(onClick);
+  
   const handleFavourite = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     toggleFavorite(item.title);
@@ -80,7 +113,7 @@ function BaseDealCard({
             )}
           >
             <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}>
-              <HeartIcon filled={isFavourite} size={size.iconSize} />
+              <HeartIcon filled={isFavourite} size={size.iconSize || 20} />
             </div>
           </button>
         </div>
