@@ -1,3 +1,9 @@
+/**
+ * @file CartDrawer.tsx
+ * @description The main interactive shopping cart drawer UI.
+ * Acts as an Observer to the `useCartStore`, automatically re-rendering when the global 
+ * cart state changes. Orchestrates interactions between individual cart items and the checkout FSM.
+ */
 "use client";
 
 import { useState, useEffect } from "react";

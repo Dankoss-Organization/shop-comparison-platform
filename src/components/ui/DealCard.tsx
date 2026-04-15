@@ -1,3 +1,11 @@
+/**
+ * @file DealCard.tsx
+ * @description A factory component for rendering product cards with different visual variants.
+ * @pattern Factory Method: The `DealCardFactory` encapsulates the logic of determining 
+ * which specific configuration (size, layout, compact mode) of the card to instantiate 
+ * based on the provided `variant` or `compact` props, hiding the complex conditional 
+ * rendering logic from the consumer components.
+ */
 "use client";
 
 import { MouseEvent, useEffect, useState } from "react";
