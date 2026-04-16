@@ -1,3 +1,7 @@
+/**
+ * @file CartItemUI.tsx
+ * @description Presentation component for an individual cart item, handling its display and emitting quantity/removal actions.
+ */
 import Image from "next/image";
 
 export function CartItemUI({ 

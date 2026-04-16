@@ -1,3 +1,8 @@
+/**
+ * @file Newsletter.tsx
+ * @brief Newsletter subscription form with integrated Telegram bot link.
+ */
+
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
@@ -36,6 +41,12 @@ const shineClassName =
 const telegramButtonClassName =
   "group absolute top-0 inline-flex h-[46px] w-[46px] items-center justify-start overflow-hidden rounded-full bg-[#EC5800] px-0 shadow-[0_10px_16px_#5e1f002e,0_0_12px_#ec580024] transition-all duration-400 hover:w-[196px] active:scale-95";
 
+/**
+ * @brief Internal component rendering the Telegram bot button.
+ * @param {Object} props Component properties.
+ * @param {boolean} props.centered Determines if the button should be center-aligned.
+ * @returns {JSX.Element} The rendered Telegram button.
+ */
 function TelegramButton({ centered }: { centered: boolean }) {
   return (
     <a
@@ -58,6 +69,11 @@ function TelegramButton({ centered }: { centered: boolean }) {
   );
 }
 
+/**
+ * @brief Main Newsletter subscription component.
+ * Handles email input validation, submission state, and error displaying.
+ * @returns {JSX.Element} The rendered newsletter section.
+ */
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");

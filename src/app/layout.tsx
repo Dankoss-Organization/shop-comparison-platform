@@ -1,3 +1,7 @@
+/**
+ * @file layout.tsx
+ * @description Root layout component establishing the HTML document structure and global Next.js metadata.
+ */
 import type { Metadata } from "next";
 import "@/app/globals.css";
 
