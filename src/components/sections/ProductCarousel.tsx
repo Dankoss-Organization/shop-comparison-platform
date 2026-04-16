@@ -26,40 +26,7 @@ export default function ProductCarousel({
 }) {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<DealCard | null>(null);
-
-  const getSmartLink = () => {
-    if (viewAllLink) return viewAllLink;
-
-    const t = (title || "").toLowerCase();
-    const e = (eyebrow || "").toLowerCase();
-    const i = (id || "").toLowerCase();
-    
-    let tab = "products";
-    let cat = "all";
-
-    if (t.includes("season") || e.includes("season") || i.includes("season")) {
-      tab = "recipes"; cat = "seasonal-recipes";
-    } 
-    else if (t.includes("like") || t.includes("people") || e.includes("like") || i.includes("like")) {
-      tab = "recipes"; cat = "people-liked";
-    } 
-    else if (t.includes("recipe") || e.includes("recipe") || i.includes("recipe")) {
-      tab = "recipes"; cat = "all";
-    } 
-    else if (t.includes("week") || e.includes("week") || i.includes("week")) {
-      tab = "products"; cat = "week-discounts";
-    } 
-    else if (t.includes("daily") || t.includes("day") || e.includes("daily") || i.includes("daily") || t.includes("just discounts")) {
-      tab = "products"; cat = "daily-discounts";
-    } 
-    else if (t.includes("expir") || t.includes("end") || e.includes("end") || i.includes("expir")) {
-      tab = "products"; cat = "expiring-discounts";
-    }
-
-    return `/catalog?tab=${tab}&category=${cat}`;
-  };
-
-  const finalViewAllLink = getSmartLink();
+  const finalViewAllLink = viewAllLink || "/catalog";
 
   return (
     <>
@@ -78,20 +45,7 @@ export default function ProductCarousel({
             className="group flex h-11 w-max shrink-0 items-center gap-2 rounded-full border border-[#ffffff15] bg-[#342e34] px-6 text-sm font-semibold text-[#FFDEBA] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#EC5800]/50 hover:bg-[#EC5800]/10 hover:text-[#EC5800] hover:shadow-[0_8px_20px_rgba(236,88,0,0.15)] active:scale-95"
           >
             View All
-            <svg 
-              width="16" 
-              height="16" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            >
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </Link>
         </div>
 

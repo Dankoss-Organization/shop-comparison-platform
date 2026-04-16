@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChainIcon, Connection } from "@/Components/ui/IconUI";
 import CatalogDropdown from "@/Components/Layout/Header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
@@ -25,6 +26,7 @@ function HeaderContent() {
   const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
   const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
   const [isMounted, setIsMounted] = useState(false);
+  
   useEffect(() => setIsMounted(true), []);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ function HeaderContent() {
             </div>
           </div>
 
-          <div className="relative flex min-w-[220px] select-none items-center justify-center py-2 cursor-pointer group/logo">
+          <Link href="/" className="relative flex min-w-[220px] select-none items-center justify-center py-2 cursor-pointer group/logo">
             <Image src="/dankoss_logo_bkg.svg" alt="logo background" fill priority className="z-0 scale-[1.2] object-contain transition-all duration-700 ease-out group-hover/logo:scale-[1.3] group-hover/logo:opacity-100 opacity-80" />
             <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-[#F6D7B0] transition-colors duration-500 group-hover/logo:text-white group-hover/logo:drop-shadow-[0_0_10px_rgba(236,88,0,0.3)]">
               DANK
@@ -134,7 +136,7 @@ function HeaderContent() {
               </span>
               SS
             </span>
-          </div>
+          </Link>
           
         </div>
 

@@ -1,4 +1,7 @@
+"use client";
+
 import { useId } from "react";
+import { useRouter } from "next/navigation";
 import DealCardView from "@/Components/ui/DealCard";
 import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data";
 
@@ -9,8 +12,8 @@ export default function RecentlyViewed() {
   return (
     <section className="mx-auto flex w-full justify-center px-2 py-12 sm:px-3 lg:px-4">
       <div className="grid shrink-0 grid-cols-1 justify-items-center gap-8 lg:gap-10 xl:gap-12 min-[1100px]:grid-cols-2">
-        <RecentlyViewedPanel item={recentDiscount} accent="знижки" />
-        <RecentlyViewedPanel item={recentRecipe} accent="рецепти" />
+        <RecentlyViewedPanel item={recentDiscount} accent="discounts" />
+        <RecentlyViewedPanel item={recentRecipe} accent="recipes" />
       </div>
     </section>
   );
@@ -23,7 +26,9 @@ function RecentlyViewedPanel({
   item: DealCard;
   accent: string;
 }) {
-  const gradientId = useId();
+  const router = useRouter();
+  const rawId = useId();
+  const gradientId = "gradient-" + rawId.replace(/:/g, "");
 
   return (
     <div className="relative h-[212px] w-[367px] sm:h-[242px] sm:w-[419px] md:h-[261px] md:w-[452px] lg:h-[282px] lg:w-[487px] xl:h-[335px] xl:w-[579px] 2xl:h-[390px] 2xl:w-[675px]">
@@ -57,32 +62,36 @@ function RecentlyViewedPanel({
           />
         </svg>
 
-        <div className="absolute left-[48px] top-[40px] z-10 h-[400px] w-[360px]">
+        <div 
+          className="absolute left-[45px] top-[10px] z-10 origin-top-left"
+          style={{ transform: 'scale(1.274)' }}
+        >
           <DealCardView
             item={item}
-            variant="recent"
-            className="h-full w-full rounded-2xl border-2 border-white/10 shadow-[0_15px_15px_-15px_rgba(0.5,0,0,0.7)]"
+            variant="default"
+            className="w-[280px] shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+            onClick={() => router.push(`/product/${encodeURIComponent(item.title)}`)}
           />
         </div>
 
         <div className="absolute left-[510px] top-[105px] z-10 flex h-[176px] w-[255px] items-center justify-center">
           <h2 className="text-center text-[45px] font-black leading-[1.14] tracking-[-0.03em] text-[#ffdeba]">
-            Нещодавно
+            Recently
             <br />
-            переглянуті
+            viewed
             <br />
             <span className="text-[#EC5800]">{accent}</span>
           </h2>
         </div>
 
-        <div className="absolute left-[530px] top-[368px] z-10 flex w-[280px] items-center justify-between">
+        <div className="absolute left-[600px] top-[368px] z-10 flex w-[280px] items-center justify-between">
           <span className="text-[27px] font-semibold tracking-[-0.02em] text-white/95">
-            Переглянути всі
+            View all
           </span>
           <button
             type="button"
             aria-label={`Open recently viewed ${accent}`}
-            className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border border-[#ffb37a]/40 bg-[#EC5800] text-white shadow-[0_0_14px_rgba(236,88,0,0.45)] transition-transform duration-300 hover:scale-105 hover:bg-[#ff6a0d] hover:shadow-[0_0_18px_rgba(236,88,0,0.58)]"
+            className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border border-[#ffb37a]/40 bg-[#EC5800] text-white shadow-[0_0_14px_rgba(236,88,0,0.45)] transition-transform duration-300 hover:scale-105 hover:bg-[#ff6a0d] hover:shadow-[0_0_18px_rgba(236,88,0,0.58)] translate-x-[-70px]"
           >
             <svg
               width="18"

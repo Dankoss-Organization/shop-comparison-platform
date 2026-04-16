@@ -7,9 +7,15 @@ import {
   type DealCard 
 } from "@/Data/home_data";
 
+export interface CatalogCategory {
+  id: string;
+  label: string;
+  slug: string;
+}
+
 export interface CatalogStrategy {
   id: "products" | "recipes";
-  categories: { id: string; label: string }[];
+  categories: CatalogCategory[];
   getData: () => (DealCard & { _cat: string; _uniqueId: string })[];
 }
 
@@ -33,10 +39,10 @@ const formatData = (baseArray: DealCard[], categoryId: string) => {
 export const ProductStrategy: CatalogStrategy = {
   id: "products",
   categories: [
-    { id: "all", label: "All Products" },
-    { id: "week-discounts", label: "Week Discounts" },
-    { id: "daily-discounts", label: "Daily Discounts" },
-    { id: "expiring-discounts", label: "Expiring Soon" },
+    { id: "all", label: "All Products", slug: "/catalog?tab=products&category=all" },
+    { id: "week-discounts", label: "Week Discounts", slug: "/catalog?tab=products&category=week-discounts" },
+    { id: "daily-discounts", label: "Daily Discounts", slug: "/catalog?tab=products&category=daily-discounts" },
+    { id: "expiring-discounts", label: "Expiring Soon", slug: "/catalog?tab=products&category=expiring-discounts" },
   ],
   getData: () => [
     ...formatData(weekDiscounts || [], "week-discounts"),
@@ -48,9 +54,9 @@ export const ProductStrategy: CatalogStrategy = {
 export const RecipeStrategy: CatalogStrategy = {
   id: "recipes",
   categories: [
-    { id: "all", label: "All Recipes" },
-    { id: "seasonal-recipes", label: "Seasonal Recipes" },
-    { id: "people-liked", label: "People Also Liked" },
+    { id: "all", label: "All Recipes", slug: "/catalog?tab=recipes&category=all" },
+    { id: "seasonal-recipes", label: "Seasonal Recipes", slug: "/catalog?tab=recipes&category=seasonal-recipes" },
+    { id: "people-liked", label: "People Also Liked", slug: "/catalog?tab=recipes&category=people-liked" },
   ],
   getData: () => [
     ...formatData(seasonalRecipes || [], "seasonal-recipes"),
