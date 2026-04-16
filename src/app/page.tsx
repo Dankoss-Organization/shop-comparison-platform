@@ -27,7 +27,7 @@ export default function Home() {
       <div>
           <StoreNav />
       </div>
-      <div className="w-full pt-6 pb-8 md:px-8 lg:px-12 2xl:px-[60px]">
+      <div className="w-full pb-8 md:px-8 lg:px-12 2xl:px-[60px]">
         <Hero featured={weekDiscounts.slice(0, 3)} />
       </div>
   </section>
