@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { expect, test, describe, beforeEach } from 'vitest';
-import { CartDrawer } from '../src/Components/cart/CartDrawer';
-import { useCartStore } from '../src/store/use_cart_store';
+import { CartDrawer } from '../src/Components/Cart/cart_drawer';
+import { useCartStore } from '../src/Store/use_cart_store';
 import '@testing-library/jest-dom';
 
 describe('CartDrawer UI Logic', () => {

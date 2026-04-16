@@ -7,13 +7,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useCartStore } from "@/store/use_cart_store";
+import { useCartStore } from "@/Store/use_cart_store";
 import Image from "next/image";
-import { CartItemUI } from "./CartItemUI";
-import { CheckoutButton } from "./CheckoutButton";
-import { ProductModal } from "../ui/ProductModal";
+import { CartItemUI } from "./cart_item_ui";
+import { CheckoutButton } from "./checkout_button";
+import { ProductModal } from "../UI/product_modal";
 import { type DealCard as DealCardType } from "@/Data/home_data";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Lib/utils";
 
 export function CartDrawer() {
   const { items, isOpen, setOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();

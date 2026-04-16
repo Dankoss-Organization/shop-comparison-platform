@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { DealCard } from "@/Data/home_data";
-import DealCardFactory from "@/Components/ui/DealCard";
-import { ProductModal } from "@/Components/ui/ProductModal";
+import DealCardFactory from "@/Components/UI/deal_card";
+import { ProductModal } from "@/Components/UI/product_modal";
 
 export default function ProductCarousel({
   id,

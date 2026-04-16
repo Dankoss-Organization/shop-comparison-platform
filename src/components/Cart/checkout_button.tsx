@@ -9,8 +9,8 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { useCartStore } from "@/store/use_cart_store";
+import { cn } from "@/Lib/utils";
+import { useCartStore } from "@/Store/use_cart_store";
 
 type CheckoutStatus = "IDLE" | "LOADING" | "SUCCESS";
 

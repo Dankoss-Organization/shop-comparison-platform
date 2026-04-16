@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import { useRouter } from "next/navigation";
-import DealCardView from "@/Components/ui/DealCard";
+import DealCardView from "@/Components/UI/deal_card";
 import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data";
 
 const recentDiscount = expiringDiscounts[2];

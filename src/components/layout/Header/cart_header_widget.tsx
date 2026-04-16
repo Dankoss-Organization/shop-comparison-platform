@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCartStore } from "@/store/use_cart_store";
-import { cn } from "@/lib/utils";
+import { useCartStore } from "@/Store/use_cart_store";
+import { cn } from "@/Lib/utils";
 
 export function CartHeaderWidget() {
   const totalItems = useCartStore((state) => state.getTotalItems());

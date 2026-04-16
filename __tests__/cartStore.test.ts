@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach } from 'vitest';
-import { useCartStore } from '../src/store/use_cart_store';
+import { useCartStore } from '../src/Store/use_cart_store';
 import type { DealCard } from '../src/Data/home_data';
 const testItem: DealCard = { 
   title: "Milk", 
