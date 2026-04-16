@@ -3,12 +3,12 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { ChainIcon, Connection } from "@/Components/ui/IconUI";
-import CatalogDropdown from "./header/CatalogDropdown";
+import CatalogDropdown from "@/Components/Layout/Header/CatalogDropdown";
 import { categories } from "@/Data/catalog_data";
 import { motion, AnimatePresence } from "framer-motion";
 import { CatalogProvider, useCatalog } from "@/context/CatalogContext";
 import { useFavoritesStore } from "@/store/use_favourites_store";
-import { CartHeaderWidget } from "./header/CartHeaderWidget";
+import { CartHeaderWidget } from "@/Components/Layout/Header/CartHeaderWidget";
 
 export default function Header() {
   return (

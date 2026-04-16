@@ -1,5 +1,5 @@
 import { useId } from "react";
-import DealCardView from "@/components/ui/DealCard";
+import DealCardView from "@/Components/ui/DealCard";
 import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data";
 
 const recentDiscount = expiringDiscounts[2];
