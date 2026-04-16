@@ -1,3 +1,10 @@
+/**
+ * @file ProductModal.tsx
+ * @description A complex modal component implemented using the Compound Components pattern.
+ * @pattern Builder: Provides a "Lego-like" API to construct the modal step-by-step (Header, Content, Actions).
+ * @pattern Composite: Treats UI sub-components as independent parts of a tree structure, 
+ * allowing them to be composed into a complex whole.
+ */
 "use client";
 
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
@@ -6,7 +13,7 @@ import type { DealCard } from "@/Data/home_data";
 import SmartImage from "./SmartImage";
 import { useFavoritesStore } from "@/store/use_favourites_store";
 import { useCartStore } from "@/store/use_cart_store";
-import { cn } from "@/lib/utils";
+import { cn, parseQuantity } from "@/lib/utils";
 
 interface ProductModalContextType {
   item: DealCard;
@@ -20,6 +27,10 @@ function useProductModal() {
   if (!context) throw new Error("ProductModal components must be used within <ProductModal>");
   return context;
 }
+/**
+ * Main ProductModal component.
+ * Serves as the context provider (Subject in Observer pattern) for its sub-components.
+ */
 
 export function ProductModal({ item, onClose, children }: { item: DealCard; onClose: () => void; children: ReactNode }) {
   useEffect(() => {
@@ -143,7 +154,10 @@ ProductModal.Reviews = function Reviews() {
     </>
   );
 };
-
+/**
+ * Sub-component for rendering the modal header.
+ * Part of the Builder interface for the ProductModal.
+ */
 ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
   const { item } = useProductModal();
   return (
@@ -158,7 +172,10 @@ ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string
     </div>
   );
 };
-
+/**
+ * Sub-component for modal action buttons (e.g., Add to Cart).
+ * Encapsulates specific interactive logic within the Composite structure.
+ */
 ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: string }) {
   const { item } = useProductModal();
   const addItem = useCartStore((state) => state.addItem);
