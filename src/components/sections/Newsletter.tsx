@@ -9,7 +9,7 @@ const telegramIconStyle = {
 };
 
 const cardClassName =
-  "relative overflow-visible rounded-[1.75rem] bg-[linear-gradient(180deg,#191517_0%,#120f12_100%)] px-5 pb-2 pt-10 shadow-[0px_-3px_8px_#ec580057,0_24px_40px_#00000038] sm:px-7 sm:pb-3 sm:pt-12 lg:max-w-[1520px] lg:px-10 lg:pb-3 lg:pt-12";
+  "relative overflow-visible rounded-[1.75rem] bg-[linear-gradient(180deg,#191517_0%,#120f12_100%)] px-5 pb-2 pt-10 shadow-[0px_-3px_8px_#ec580057,0_24px_40px_#00000038] sm:px-7 sm:pb-3 sm:pt-12 lg:max-w-[1400px] lg:px-10 lg:pb-3 lg:pt-12";
 
 const glowLayerClassName =
   "pointer-events-none absolute inset-0 rounded-[1.75rem] bg-[radial-gradient(circle_at_16%_78%,#ec580085,transparent_24%),radial-gradient(circle_at_84%_26%,#ec580066,transparent_22%),radial-gradient(circle_at_62%_88%,#ec580057,transparent_20%),radial-gradient(circle_at_top_center,#f6d7b00d,transparent_18%)]";
@@ -99,7 +99,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section id="contact" className="mx-auto max-w-[1840px] px-3 py-8 sm:px-4 lg:px-6">
+    <section id="contact" className="mx-auto max-w-[1220px] px-3 py-8 sm:px-4 lg:px-6">
       <div className={cardClassName}>
         <div className={glowLayerClassName} />
 
