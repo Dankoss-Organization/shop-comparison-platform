@@ -1,3 +1,18 @@
+/**
+ * @file Banner.tsx
+ * @brief Reusable promotional banner component with call-to-action.
+ */
+
+/**
+ * @brief Renders a promotional banner.
+ * @param {Object} props Component properties.
+ * @param {string} props.eyebrow Small over-title text.
+ * @param {string} props.title Main banner heading.
+ * @param {string} props.cta Call to action button text.
+ * @param {string} props.href Call to action URL.
+ * @param {boolean} [props.dark=false] Toggles dark mode styling.
+ * @returns {JSX.Element} The rendered banner.
+ */
 export default function Banner({
   eyebrow,
   title,

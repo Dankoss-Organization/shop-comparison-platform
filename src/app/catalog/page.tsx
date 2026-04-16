@@ -1,3 +1,7 @@
+/**
+ * @file CatalogPage.tsx
+ * @description Main catalog view with tabbed navigation (products/recipes), category filtering, and a paginated grid layout. Utilizes a facade pattern for state logic.
+ */
 "use client";
 
 import { Suspense } from "react";

@@ -1,3 +1,8 @@
+/**
+ * @file StoreNav.tsx
+ * @brief Component for displaying an animated carousel of store logos.
+ */
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -11,6 +16,11 @@ const initialShops = [
   { name: "Varus", src: "/varus_logo.svg", active: false },
 ];
 
+/**
+ * @brief Main store navigation carousel.
+ * Auto-scrolls periodically or allows manual navigation via arrow buttons.
+ * @returns {JSX.Element} The rendered store navigation component.
+ */
 export default function StoreNav() {
   const [shops, setShops] = useState(initialShops);
   const [isHovered, setIsHovered] = useState(false);
@@ -117,6 +127,13 @@ export default function StoreNav() {
   );
 }
 
+/**
+ * @brief Renders a directional arrow button for the carousel.
+ * @param {Object} props Component props.
+ * @param {Function} props.onClick Callback fired on button click.
+ * @param {"left" | "right"} props.direction Direction of the arrow.
+ * @returns {JSX.Element} The arrow button element.
+ */
 function ArrowSquare({
   onClick,
   direction,
@@ -159,6 +176,12 @@ function ArrowSquare({
   );
 }
 
+/**
+ * @brief Renders an individual shop card with hover effects.
+ * @param {Object} props Component props.
+ * @param {Object} props.shop Shop data including name, image source, and active state.
+ * @returns {JSX.Element} The shop card element.
+ */
 function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
   return (
     <button

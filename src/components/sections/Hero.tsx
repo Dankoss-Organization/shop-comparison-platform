@@ -1,3 +1,8 @@
+/**
+ * @file Hero.tsx
+ * @brief Main landing page hero section showcasing features and live basket comparison.
+ */
+
 "use client";
 
 import Image from "next/image";
@@ -27,6 +32,13 @@ const basketsData = {
   }
 };
 
+/**
+ * @brief Hero component with a dynamic "Smart Basket" widget.
+ * Allows users to toggle between different basket types to see price comparisons.
+ * @param {Object} props Component properties.
+ * @param {DealCard[]} props.featured Array of featured deal cards (currently unused).
+ * @returns {JSX.Element} The rendered hero section.
+ */
 export default function Hero({ featured: _featured }: { featured: DealCard[] }) {
   const [activeTab, setActiveTab] = useState<"healthy" | "weekend">("healthy");
   const activeBasket = basketsData[activeTab];

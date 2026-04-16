@@ -1,3 +1,7 @@
+/**
+ * @file globals.css
+ * @description Global Tailwind CSS configuration, root theme variables, and custom scrollbar styling.
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
