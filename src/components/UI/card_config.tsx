@@ -1,3 +1,17 @@
+/**
+ * @file card_sizes.ts
+ * @description Centralized configuration object defining design tokens (Tailwind CSS classes) for product card variants.
+ * @pattern Theme/Token Object: Centralizes styling constants to ensure UI consistency and easy global updates across the application.
+ * @pattern Factory Parameter: Acts as a configuration dictionary that can be passed into a generic Card component to alter its appearance.
+ */
+
+/**
+ * Predefined styling variants for Deal/Product cards.
+ * Each variant maps specific internal elements to their respective Tailwind CSS utility classes.
+ * * @property {Object} default - Standard card size. Used for main product grids and primary displays.
+ * @property {Object} compact - Condensed card size. Ideal for sidebars, mobile views, or dense carousels.
+ * @property {Object} recent - Intermediate size. Optimized for browsing history logs or recommendation sections.
+ */
 export const cardSizes = {
   default: {
     wrapper: "min-w-[240px] md:min-w-[280px] rounded-[1.85rem]",

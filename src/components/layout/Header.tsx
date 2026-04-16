@@ -11,13 +11,13 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChainIcon, Connection } from "@/Components/ui/IconUI";
-import CatalogDropdown from "@/Components/Layout/Header/CatalogDropdown";
+import { ChainIcon, Connection } from "@/Components/UI/icon_ui";
+import CatalogDropdown from "@/Components/Layout/Header/catalog_dropdown";
 import { categories } from "@/Data/catalog_data";
 import { motion, AnimatePresence } from "framer-motion";
-import { CatalogProvider, useCatalog } from "@/context/CatalogContext";
-import { useFavoritesStore } from "@/store/use_favourites_store";
-import { CartHeaderWidget } from "@/Components/Layout/Header/CartHeaderWidget";
+import { CatalogProvider, useCatalog } from "@/Context/catalog_context";
+import { useFavoritesStore } from "@/Store/use_favourites_store";
+import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
 
 /**
  * @brief Wrapper component that provides the catalog context to the header.

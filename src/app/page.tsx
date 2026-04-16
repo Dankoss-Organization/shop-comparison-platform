@@ -2,15 +2,15 @@
  * @file page.tsx (Home)
  * @description Home page assembling various promotional banners, seasonal product carousels, and navigation sections.
  */
-import Header from "@/Components/Layout/Header";
-import Footer from "@/Components/Layout/Footer";
-import Banner from "@/Components/Sections/Banner";
-import Hero from "@/Components/Sections/Hero";
-import Newsletter from "@/Components/Sections/Newsletter";
-import ProductCarousel from "@/Components/Sections/ProductCarousel";
-import RecentlyViewed from "@/Components/Sections/RecentlyViewed";
-import StoreNav from "@/Components/Sections/StoreNav";
-import { CartDrawer } from "@/Components/cart/CartDrawer"; 
+import Header from "@/Components/Layout/header";
+import Footer from "@/Components/Layout/footer";
+import Banner from "@/Components/Sections/banner";
+import Hero from "@/Components/Sections/hero";
+import Newsletter from "@/Components/Sections/newsletter";
+import ProductCarousel from "@/Components/Sections/product_carousel";
+import RecentlyViewed from "@/Components/Sections/recently_viewed";
+import StoreNav from "@/Components/Sections/store_nav";
+import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
 
 import {
   dailyDiscounts,
@@ -31,7 +31,7 @@ export default function Home() {
       <div>
           <StoreNav />
       </div>
-      <div className="w-full pt-6 pb-8 md:px-8 lg:px-12 2xl:px-[60px]">
+      <div className="w-full pb-8 md:px-8 lg:px-12 2xl:px-[60px]">
         <Hero featured={weekDiscounts.slice(0, 3)} />
       </div>
   </section>

@@ -1,3 +1,20 @@
+/**
+ * @file home_data.ts
+ * @description Centralized mock data and type definitions for the application's homepage and product/recipe displays.
+ * @pattern Static Data Store: Provides predictable, strongly-typed static data for UI development and testing before API integration.
+ * @pattern Factory Function: Uses a helper (`makeNutrition`) to reliably construct nested data objects, reducing boilerplate.
+ */
+
+/**
+ * Represents the nutritional profile of a product or recipe.
+ * @property {string} calories - Energy value, typically in kcal.
+ * @property {string} carbs - Carbohydrate content (e.g., "75 g").
+ * @property {string} fats - Fat content (e.g., "13 g").
+ * @property {string} protein - Protein content (e.g., "20 g").
+ * @property {string} fiber - Dietary fiber content (e.g., "3 g").
+ * @property {string} sugar - Sugar content (e.g., "3 g").
+ */
+
 export type NutritionFacts = {
   calories: string;
   carbs: string;
@@ -6,6 +23,22 @@ export type NutritionFacts = {
   fiber: string;
   sugar: string;
 };
+
+/**
+ * Defines the core data structure for a product deal or recipe card.
+ * @property {string} title - The name of the product or recipe.
+ * @property {string} image - URL to the product/recipe image.
+ * @property {string} market - The store offering the deal (or source of the recipe ingredients).
+ * @property {string} price - Current discounted price.
+ * @property {string} oldPrice - Original price before discount.
+ * @property {string} discount - Percentage or amount saved (e.g., "-32%").
+ * @property {string} rating - User rating out of 5.0.
+ * @property {string} description - Short promotional or descriptive text.
+ * @property {string} quantity - Pack size, weight, or servings (e.g., "500 g", "2 portions").
+ * @property {NutritionFacts} nutrition - Detailed nutritional breakdown.
+ * @property {string[]} [allergens] - Optional list of potential allergens.
+ * @property {string[]} [notes] - Optional storage, cooking, or usage tips.
+ */
 
 export type DealCard = {
   title: string;
@@ -21,6 +54,18 @@ export type DealCard = {
   allergens?: string[];
   notes?: string[];
 };
+
+/**
+ * Helper function to quickly instantiate a `NutritionFacts` object.
+ * Reduces boilerplate when creating large arrays of mock data.
+ * * @param {string} calories - Calories value.
+ * @param {string} carbs - Carbohydrates value.
+ * @param {string} fats - Fats value.
+ * @param {string} protein - Protein value.
+ * @param {string} fiber - Fiber value.
+ * @param {string} sugar - Sugar value.
+ * @returns {NutritionFacts} A formatted nutrition object.
+ */
 
 function makeNutrition(
   calories: string,

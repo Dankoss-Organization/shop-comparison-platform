@@ -8,7 +8,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Category } from "@/Data/catalog_data";
-import { useCatalog } from "@/context/CatalogContext"; 
+import { useCatalog } from "@/Context/catalog_context"; 
 
 interface Props {
   categories: Category[];

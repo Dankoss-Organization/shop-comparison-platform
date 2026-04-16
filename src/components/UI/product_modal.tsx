@@ -1,12 +1,18 @@
+/**
+ * @file product_modal.tsx
+ * @description A complex, composable modal component for displaying detailed product information, reviews, and handling cart/favorite actions.
+ * @pattern Compound Components: Uses the Context API to allow parent-child component communication without prop drilling (e.g., `<ProductModal.Window>`, `<ProductModal.Header>`).
+ * @pattern Custom Hooks: Encapsulates complex business logic (favorites, cart manipulation, parsing quantities) into isolated, reusable hooks (`useFavoriteLogic`, `useCartLogic`).
+ */
 "use client";
 
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { DealCard } from "@/Data/home_data";
-import SmartImage from "./SmartImage";
-import { useFavoritesStore } from "@/store/use_favourites_store";
-import { useCartStore } from "@/store/use_cart_store";
-import { cn } from "@/lib/utils";
+import SmartImage from "./smart_image";
+import { useFavoritesStore } from "@/Store/use_favourites_store";
+import { useCartStore } from "@/Store/use_cart_store";
+import { cn } from "@/Lib/utils";
 
 interface FavoritesState {
   toggleFavorite: (title: string) => void;
@@ -17,6 +23,10 @@ interface CartState {
   addItem: (item: DealCard) => void;
 }
 
+/**
+ * Defines the shape of the data shared across all internal modal components.
+ */
+
 interface ProductModalContextType {
   item: DealCard;
   onClose: () => void;
@@ -24,11 +34,23 @@ interface ProductModalContextType {
 
 const ProductModalContext = createContext<ProductModalContextType | undefined>(undefined);
 
+/**
+ * Custom hook to securely access the modal's context.
+ * Throws an error if a child component is used outside of the `ProductModalRoot`.
+ */
+
 function useProductModal() {
   const context = useContext(ProductModalContext);
   if (!context) throw new Error("ProductModal components must be used within <ProductModal.Root>");
   return context;
 }
+
+/**
+ * Encapsulates the logic for checking and toggling a product's favorite status globally.
+ * Handles React hydration safety for Next.js.
+ * * @param {string} title - The unique identifier (title) of the product.
+ * @returns {Object} State and methods for favorites management.
+ */
 
 function useFavoriteLogic(title: string) {
   const toggleFavorite = useFavoritesStore((state: FavoritesState) => state.toggleFavorite);
@@ -40,6 +62,13 @@ function useFavoriteLogic(title: string) {
 
   return { favourite, toggleFavorite: () => toggleFavorite(title) };
 }
+
+/**
+ * Encapsulates the complex logic for parsing product quantities (grams vs pieces),
+ * handling user increments/decrements, and dispatching items to the global cart store.
+ * * @param {DealCard} item - The current product object.
+ * @returns {Object} Computed display values, state variables, and action handlers.
+ */
 
 function useCartLogic(item: DealCard) {
   const addItem = useCartStore((state: CartState) => state.addItem);
@@ -84,6 +113,11 @@ function useCartLogic(item: DealCard) {
   };
 }
 
+/**
+ * The primary wrapper component that establishes the Context Provider.
+ * Also manages global DOM side-effects like body scroll locking and Escape key listeners.
+ */
+
 function ProductModalRoot({ item, onClose, children }: { item: DealCard; onClose: () => void; children: ReactNode }) {
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
@@ -108,6 +142,11 @@ function ProductModalRoot({ item, onClose, children }: { item: DealCard; onClose
     </ProductModalContext.Provider>
   );
 }
+
+/**
+ * The main container rendering the modal's physical UI boundaries.
+ * Includes layout grid setups and absolute positioned action buttons (Close/Expand).
+ */
 
 function ModalWindow({ children }: { children: ReactNode }) {
   const { item, onClose } = useProductModal();
@@ -144,6 +183,10 @@ function ModalWindow({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Structural component for the left side of the split layout (usually images and reviews).
+ */
+
 function LeftColumn({ children }: { children: ReactNode }) {
   return (
     <div className="h-full overflow-y-auto border-r border-[#ffffff0d] px-5 pb-6 pt-6 lg:px-6 lg:pb-8 lg:pt-8 custom-scrollbar">
@@ -152,6 +195,10 @@ function LeftColumn({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Structural component for the right side of the split layout (usually details and actions).
+ */
+
 function RightColumn({ children }: { children: ReactNode }) {
   return (
     <div className="h-full overflow-y-auto px-5 pb-6 pt-6 lg:px-8 lg:pb-8 lg:pt-8 custom-scrollbar">
@@ -159,6 +206,10 @@ function RightColumn({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+/**
+ * Displays the primary product image, store badges, discount tags, and favorite toggle.
+ */
 
 function ImageGallery() {
   const { item } = useProductModal();
@@ -187,6 +238,10 @@ function ImageGallery() {
     </div>
   );
 }
+
+/**
+ * Displays aggregate rating data and individual user reviews inside a collapsible accordion.
+ */
 
 function Reviews() {
   const { item } = useProductModal();
@@ -224,6 +279,10 @@ function Reviews() {
   );
 }
 
+/**
+ * Renders the top-level typography: Category, Title, Price, and short description.
+ */
+
 function Header({ categoryTitle = "Details" }: { categoryTitle?: string }) {
   const { item } = useProductModal();
   return (
@@ -238,6 +297,10 @@ function Header({ categoryTitle = "Details" }: { categoryTitle?: string }) {
     </div>
   );
 }
+
+/**
+ * Handles the user interactions for modifying quantities and dispatching the Add to Cart action.
+ */
 
 function Actions({ categoryTitle = "Details" }: { categoryTitle?: string }) {
   const { item } = useProductModal();
@@ -306,6 +369,10 @@ function Actions({ categoryTitle = "Details" }: { categoryTitle?: string }) {
   );
 }
 
+/**
+ * Displays expandable technical/nutritional data inside accordion menus.
+ */
+
 function Details({ categoryTitle = "Details" }: { categoryTitle?: string }) {
   const { item } = useProductModal();
   const [expanded, setExpanded] = useState({ description: true, nutrition: true, details: false });
@@ -333,6 +400,19 @@ function Details({ categoryTitle = "Details" }: { categoryTitle?: string }) {
     </div>
   );
 }
+
+/**
+ * The assembled Compound Component. 
+ * Allows consumers to structure the modal's internal layout declaratively.
+ * * @example
+ * <ProductModal item={product} onClose={handleClose}>
+ * <ProductModal.Window>
+ * <ProductModal.LeftColumn>
+ * <ProductModal.ImageGallery />
+ * </ProductModal.LeftColumn>
+ * </ProductModal.Window>
+ * </ProductModal>
+ */
 
 export const ProductModal = Object.assign(ProductModalRoot, {
   Window: ModalWindow,

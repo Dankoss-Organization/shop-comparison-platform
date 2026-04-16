@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { expect, test, describe, vi } from 'vitest';
-import { CheckoutButton } from '../src/Components/cart/CheckoutButton';
+import { CheckoutButton } from '../src/Components/Cart/checkout_button';
 import '@testing-library/jest-dom';
 
 describe('CheckoutButton UI Logic', () => {

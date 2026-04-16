@@ -1,7 +1,28 @@
+/**
+ * @file catalog_data.ts
+ * @description Centralized data models and static mock data for the application's hierarchical catalog and mega-menu.
+ * @pattern Static Data Store: Decouples the UI structure (the dropdown) from the actual menu content, making it easy to update or swap with an API fetch in the future.
+ */
+
+/**
+ * Represents the deepest level of the catalog hierarchy (Level 3).
+ * Typically rendered as a clickable link or specific filter item.
+ * * @property {string} name - The display name of the item (e.g., "Apples & Pears").
+ * @property {string} [href] - Optional URL path. If omitted, the item might function as a client-side filter rather than a direct link.
+ */
+
 export interface SubItem {
   name: string;
   href?: string;
 }
+
+/**
+ * Represents a secondary grouping within a main category (Level 2).
+ * Can optionally contain a background image for rich UI displays and a list of specific SubItems.
+ * * @property {string} name - The display name of the subcategory (e.g., "Fruits and vegetables").
+ * @property {string} [image] - Optional URL path to a background image used when this subcategory is active.
+ * @property {SubItem[]} [items] - Optional array of Level 3 items belonging to this subcategory.
+ */
 
 export interface SubCategory {
   name: string;
@@ -9,10 +30,22 @@ export interface SubCategory {
   items?: SubItem[];
 }
 
+/**
+ * Represents the top-level navigation categories (Level 1).
+ * These are usually the main tabs presented in the root of the dropdown menu.
+ * * @property {string} name - The main category name (e.g., "Products", "Recipes").
+ * @property {SubCategory[]} subcategories - An array of Level 2 groupings belonging to this category.
+ */
+
 export interface Category {
   name: string;
   subcategories: SubCategory[];
 }
+
+/**
+ * The primary static dataset driving the CatalogDropdown component.
+ * Structured as a 3-deep hierarchy: Category -> SubCategory -> SubItem.
+ */
 
 export const categories: Category[] = [
   {

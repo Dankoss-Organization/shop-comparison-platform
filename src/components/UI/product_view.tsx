@@ -1,11 +1,25 @@
+/**
+ * @file product_modal_blocks.tsx
+ * @description A collection of modular UI components used to construct the Product Modal. These components handle specific domains like imagery, reviews, cart actions, and nutritional details.
+ * @pattern Modular Design: Breaks down a complex modal into single-responsibility building blocks, making the code easier to test, read, and rearrange.
+ */
+
 "use client";
 
 import React, { useState, useMemo, useEffect, ReactNode } from "react";
-import { useFavoritesStore } from "@/store/use_favourites_store";
-import { useCartStore } from "@/store/use_cart_store";
-import SmartImage from "./SmartImage";
-import { cn } from "@/lib/utils";
+import { useFavoritesStore } from "@/Store/use_favourites_store";
+import { useCartStore } from "@/Store/use_cart_store";
+import SmartImage from "./smart_image";
+import { cn } from "@/Lib/utils";
 import type { DealCard } from "@/Data/home_data";
+
+/**
+ * Renders the product image gallery alongside promotional badges and the favorite toggle button.
+ * Interacts directly with the global `useFavoritesStore`.
+ * * @param {Object} props - Component props.
+ * @param {DealCard} props.item - The product data object.
+ * @returns {JSX.Element} The image gallery component.
+ */
 
 export function ImageGallery({ item }: { item: DealCard }) {
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
@@ -51,6 +65,13 @@ export function ImageGallery({ item }: { item: DealCard }) {
   );
 }
 
+/**
+ * Displays the aggregate product rating, star indicators, and a collapsible list of user reviews.
+ * * @param {Object} props - Component props.
+ * @param {DealCard} props.item - The product data object.
+ * @returns {JSX.Element} The reviews section.
+ */
+
 export function Reviews({ item }: { item: DealCard }) {
   const [open, setOpen] = useState(true);
   const reviewCards = useMemo(() => [
@@ -86,6 +107,13 @@ export function Reviews({ item }: { item: DealCard }) {
     </div>
   );
 }
+/**
+ * Renders the primary typography of the product including category, title, current price, and original price.
+ * * @param {Object} props - Component props.
+ * @param {DealCard} props.item - The product data object.
+ * @param {string} props.categoryTitle - The name of the category the product belongs to.
+ * @returns {JSX.Element} The header component.
+ */
 
 export function ProductHeader({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   return (
@@ -101,6 +129,15 @@ export function ProductHeader({ item, categoryTitle }: { item: DealCard, categor
     </div>
   );
 }
+
+/**
+ * Handles the "Add to Cart" interactions. Parses product quantities (weights vs. pieces) 
+ * to provide accurate increment/decrement controls and dispatches actions to the global cart store.
+ * * @param {Object} props - Component props.
+ * @param {DealCard} props.item - The product data object to add to the cart.
+ * @param {string} props.categoryTitle - The category context for display tags.
+ * @returns {JSX.Element} The actions component (quantity selectors and add button).
+ */
 
 export function ProductActions({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   const addItem = useCartStore((state) => state.addItem);
@@ -118,10 +155,8 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
   const handleIncrease = () => setAmount((a) => parsedQuantity.isWeight ? a + 100 : a + 1);
 
   const handleAddToCart = () => {
-    // Actually add the item to the store
     addItem(item);
     
-    // Trigger visual state change
     setAdded(true);
     setTimeout(() => setAdded(false), 2000); 
   };
@@ -157,7 +192,6 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
       </div>
       
       <div className="mt-2">
-        {/* The single Add to Cart Button, purely responsive and reactive */}
         <button 
           type="button" 
           onClick={handleAddToCart}
@@ -174,6 +208,15 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
     </div>
   );
 }
+
+/**
+ * Displays detailed, collapsible information blocks including full descriptions, 
+ * nutrition facts (calories, macros), and allergen notes.
+ * * @param {Object} props - Component props.
+ * @param {DealCard} props.item - The product data containing nutrition and allergen info.
+ * @param {string} props.categoryTitle - Display name for the category quick fact.
+ * @returns {JSX.Element} The detailed accordions section.
+ */
 
 export function ProductDetails({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   const [expanded, setExpanded] = useState({ description: true, nutrition: true, details: false });
@@ -214,7 +257,6 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard, catego
   );
 }
 
-// --- Local Shared Helpers ---
 
 function OptionBlock({ label, content }: { label: string; content: ReactNode }) {
   return (

@@ -6,11 +6,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter, usePathname } from "next/navigation";
-import Header from "@/Components/Layout/Header";
-import Footer from "@/Components/Layout/Footer";
-import ProductCarousel from "@/Components/Sections/ProductCarousel";
-import { useCartStore } from "@/store/use_cart_store";
-import { CartDrawer } from "@/Components/cart/CartDrawer"; 
+import Header from "@/Components/Layout/header";
+import Footer from "@/Components/Layout/footer";
+import ProductCarousel from "@/Components/Sections/product_carousel";
+import { useCartStore } from "@/Store/use_cart_store";
+import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
 
 import { 
   ImageGallery, 
@@ -18,7 +18,7 @@ import {
   ProductHeader, 
   ProductActions, 
   ProductDetails 
-} from "@/Components/ui/ProductView";
+} from "@/Components/UI/product_view";
 
 import { 
   weekDiscounts, 

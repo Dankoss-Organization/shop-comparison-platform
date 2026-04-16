@@ -1,13 +1,26 @@
+/**
+ * @file use_catalog_facade.ts
+ * @description A custom hook acting as a Facade to manage the complex state of the catalog page, including pagination, filtering, URL synchronization, and "Load More" functionality.
+ * @pattern Facade: Hides the complex orchestration of Next.js routers, Zustand stores, and data filtering logic behind a simple, unified interface (`state` and `actions`).
+ * @pattern URL-State Sync: Initializes and updates component state based on URL search parameters, ensuring shareable links and proper browser history navigation.
+ */
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCartStore } from "@/store/use_cart_store";
+import { useCartStore } from "@/Store/use_cart_store";
 import { strategies } from "./use_catalog_strategy";
 
 interface CartState {
   setOpen: (open: boolean) => void;
 }
+
+/**
+ * The primary hook driving the Catalog/Browsing experience.
+ * Manages tabs (Products vs. Recipes), category filtering, pagination, and URL routing.
+ * * @returns {Object} An object divided into `state` (readonly data/UI properties) and `actions` (event handlers).
+ */
 
 export function useCatalogFacade() {
   const router = useRouter();
