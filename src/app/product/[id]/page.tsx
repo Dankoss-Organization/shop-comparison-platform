@@ -30,11 +30,16 @@ interface HistoryItem {
   url: string;
 }
 
+interface CartState {
+  setOpen: (open: boolean) => void;
+}
+
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
-  const setOpen = useCartStore((state) => state.setOpen);
+  
+  const setOpen = useCartStore((state: CartState) => state.setOpen);
   
   const rawId = Array.isArray(params?.id) ? params.id[0] : params?.id;
   const decodedId = rawId ? decodeURIComponent(rawId) : "";
@@ -107,23 +112,26 @@ export default function ProductPage() {
 
   const handleBackToBrowsing = () => {
     sessionStorage.removeItem("productHistoryTrail");
-    const isRecipe = (item as any)?._isRecipe || item?.title.toLowerCase().includes("recipe") || item?.title.toLowerCase().includes("pasta");
-    router.push(isRecipe ? "/#recipes" : "/#products");
+    
+    const lastCatalogUrl = sessionStorage.getItem("lastCatalogUrl");
+    if (lastCatalogUrl) {
+      router.push(lastCatalogUrl);
+    } else {
+      const isRecipe = (item as any)?._isRecipe || item?.title.toLowerCase().includes("recipe") || item?.title.toLowerCase().includes("pasta");
+      router.push(isRecipe ? "/#recipes" : "/#products");
+    }
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-[#2d282d]">
-      <div className="fixed left-0 right-0 top-0 z-50 bg-[rgba(45,40,45,0.8)] border-b border-white/5 backdrop-blur-xl">
+      <div className="sticky top-0 z-50 w-full bg-[rgba(45,40,45,0.95)] border-b border-white/5">
         <Header />
       </div>
 
-      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-[80px] md:px-8 lg:px-12 2xl:px-[60px]">
+      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-8 md:px-8 lg:px-12 2xl:px-[60px]">
         
         <nav className="mb-4 mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-[#FFDEBA]/60">
-          <button
-            onClick={handleBackToBrowsing}
-            className="group flex items-center gap-1.5 transition-colors hover:text-[#EC5800]"
-          >
+          <button onClick={handleBackToBrowsing} className="group flex items-center gap-1.5 transition-colors hover:text-[#EC5800]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:-translate-x-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Back to browsing
           </button>

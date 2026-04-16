@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Category } from "@/Data/catalog_data";
 import { useCatalog } from "@/context/CatalogContext"; 
+
 interface Props {
   categories: Category[];
 }
@@ -38,7 +39,7 @@ export default function CatalogDropdown({ categories }: Props) {
     <div
       id="catalog-dropdown"
       className={`
-        absolute left-[0px] top-[85px] w-full h-auto pb-2
+        fixed left-0 right-0 top-[85px] w-full h-auto pb-2
         bg-[rgba(70,59,70,0.25)] 
         backdrop-blur-[35px]
         rounded-b-[50px]

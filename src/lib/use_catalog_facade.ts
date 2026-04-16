@@ -3,44 +3,23 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/store/use_cart_store";
+import { strategies } from "./use_catalog_strategy";
 
-import { 
-  weekDiscounts, 
-  dailyDiscounts, 
-  expiringDiscounts, 
-  seasonalRecipes, 
-  peopleLiked,
-  type DealCard
-} from "@/Data/home_data";
+interface CartState {
+  setOpen: (open: boolean) => void;
+}
 
 export function useCatalogFacade() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const setOpen = useCartStore((state) => state.setOpen);
+  const setOpen = useCartStore((state: CartState) => state.setOpen);
 
   const config = useMemo(() => ({
-    fallbackImg: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80",
     itemsPerLoad: 8,
     maxRowsPerPage: 3,
-    get itemsPerPage() { return this.itemsPerLoad * this.maxRowsPerPage; },
-    productCats: [
-      { id: "all", label: "All Products", anchor: "products" },
-      { id: "week-discounts", label: "Week Discounts", anchor: "week-discounts" },
-      { id: "daily-discounts", label: "Daily Discounts", anchor: "daily-discounts" },
-      { id: "expiring-discounts", label: "Expiring Soon", anchor: "expiring-discounts" },
-    ],
-    recipeCats: [
-      { id: "all", label: "All Recipes", anchor: "recipes" },
-      { id: "seasonal-recipes", label: "Seasonal Recipes", anchor: "seasonal-recipes" },
-      { id: "people-liked", label: "People Also Liked", anchor: "people-liked" },
-    ]
+    get itemsPerPage() { return this.itemsPerLoad * this.maxRowsPerPage; }
   }), []);
-
-  const truncateDesc = (text: string, maxLength = 70) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
-  };
 
   const urlTab = searchParams.get("tab") === "recipes" ? "recipes" : "products";
   const urlCategory = searchParams.get("category") || "all";
@@ -55,32 +34,13 @@ export function useCatalogFacade() {
     setOpen(false);
   }, [pathname, setOpen]);
 
-  const allProducts = useMemo(() => {
-    const base = [
-      ...(weekDiscounts || []).map(p => ({ ...p, _cat: "week-discounts" })),
-      ...(dailyDiscounts || []).map(p => ({ ...p, _cat: "daily-discounts" })),
-      ...(expiringDiscounts || []).map(p => ({ ...p, _cat: "expiring-discounts" })),
-    ];
-    return Array(8).fill(base).flat().map((p, i) => ({
-      ...p,
-      _uniqueId: `prod-${p.title}-${i}`, 
-      image: p.image || config.fallbackImg,
-      description: truncateDesc(p.description)
-    }));
-  }, [config.fallbackImg]);
+  useEffect(() => {
+    const currentQuery = `?tab=${activeTab}&category=${activeCategory}&page=${currentPage}`;
+    sessionStorage.setItem("lastCatalogUrl", `${pathname}${currentQuery}`);
+  }, [pathname, activeTab, activeCategory, currentPage]);
 
-  const allRecipes = useMemo(() => {
-    const base = [
-      ...(seasonalRecipes || []).map(r => ({ ...r, _cat: "seasonal-recipes" })),
-      ...(peopleLiked || []).map(r => ({ ...r, _cat: "people-liked" })),
-    ];
-    return Array(8).fill(base).flat().map((r, i) => ({
-      ...r,
-      _uniqueId: `rec-${r.title}-${i}`,
-      image: r.image || config.fallbackImg,
-      description: truncateDesc(r.description)
-    }));
-  }, [config.fallbackImg]);
+  const allProducts = useMemo(() => strategies.products.getData(), []);
+  const allRecipes = useMemo(() => strategies.recipes.getData(), []);
 
   const activeData = useMemo(() => {
     let data = activeTab === "products" ? allProducts : allRecipes;
@@ -95,8 +55,10 @@ export function useCatalogFacade() {
   const itemsOnThisPage = activeData.slice(startIndex, startIndex + config.itemsPerPage);
   const visibleItems = itemsOnThisPage.slice(0, visibleCount);
   
-  const currentCats = activeTab === "products" ? config.productCats : config.recipeCats;
+  const currentCats = activeTab === "products" ? strategies.products.categories : strategies.recipes.categories;
   const currentCatLabel = currentCats.find(c => c.id === activeCategory)?.label || "Items";
+  
+  const hasMore = visibleCount < itemsOnThisPage.length;
 
   const updateUrl = (tab: string, cat: string, page: number) => {
     router.push(`${pathname}?tab=${tab}&category=${cat}&page=${page}`, { scroll: false });
@@ -129,9 +91,7 @@ export function useCatalogFacade() {
   };
 
   const handleBackToBrowsing = () => {
-    const selection = currentCats.find(c => c.id === activeCategory);
-    const anchor = selection?.anchor || activeTab;
-    router.push(`/#${anchor}`);
+    router.push(`/#${activeTab}`);
   };
 
   return {
@@ -146,6 +106,7 @@ export function useCatalogFacade() {
       currentCats,
       currentCatLabel,
       totalItemsCount: activeData.length,
+      hasMore,
     },
     actions: {
       handleTabChange,
