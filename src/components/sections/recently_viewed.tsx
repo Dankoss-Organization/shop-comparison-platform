@@ -1,3 +1,8 @@
+/**
+ * @file RecentlyViewed.tsx
+ * @brief Component displaying recently viewed items using custom SVG panel backgrounds.
+ */
+
 "use client";
 
 import { useId } from "react";
@@ -8,6 +13,10 @@ import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data"
 const recentDiscount = expiringDiscounts[2];
 const recentRecipe = peopleLiked[1];
 
+/**
+ * @brief Main section container for recently viewed panels.
+ * @returns {JSX.Element} The rendered recently viewed section.
+ */
 export default function RecentlyViewed() {
   return (
     <section className="mx-auto flex w-full justify-center px-2 py-12 sm:px-3 lg:px-4">
@@ -19,6 +28,13 @@ export default function RecentlyViewed() {
   );
 }
 
+/**
+ * @brief Renders an individual recently viewed panel with an SVG mask/background.
+ * @param {Object} props Component properties.
+ * @param {DealCard} props.item The deal or recipe item to display.
+ * @param {string} props.accent Text accent for the panel title (e.g., "discounts", "recipes").
+ * @returns {JSX.Element} The styled panel component.
+ */
 function RecentlyViewedPanel({
   item,
   accent,

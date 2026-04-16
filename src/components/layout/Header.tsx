@@ -1,3 +1,11 @@
+/**
+ * @file Header.tsx
+ * @brief Main header component for the application.
+ * * Provides global navigation, a search bar, a toggleable catalog dropdown, 
+ * language selection, and quick links to user features (favorites, profile, cart).
+ * Incorporates the CatalogProvider to manage the catalog's state across header elements.
+ */
+
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -11,6 +19,10 @@ import { CatalogProvider, useCatalog } from "@/Context/catalog_context";
 import { useFavoritesStore } from "@/Store/use_favourites_store";
 import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
 
+/**
+ * @brief Wrapper component that provides the catalog context to the header.
+ * @returns {JSX.Element} The application header wrapped in a context provider.
+ */
 export default function Header() {
   return (
     <CatalogProvider>
@@ -19,6 +31,12 @@ export default function Header() {
   );
 }
 
+/**
+ * @brief Inner content of the header handling UI layout and interactions.
+ * * Manages the state of the language dropdown, handles clicks outside the catalog 
+ * to close it, and renders navigation items including the logo, search bar, and action icons.
+ * @returns {JSX.Element} The rendered header content layout.
+ */
 function HeaderContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);

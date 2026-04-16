@@ -1,3 +1,7 @@
+/**
+ * @file ProductPage.tsx
+ * @description Dynamic product details view. Handles URL ID parsing, related items matching, and maintains a session-based viewing history trail.
+ */
 "use client";
 
 import React, { useEffect, useState } from "react";
