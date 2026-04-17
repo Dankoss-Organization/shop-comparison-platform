@@ -5,6 +5,9 @@ on:
     branches:
       - anzhela/37-docs-deploy
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,12 +23,13 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-        
+
       - name: Generate Documentation
-        run: npm run docs
+        run: npx typedoc --entryPointStrategy expand --out docs --exclude "**/*.test.ts" --exclude "**/node_modules/**" ./src ./components ./app ./data ./store
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
+          publish_branch: anzhela/37-docs-deploy
