@@ -7,11 +7,11 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, ReactNode } from "react";
-import { useFavoritesStore } from "@/Store/use_favourites_store";
-import { useCartStore } from "@/Store/use_cart_store";
-import SmartImage from "./smart_image";
-import { cn } from "@/Lib/utils";
-import type { DealCard } from "@/Data/home_data";
+import { useFavoritesStore } from "@/store/useFavouritesStore";
+import { useCartStore } from "@/store/useCartStore";
+import SmartImage from "./SmartImage";
+import { cn } from "@/lib/utils";
+import type { DealCard } from "@/data/homeData";
 
 /**
  * Renders the product image gallery alongside promotional badges and the favorite toggle button.

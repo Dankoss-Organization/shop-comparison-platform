@@ -1,22 +1,25 @@
 /**
  * @file CatalogDropdown.tsx
- * @brief Dropdown menu component displaying the store's product catalog.
+ * @description Dropdown menu component displaying the store's product catalog.
  */
 
 "use client";
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Category } from "@/Data/catalog_data";
-import { useCatalog } from "@/Context/catalog_context"; 
+import { Category } from "@/data/catalogData";
+import { useCatalog } from "@/context/CatalogContext"; 
 
-interface Props {
+/**
+ * @description Props defining the category data structure for the dropdown.
+ */
+export interface Props {
   categories: Category[];
 }
 
 /**
- * @brief Renders the multi-level catalog navigation dropdown.
- * * Dynamically handles active and locked states for categories and subcategories on hover 
+ * @description Renders the multi-level catalog navigation dropdown.
+ * Dynamically handles active and locked states for categories and subcategories on hover 
  * and click. Adapts the visual layout to present 2 or 3-level depth, dynamically updating 
  * background imagery and displaying specific promotional items or banners.
  * @param {Props} props - Properties including the categories array payload.

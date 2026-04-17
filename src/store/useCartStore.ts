@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DealCard as DealCardType } from '@/Data/home_data';
+import { DealCard as DealCardType } from '@/data/homeData';
 
 interface CartItem extends DealCardType {
   cartQuantity: number;

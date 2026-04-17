@@ -12,7 +12,7 @@ import {
   seasonalRecipes, 
   peopleLiked,
   type DealCard 
-} from "@/Data/home_data";
+} from "@/data/homeData";
 
 /**
  * Represents a selectable category/filter tab within a specific catalog strategy.

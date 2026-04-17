@@ -1,18 +1,18 @@
 /**
  * @file CartHeaderWidget.tsx
- * @brief An interactive widget displaying the current state of the user's shopping cart.
+ * @description An interactive widget displaying the current state of the user's shopping cart.
  */
 
 "use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCartStore } from "@/Store/use_cart_store";
-import { cn } from "@/Lib/utils";
+import { useCartStore } from "@/store/useCartStore";
+import { cn } from "@/lib/utils";
 
 /**
- * @brief Renders the cart button with total price, item count, and an add-to-cart animation effect.
- * * Retrieves cart state from the store. Triggers a visually appealing "shooting ball"
+ * @description Renders the cart button with total price, item count, and an add-to-cart animation effect.
+ * Retrieves cart state from the store. Triggers a visually appealing "shooting ball"
  * animation over the cart icon whenever a new item is added.
  * @returns {JSX.Element} The animated shopping cart widget.
  */

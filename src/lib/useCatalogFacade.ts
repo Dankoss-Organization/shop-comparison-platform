@@ -9,8 +9,8 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCartStore } from "@/Store/use_cart_store";
-import { strategies } from "./use_catalog_strategy";
+import { useCartStore } from "@/store/useCartStore";
+import { strategies } from "./useCatalogStrategy";
 
 interface CartState {
   setOpen: (open: boolean) => void;

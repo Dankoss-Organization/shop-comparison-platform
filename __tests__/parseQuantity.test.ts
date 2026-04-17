@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { parseQuantity } from '../src/Lib/utils';
+import { parseQuantity } from '../src/lib/utils';
 
 describe('Utility: parseQuantity', () => {
   test('should parse standard unit (packs/pcs)', () => {

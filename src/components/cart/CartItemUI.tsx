@@ -4,6 +4,16 @@
  */
 import Image from "next/image";
 
+/**
+ * @description Displays a single item within the cart drawer, rendering its thumbnail, title, price, and quantity controls.
+ * * @param {Object} props - The component props.
+ * @param {any} props.item - The data object representing the item in the cart.
+ * @param {() => void} props.onIncrease - Callback triggered when the increment button is clicked.
+ * @param {() => void} props.onDecrease - Callback triggered when the decrement button is clicked.
+ * @param {() => void} props.onRemove - Callback triggered when the removal (X) button is clicked.
+ * @param {() => void} props.onClick - Callback triggered when the item's main area is clicked (e.g., to view details).
+ * * @returns {JSX.Element} The rendered list item UI.
+ */
 export function CartItemUI({ 
   item, 
   onIncrease, 

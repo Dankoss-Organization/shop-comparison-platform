@@ -7,8 +7,8 @@
 
 import { useId } from "react";
 import { useRouter } from "next/navigation";
-import DealCardView from "@/Components/UI/deal_card";
-import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data";
+import DealCardView from "@/components/ui/DealCard";
+import { expiringDiscounts, peopleLiked, type DealCard } from "@/data/homeData";
 
 const recentDiscount = expiringDiscounts[2];
 const recentRecipe = peopleLiked[1];
@@ -35,7 +35,7 @@ export default function RecentlyViewed() {
  * @param {string} props.accent Text accent for the panel title (e.g., "discounts", "recipes").
  * @returns {JSX.Element} The styled panel component.
  */
-function RecentlyViewedPanel({
+export function RecentlyViewedPanel({
   item,
   accent,
 }: {

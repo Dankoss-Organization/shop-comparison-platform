@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import ProductPage from '../src/app/product/[id]/page';
-import * as cartStore from '../src/store/use_cart_store';
-import * as favStore from '../src/store/use_favourites_store';
+import * as cartStore from '../src/store/useCartStore';
+import * as favStore from '../src/store/useFavouritesStore';
 import '@testing-library/jest-dom';
 
 const mockPush = vi.fn();

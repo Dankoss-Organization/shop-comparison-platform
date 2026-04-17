@@ -9,25 +9,29 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/Lib/utils";
-import { useCartStore } from "@/Store/use_cart_store";
-
-type CheckoutStatus = "IDLE" | "LOADING" | "SUCCESS";
+import { cn } from "@/lib/utils";
+import { useCartStore } from "@/store/useCartStore";
 
 /**
- * CheckoutButton Component.
- * Acts as the context for the State pattern, changing its UI based on `CheckoutStatus`.
+ * @description Represents the potential processing states of the checkout action.
  */
+export type CheckoutStatus = "IDLE" | "LOADING" | "SUCCESS";
 
+/**
+ * @description CheckoutButton Component.
+ * Acts as the context for the State pattern, changing its UI based on `CheckoutStatus`.
+ * Manages the pseudo-asynchronous delay and handles clearing the cart upon success.
+ * * **Internal Behavior (`handleCheckout`):**
+ * Handles the state transitions for the checkout process.
+ * Simulates an async network request: `IDLE` -> `LOADING` -> `SUCCESS` -> `IDLE`.
+ * Resolves when the fake checkout delay is complete.
+ * @returns {JSX.Element} The stateful checkout action button.
+ */
 export function CheckoutButton() {
   const [status, setStatus] = useState<CheckoutStatus>("IDLE");
   const clearCart = useCartStore(state => state.clearCart);
   const setOpen = useCartStore(state => state.setOpen);
 
-  /**
-   * Handles the state transitions for the checkout process.
-   * Simulates an async network request: IDLE -> LOADING -> SUCCESS -> IDLE.
-   */
   const handleCheckout = async () => {
     if (status !== "IDLE") return;
 

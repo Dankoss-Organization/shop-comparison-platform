@@ -1,6 +1,6 @@
 /**
  * @file Newsletter.tsx
- * @brief Newsletter subscription form with integrated Telegram bot link.
+ * @description Newsletter subscription form with integrated Telegram bot link.
  */
 
 "use client";
@@ -32,74 +32,74 @@ const formSurfaceStyle = {
   WebkitBackdropFilter: "blur(5px)",
 };
 
-const subscribeButtonClassName =
-  "group relative inline-flex min-h-[46px] w-auto self-center items-center justify-center overflow-hidden rounded-[1rem] bg-[#EC5800] px-11 text-[0.94rem] font-bold text-[#2D282D] shadow-[0_10px_16px_#5e1f002e,0_0_12px_#ec580024] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_16px_#ec580042,0_14px_18px_#5e1f0038] active:scale-95 sm:min-w-[244px] lg:min-w-[188px] lg:px-7 lg:text-[1rem]";
+const submitBtnClassName =
+  "group relative flex h-[46px] w-[140px] shrink-0 items-center justify-center overflow-hidden rounded-[24px] border border-transparent text-[15px] font-bold text-[#FFDEBA] shadow-[2px_2px_1px_#EC5800] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-70";
 
 const shineClassName =
-  "h-full w-[36px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[#fff5ed3d] to-transparent";
-
-const telegramButtonClassName =
-  "group absolute top-0 inline-flex h-[46px] w-[46px] items-center justify-start overflow-hidden rounded-full bg-[#EC5800] px-0 shadow-[0_10px_16px_#5e1f002e,0_0_12px_#ec580024] transition-all duration-400 hover:w-[196px] active:scale-95";
+  "h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[#f6d7b040] to-transparent";
 
 /**
- * @brief Internal component rendering the Telegram bot button.
- * @param {Object} props Component properties.
- * @param {boolean} props.centered Determines if the button should be center-aligned.
- * @returns {JSX.Element} The rendered Telegram button.
+ * @description Renders a stylized Telegram subscription button.
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.centered - Determines if the button text should be centered or aligned left with an icon.
+ * @returns {JSX.Element} The interactive Telegram button link.
  */
-function TelegramButton({ centered }: { centered: boolean }) {
+export function TelegramButton({ centered }: { centered: boolean }) {
   return (
     <a
-      href="#"
-      className={`${telegramButtonClassName} ${centered ? "left-1/2 -translate-x-1/2" : "left-0"}`}
+      href="https://t.me/your_bot"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-[24px] border border-transparent text-[15px] font-bold text-[#FFDEBA] shadow-[2px_2px_1px_#EC5800] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
+      style={formSurfaceStyle}
     >
-      <span className="flex h-[46px] w-[46px] shrink-0 items-center justify-center text-[#2D282D]">
+      <span
+        className={`relative z-10 flex items-center transition-transform duration-300 group-hover:scale-105 ${
+          centered ? "justify-center gap-2" : "w-full justify-start pl-[1.1rem]"
+        }`}
+      >
         <Image
           src="/telegram.svg"
           alt="Telegram"
-          width={40}
-          height={40}
+          width={18}
+          height={18}
+          className="transition-transform duration-300 group-hover:rotate-12"
           style={telegramIconStyle}
         />
+        <span className={centered ? "" : "ml-2"}>Go to Bot</span>
       </span>
-      <span className="max-w-0 overflow-hidden whitespace-nowrap pr-3 text-center text-[0.74rem] font-bold uppercase tracking-[0.08em] text-[#2D282D] opacity-0 transition-all duration-300 group-hover:ml-1 group-hover:max-w-[144px] group-hover:opacity-100">
-        Telegram bot
+      <span className="absolute -left-[150%] top-0 z-0 flex h-full w-full justify-center transition-all duration-700 ease-out group-hover:left-[150%]">
+        <span className={shineClassName} />
       </span>
     </a>
   );
 }
 
 /**
- * @brief Main Newsletter subscription component.
- * Handles email input validation, submission state, and error displaying.
- * @returns {JSX.Element} The rendered newsletter section.
+ * @description Main Newsletter subscription component.
+ * Provides an email input form with client-side validation, success/error state handling, 
+ * and an alternative Telegram bot subscription option.
+ * @returns {JSX.Element} The rendered newsletter subscription card.
  */
 export default function Newsletter() {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (!submitted) {
+    setIsMounted(true);
+  }, []);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Please enter your email address.");
       return;
     }
-
-    const timer = window.setTimeout(() => {
-      setSubmitted(false);
-    }, 4000);
-
-    return () => window.clearTimeout(timer);
-  }, [submitted]);
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const trimmedEmail = email.trim();
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
-
-    if (!isValidEmail) {
-      setSubmitted(false);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -115,50 +115,55 @@ export default function Newsletter() {
   };
 
   return (
-    <section id="contact" className="mx-auto max-w-[1220px] px-3 py-8 sm:px-4 lg:px-6">
+    <section id="contact" className="mx-auto max-w-[1200px] px-4 pb-20 pt-16 sm:px-6 lg:px-8">
       <div className={cardClassName}>
         <div className={glowLayerClassName} />
 
         <div className={badgeClassName}>
           <div className={badgeInnerClassName}>
-            <Image src="/newsletter.svg" alt="Newsletter" width={40} height={40} />
+            {isMounted && (
+              <Image src="/orange_logo.svg" alt="Dankoss Logo" width={38} height={38} priority />
+            )}
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto flex max-w-[980px] flex-col items-center text-center">
-          <h2 className="mt-1 max-w-[760px] text-[1.45rem] font-black leading-[0.96] tracking-[-0.05em] text-[#FFDEBA] sm:text-[1.75rem] lg:text-[2.15rem]">
-            Subscribe Newsletter
+        <div className="relative z-10 flex flex-col items-center pt-8 sm:pt-10">
+          <h2 className="mb-3 text-center text-[1.65rem] font-bold uppercase leading-tight tracking-[0.1em] text-[#FFDEBA] sm:text-[2rem]">
+            Get <span className="text-[#EC5800]">Weekly</span> Hits
           </h2>
-
-          <p className="mt-3 max-w-[860px] text-[0.78rem] leading-[1.3] text-[#FFDEBAD1] sm:text-[0.86rem] lg:whitespace-nowrap lg:text-[0.94rem]">
-            You will never miss our updates, best discounts and product picks.
-            We keep it useful, light and worth opening.
+          <p className="mb-8 max-w-[500px] text-center text-[0.95rem] font-medium leading-relaxed tracking-wide text-[#FFDEBA8A] sm:text-[1.05rem]">
+            Drop your email below, and we'll send you the absolute best deals, wildest discounts, and freshest seasonal recipes every week.
           </p>
 
-          <form className="mt-5 flex w-full max-w-[980px] flex-col items-center gap-3.5" onSubmit={handleSubmit}>
-            <div className="flex w-full flex-col items-stretch gap-3 overflow-visible lg:flex-row lg:items-center lg:justify-center">
-              <div aria-hidden="true" className="hidden lg:block lg:w-[138px] lg:shrink-0" />
-
-              <div className="flex w-full overflow-hidden rounded-[1rem] lg:max-w-[640px]" style={formSurfaceStyle}>
-                <label className="flex min-h-[46px] flex-1 items-center px-4 sm:px-5">
-                  <input
-                    type="email"
-                    placeholder="user@gmail.com"
-                    value={email}
-                    onChange={(event) => {
-                      setEmail(event.target.value);
-                      if (error) {
-                        setError("");
-                      }
-                    }}
-                    disabled={isSubmitting}
-                    aria-invalid={error ? "true" : "false"}
-                    className="w-full bg-transparent text-[0.9rem] text-[#FFDEBA] outline-none placeholder:text-[#FFDEBA80] lg:text-[0.96rem]"
-                  />
-                </label>
+          <form onSubmit={handleSubmit} className="w-full max-w-[620px]">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-stretch sm:justify-center">
+              
+              <div
+                className="flex h-[46px] w-full max-w-[340px] items-center rounded-[24px] px-1 sm:max-w-none sm:flex-1"
+                style={formSurfaceStyle}
+              >
+                <div className="flex h-full items-center pl-4 pr-2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EC5800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                    <path d="Mm22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className="h-full w-full bg-transparent px-2 text-[15px] font-medium text-[#FFDEBA] placeholder-[#FFDEBA]/40 outline-none transition-all placeholder:font-normal focus:bg-transparent"
+                  disabled={isSubmitting || submitted}
+                />
               </div>
 
-              <button type="submit" disabled={isSubmitting} className={subscribeButtonClassName}>
+              <button
+                type="submit"
+                disabled={isSubmitting || submitted}
+                className={submitBtnClassName}
+                style={formSurfaceStyle}
+              >
                 <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
                   {isSubmitting ? "Sending..." : "Subscribe"}
                 </span>
@@ -193,13 +198,12 @@ export default function Newsletter() {
 
               {!error && !submitted ? (
                 <p className="text-[0.82rem] text-[#FFDEBA8A] sm:text-[0.88rem]">
-                  We promise not to spam you!
+                  We respect your inbox. No spam, ever.
                 </p>
               ) : null}
             </div>
           </form>
         </div>
-
       </div>
     </section>
   );

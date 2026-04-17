@@ -7,7 +7,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import type { DealCard } from "@/Data/home_data";
+import type { DealCard } from "@/data/homeData";
 
 const basketsData = {
   healthy: {

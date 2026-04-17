@@ -1,12 +1,12 @@
 /**
  * @file Footer.tsx
- * @brief Global footer component rendering contact info, form, and legal links.
+ * @description Global footer component rendering contact info, form, and legal links.
  */
 
 "use client";
 
 import Image from "next/image";
-import { ChainIcon, Connection } from "@/Components/UI/icon_ui";
+import { ChainIcon, Connection } from "@/components/ui/IconUI";
 
 const companyLinks = ["About Us", "How it works", "Partners"];
 const supportLinks = ["FAQ", "Privacy Policy", "Cookie Policy"];
@@ -43,8 +43,8 @@ const socials = [
 ];
 
 /**
- * @brief Renders the application's footer section.
- * * Incorporates a prominent contact form, dynamic link columns for company info and support,
+ * @description Renders the application's footer section.
+ * Incorporates a prominent contact form, dynamic link columns for company info and support,
  * visual branding elements, direct contact items (email/phone/location), and social media integrations.
  * @returns {JSX.Element} The completely assembled footer component.
  */
@@ -200,13 +200,13 @@ export default function Footer() {
 }
 
 /**
- * @brief Reusable text input component scoped for the footer contact form.
+ * @description Reusable text input component scoped for the footer contact form.
  * @param {Object} props - The component props.
  * @param {string} props.type - The HTML input type attribute (e.g., "text", "email").
  * @param {string} props.placeholder - The placeholder text to display in the input.
  * @returns {JSX.Element} A pre-styled input element.
  */
-function FooterInput({ type, placeholder }: { type: string; placeholder: string }) {
+export function FooterInput({ type, placeholder }: { type: string; placeholder: string }) {
   return (
     <input
       type={type}
@@ -224,13 +224,13 @@ function FooterInput({ type, placeholder }: { type: string; placeholder: string 
 }
 
 /**
- * @brief Renders a column grouping of text links for the footer layout.
+ * @description Renders a column grouping of text links for the footer layout.
  * @param {Object} props - The component props.
  * @param {string} props.title - The heading text to display above the list of links.
  * @param {string[]} props.links - An array of link label strings.
  * @returns {JSX.Element} A stylized unordered list acting as a footer column.
  */
-function FooterLinkColumn({ title, links }: { title: string; links: string[] }) {
+export function FooterLinkColumn({ title, links }: { title: string; links: string[] }) {
   return (
     <div>
       <h3 className="mb-5 text-[28px] font-bold leading-[34px] tracking-[2px] text-[#EC5800]">{title}</h3>

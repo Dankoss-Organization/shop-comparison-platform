@@ -8,9 +8,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { DealCard } from "@/Data/home_data";
-import DealCardFactory from "@/Components/UI/deal_card";
-import { ProductModal } from "@/Components/UI/product_modal";
+import type { DealCard } from "@/data/homeData";
+import DealCardFactory from "@/components/ui/DealCard";
+import { ProductModal } from "@/components/ui/ProductModal";
 
 /**
  * @brief Renders a scrollable list of DealCards.

@@ -67,7 +67,7 @@ export type DealCard = {
  * @returns {NutritionFacts} A formatted nutrition object.
  */
 
-function makeNutrition(
+export function makeNutrition(
   calories: string,
   carbs: string,
   fats: string,

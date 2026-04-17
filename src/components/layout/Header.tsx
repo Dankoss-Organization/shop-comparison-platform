@@ -11,13 +11,13 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChainIcon, Connection } from "@/Components/UI/icon_ui";
-import CatalogDropdown from "@/Components/Layout/Header/catalog_dropdown";
-import { categories } from "@/Data/catalog_data";
+import { ChainIcon, Connection } from "@/components/ui/IconUI";
+import CatalogDropdown from "@/components/layout/header/CatalogDropdown";
+import { categories } from "@/data/catalogData";
 import { motion, AnimatePresence } from "framer-motion";
-import { CatalogProvider, useCatalog } from "@/Context/catalog_context";
-import { useFavoritesStore } from "@/Store/use_favourites_store";
-import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
+import { CatalogProvider, useCatalog } from "@/context/CatalogContext";
+import { useFavoritesStore } from "@/store/useFavouritesStore";
+import { CartHeaderWidget } from "@/components/layout/header/CartHeaderWidget";
 
 /**
  * @brief Wrapper component that provides the catalog context to the header.
@@ -37,7 +37,7 @@ export default function Header() {
  * to close it, and renders navigation items including the logo, search bar, and action icons.
  * @returns {JSX.Element} The rendered header content layout.
  */
-function HeaderContent() {
+export function HeaderContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");

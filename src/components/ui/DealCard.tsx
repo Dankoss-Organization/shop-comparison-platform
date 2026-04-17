@@ -7,17 +7,17 @@
 "use client";
 
 import { MouseEvent, useEffect, useState } from "react";
-import type { DealCard as DealCardType } from "@/Data/home_data";
-import { cardSizes } from "@/Components/UI/card_config";
-import SmartImage from "@/Components/UI/smart_image";
-import { useFavoritesStore } from "@/Store/use_favourites_store";
-import { useCartStore } from "@/Store/use_cart_store";
-import { cn } from "@/Lib/utils";
+import type { DealCard as DealCardType } from "@/data/homeData";
+import { cardSizes } from "@/components/ui/CardConfig";
+import SmartImage from "@/components/ui/SmartImage";
+import { useFavoritesStore } from "@/store/useFavouritesStore";
+import { useCartStore } from "@/store/useCartStore";
+import { cn } from "@/lib/utils";
 
 /**
  * Defines the layout areas where a card might be used, automatically dictating its default size.
  */
-type DealCardContext = "carousel" | "grid" | "sidebar";
+export type DealCardContext = "carousel" | "grid" | "sidebar";
 
 /**
  * Props for the DealCardFactory component.
@@ -37,12 +37,12 @@ export type DealCardFactoryProps = {
   className?: string;
 };
 
-interface FavoritesState {
+export interface FavoritesState {
   toggleFavorite: (title: string) => void;
   isFavorite: (title: string) => boolean;
 }
 
-interface CartState {
+export interface CartState {
   addItem: (item: DealCardType) => void;
 }
 
@@ -79,7 +79,7 @@ export default function DealCardFactory({
  * @param {any} props.size - The resolved CSS class map from the cardSizes configuration.
  */
 
-function BaseDealCard({ item, onClick, compact, className = "", size }: { item: DealCardType; onClick?: () => void; compact?: boolean; className?: string; size: any }) {
+export function BaseDealCard({ item, onClick, compact, className = "", size }: { item: DealCardType; onClick?: () => void; compact?: boolean; className?: string; size: any }) {
   const toggleFavorite = useFavoritesStore((state: FavoritesState) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state: FavoritesState) => state.isFavorite(item.title));
   const addItem = useCartStore((state: CartState) => state.addItem);
@@ -137,4 +137,4 @@ function BaseDealCard({ item, onClick, compact, className = "", size }: { item: 
 /**
  * Standard SVG Heart Icon used for the favorites toggle.
  */
-function HeartIcon({ filled, size }: { filled: boolean; size: number }) { return <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg"><path d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>; }
+export function HeartIcon({ filled, size }: { filled: boolean; size: number }) { return <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg"><path d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>; }

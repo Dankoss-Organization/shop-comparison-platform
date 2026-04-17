@@ -7,14 +7,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useCartStore } from "@/Store/use_cart_store";
+import { useCartStore } from "@/store/useCartStore";
 import Image from "next/image";
-import { CartItemUI } from "./cart_item_ui";
-import { CheckoutButton } from "./checkout_button";
-import { ProductModal } from "../UI/product_modal";
-import { type DealCard as DealCardType } from "@/Data/home_data";
-import { cn } from "@/Lib/utils";
+import { CartItemUI } from "./CartItemUI";
+import { CheckoutButton } from "./CheckoutButton";
+import { ProductModal } from "../ui/ProductModal";
+import { type DealCard as DealCardType } from "@/data/homeData";
+import { cn } from "@/lib/utils";
 
+/**
+ * @description Renders the sliding drawer for the shopping cart.
+ * Manages its own internal mounted state to prevent hydration mismatches during SSR,
+ * and handles the display of cart items, empty state visuals, and the product detail modal.
+ * * @returns {JSX.Element | null} The rendered cart drawer overlay and sidebar, or null if not mounted.
+ */
 export function CartDrawer() {
   const { items, isOpen, setOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [isMounted, setIsMounted] = useState(false);

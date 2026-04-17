@@ -2,15 +2,15 @@
  * @file page.tsx (Home)
  * @description Home page assembling various promotional banners, seasonal product carousels, and navigation sections.
  */
-import Header from "@/Components/Layout/header";
-import Footer from "@/Components/Layout/footer";
-import Banner from "@/Components/Sections/banner";
-import Hero from "@/Components/Sections/hero";
-import Newsletter from "@/Components/Sections/newsletter";
-import ProductCarousel from "@/Components/Sections/product_carousel";
-import RecentlyViewed from "@/Components/Sections/recently_viewed";
-import StoreNav from "@/Components/Sections/store_nav";
-import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Banner from "@/components/sections/Banner";
+import Hero from "@/components/sections/Hero";
+import Newsletter from "@/components/sections/Newsletter";
+import ProductCarousel from "@/components/sections/ProductCarousel";
+import RecentlyViewed from "@/components/sections/RecentlyViewed";
+import StoreNav from "@/components/sections/StoreNav";
+import { CartDrawer } from "@/components/cart/CartDrawer"; 
 
 import {
   dailyDiscounts,
@@ -19,8 +19,14 @@ import {
   recentItems,
   seasonalRecipes,
   weekDiscounts,
-} from "@/Data/home_data";
+} from "@/data/homeData";
 
+/**
+ * @description The main landing component for the website (`/`).
+ * Iterates through arrays of mock data to render distinct presentation sections, including Hero elements,
+ * horizontally scrolling DealCard carousels, and promotional Banners.
+ * * @returns {JSX.Element} The composed Home page DOM hierarchy.
+ */
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-night text-white">

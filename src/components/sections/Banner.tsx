@@ -1,17 +1,17 @@
 /**
  * @file Banner.tsx
- * @brief Reusable promotional banner component with call-to-action.
+ * @description Reusable promotional banner component with call-to-action.
  */
 
 /**
- * @brief Renders a promotional banner.
- * @param {Object} props Component properties.
- * @param {string} props.eyebrow Small over-title text.
- * @param {string} props.title Main banner heading.
- * @param {string} props.cta Call to action button text.
- * @param {string} props.href Call to action URL.
- * @param {boolean} [props.dark=false] Toggles dark mode styling.
- * @returns {JSX.Element} The rendered banner.
+ * @description Renders a promotional banner to highlight specific marketing campaigns or actions.
+ * @param {Object} props - Component properties.
+ * @param {string} props.eyebrow - Small over-title text displayed above the main heading.
+ * @param {string} props.title - Main banner heading displaying the core message.
+ * @param {string} props.cta - Call to action button text.
+ * @param {string} props.href - Call to action URL destination.
+ * @param {boolean} [props.dark=false] - Toggles dark mode styling for the banner background.
+ * @returns {JSX.Element} The rendered banner section containing the titles and CTA button.
  */
 export default function Banner({
   eyebrow,
@@ -44,13 +44,25 @@ export default function Banner({
           </div>
           <a
             href={href}
-            className={`inline-flex rounded-full px-6 py-3 font-semibold transition ${
-              dark
-                ? "border border-brand-orange/40 text-brand-orangeSoft hover:bg-brand-orange hover:text-white"
-                : "bg-white text-brand-night hover:bg-brand-orange hover:text-white"
-            }`}
+            className="group relative flex h-14 w-[200px] shrink-0 items-center justify-center overflow-hidden rounded-full font-bold text-white transition-all hover:shadow-[0_0_20px_rgba(236,88,0,0.4)]"
           >
-            {cta}
+            <div className="absolute inset-0 bg-brand-orange transition-transform duration-300 group-hover:scale-105" />
+            <span className="relative z-10 flex items-center gap-2">
+              {cta}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
           </a>
         </div>
       </div>
