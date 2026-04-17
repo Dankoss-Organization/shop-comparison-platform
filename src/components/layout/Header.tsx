@@ -1,4 +1,5 @@
 /**
+ * @module
  * @file Header.tsx
  * @brief Main header component for the application.
  * * Provides global navigation, a search bar, a toggleable catalog dropdown, 
