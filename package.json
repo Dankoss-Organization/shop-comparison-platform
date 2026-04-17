@@ -9,7 +9,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "docs": "typedoc",
-    "build-docs": "typedoc --out docs src/index.ts"
+    "build-docs": "typedoc --entryPointStrategy expand ./src"
   },
   "dependencies": {
     "clsx": "^2.1.1",
