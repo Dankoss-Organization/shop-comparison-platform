@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
+    "lint": "next lint",
     "test:watch": "vitest",
     "docs": "typedoc",
-    "build-docs": "typedoc --entryPointStrategy expand ./src"
+    "build-docs": "typedoc"
   },
   "dependencies": {
     "clsx": "^2.1.1",

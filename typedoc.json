@@ -1,14 +1,20 @@
 {
-  "entryPointStrategy": "expand",
+  "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["./src"],
+  "entryPointStrategy": "expand",
   "out": "./docs",
   "tsconfig": "./tsconfig.json",
   "name": "Dankoss Docs",
   "includeVersion": true,
+  "readme": "./README.md",
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/__tests__/**",
-    "**/node_modules/**"
-  ]
+    "**/node_modules/**",
+    "**/*.css"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  }
 }

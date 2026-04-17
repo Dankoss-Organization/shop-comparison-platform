@@ -1,5 +1,4 @@
 /**
- * @module
  * @file Header.tsx
  * @brief Main header component for the application.
  * * Provides global navigation, a search bar, a toggleable catalog dropdown, 
@@ -38,7 +37,7 @@ export default function Header() {
  * to close it, and renders navigation items including the logo, search bar, and action icons.
  * @returns {JSX.Element} The rendered header content layout.
  */
-function HeaderContent() {
+export function HeaderContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");

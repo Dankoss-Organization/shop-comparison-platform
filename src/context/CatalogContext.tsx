@@ -20,7 +20,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
  * @property {() => void} closeCatalog - Helper utility to completely close the menu and reset all selections.
  */
 
-interface CatalogContextType {
+export interface CatalogContextType {
   isCatalogOpen: boolean;
   setIsCatalogOpen: (isOpen: boolean) => void;
   activeCategory: string | null;

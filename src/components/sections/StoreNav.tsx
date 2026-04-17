@@ -134,7 +134,7 @@ export default function StoreNav() {
  * @param {"left" | "right"} props.direction Direction of the arrow.
  * @returns {JSX.Element} The arrow button element.
  */
-function ArrowSquare({
+export function ArrowSquare({
   onClick,
   direction,
 }: {
@@ -182,7 +182,7 @@ function ArrowSquare({
  * @param {Object} props.shop Shop data including name, image source, and active state.
  * @returns {JSX.Element} The shop card element.
  */
-function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
+export function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
   return (
     <button
       type="button"

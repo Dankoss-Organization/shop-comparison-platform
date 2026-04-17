@@ -19,7 +19,7 @@ import { useCatalogFacade } from "@/lib/useCatalogFacade";
  * Designed to be encapsulated by a React Suspense boundary.
  * * @returns {JSX.Element} The header controls, filters, and paginated product grid.
  */
-function CatalogContent() {
+export function CatalogContent() {
   const router = useRouter();
   const { state, actions } = useCatalogFacade();
 

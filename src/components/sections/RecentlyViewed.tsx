@@ -35,7 +35,7 @@ export default function RecentlyViewed() {
  * @param {string} props.accent Text accent for the panel title (e.g., "discounts", "recipes").
  * @returns {JSX.Element} The styled panel component.
  */
-function RecentlyViewedPanel({
+export function RecentlyViewedPanel({
   item,
   accent,
 }: {

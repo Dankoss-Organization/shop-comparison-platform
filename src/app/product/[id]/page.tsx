@@ -32,7 +32,7 @@ import {
 /**
  * @description Represents a breadcrumb entry stored in sessionStorage to track viewed products.
  */
-interface HistoryItem {
+export interface HistoryItem {
   title: string;
   url: string;
 }
@@ -40,7 +40,7 @@ interface HistoryItem {
 /**
  * @description Defines the cart store interface dependency for controlling the cart's visibility state.
  */
-interface CartState {
+export interface CartState {
   setOpen: (open: boolean) => void;
 }
 

@@ -44,7 +44,7 @@ const shineClassName =
  * @param {boolean} props.centered - Determines if the button text should be centered or aligned left with an icon.
  * @returns {JSX.Element} The interactive Telegram button link.
  */
-function TelegramButton({ centered }: { centered: boolean }) {
+export function TelegramButton({ centered }: { centered: boolean }) {
   return (
     <a
       href="https://t.me/your_bot"

@@ -206,7 +206,7 @@ export default function Footer() {
  * @param {string} props.placeholder - The placeholder text to display in the input.
  * @returns {JSX.Element} A pre-styled input element.
  */
-function FooterInput({ type, placeholder }: { type: string; placeholder: string }) {
+export function FooterInput({ type, placeholder }: { type: string; placeholder: string }) {
   return (
     <input
       type={type}
@@ -230,7 +230,7 @@ function FooterInput({ type, placeholder }: { type: string; placeholder: string 
  * @param {string[]} props.links - An array of link label strings.
  * @returns {JSX.Element} A stylized unordered list acting as a footer column.
  */
-function FooterLinkColumn({ title, links }: { title: string; links: string[] }) {
+export function FooterLinkColumn({ title, links }: { title: string; links: string[] }) {
   return (
     <div>
       <h3 className="mb-5 text-[28px] font-bold leading-[34px] tracking-[2px] text-[#EC5800]">{title}</h3>
