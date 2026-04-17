@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach } from 'vitest';
-import { useCartStore } from '../src/Store/use_cart_store';
-import type { DealCard } from '../src/Data/home_data';
+import { useCartStore } from '../src/store/useCartStore';
+import type { DealCard } from '../src/data/homeData';
 const testItem: DealCard = { 
   title: "Milk", 
   price: "$2.50", 

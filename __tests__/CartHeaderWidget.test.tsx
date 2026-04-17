@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
-import { CartHeaderWidget } from '../src/Components/Layout/Header/CartHeaderWidget';
-import * as cartStore from '../src/store/use_cart_store';
+import { CartHeaderWidget } from '../src/components/layout/header/CartHeaderWidget';
+import * as cartStore from '../src/store/useCartStore';
 import '@testing-library/jest-dom';
 
 vi.mock('../src/store/use_cart_store');

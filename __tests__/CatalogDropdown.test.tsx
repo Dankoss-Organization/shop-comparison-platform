@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
-import CatalogDropdown from '../src/Components/Layout/Header/CatalogDropdown';
+import CatalogDropdown from '../src/components/layout/header/CatalogDropdown';
 import * as catalogContext from '../src/context/CatalogContext';
 import '@testing-library/jest-dom';
 

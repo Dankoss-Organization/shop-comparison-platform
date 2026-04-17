@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { expect, test, describe, vi } from 'vitest';
-import { CartItemUI } from '../src/Components/cart/CartItemUI';
+import { CartItemUI } from '../src/components/cart/CartItemUI';
 import '@testing-library/jest-dom';
 
 vi.mock('next/image', () => ({

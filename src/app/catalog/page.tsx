@@ -6,13 +6,19 @@
 
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/Components/Layout/header";
-import Footer from "@/Components/Layout/footer";
-import DealCardFactory from "@/Components/UI/deal_card";
-import { cn } from "@/Lib/utils";
-import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
-import { useCatalogFacade } from "@/Lib/use_catalog_facade";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import DealCardFactory from "@/components/ui/DealCard";
+import { cn } from "@/lib/utils";
+import { CartDrawer } from "@/components/cart/CartDrawer"; 
+import { useCatalogFacade } from "@/lib/useCatalogFacade";
 
+/**
+ * @description Internal component responsible for rendering the content body of the catalog.
+ * Uses the `useCatalogFacade` hook to govern complex state like current tab, active category, and pagination variables.
+ * Designed to be encapsulated by a React Suspense boundary.
+ * * @returns {JSX.Element} The header controls, filters, and paginated product grid.
+ */
 function CatalogContent() {
   const router = useRouter();
   const { state, actions } = useCatalogFacade();
@@ -83,6 +89,12 @@ function CatalogContent() {
   );
 }
 
+/**
+ * @description The main page component for the `/catalog` route.
+ * Combines layout-level elements (Header, Footer, CartDrawer) and provides 
+ * a loading state fallback for the main `CatalogContent`.
+ * * @returns {JSX.Element} The composed catalog page.
+ */
 export default function CatalogPage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#2d282d] font-sans">

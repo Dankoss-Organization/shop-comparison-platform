@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach } from 'vitest';
-import { useFavoritesStore } from '../src/Store/use_favourites_store';
+import { useFavoritesStore } from '../src/store/useFavouritesStore';
 
 describe('Favorites Store Business Logic', () => {
   beforeEach(() => {

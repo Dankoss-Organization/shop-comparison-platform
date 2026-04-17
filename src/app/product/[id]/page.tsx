@@ -6,11 +6,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter, usePathname } from "next/navigation";
-import Header from "@/Components/Layout/header";
-import Footer from "@/Components/Layout/footer";
-import ProductCarousel from "@/Components/Sections/product_carousel";
-import { useCartStore } from "@/Store/use_cart_store";
-import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import ProductCarousel from "@/components/sections/ProductCarousel";
+import { useCartStore } from "@/store/useCartStore";
+import { CartDrawer } from "@/components/cart/CartDrawer"; 
 
 import { 
   ImageGallery, 
@@ -18,7 +18,7 @@ import {
   ProductHeader, 
   ProductActions, 
   ProductDetails 
-} from "@/Components/UI/product_view";
+} from "@/components/ui/ProductView";
 
 import { 
   weekDiscounts, 
@@ -27,17 +27,29 @@ import {
   seasonalRecipes, 
   peopleLiked,
   type DealCard 
-} from "@/Data/home_data";
+} from "@/data/homeData";
 
+/**
+ * @description Represents a breadcrumb entry stored in sessionStorage to track viewed products.
+ */
 interface HistoryItem {
   title: string;
   url: string;
 }
 
+/**
+ * @description Defines the cart store interface dependency for controlling the cart's visibility state.
+ */
 interface CartState {
   setOpen: (open: boolean) => void;
 }
 
+/**
+ * @description The dynamic routing page component for displaying singular product details.
+ * Retrieves product data based on the URL parameter, builds a list of similar items, and tracks
+ * the user's viewing history in `sessionStorage` for breadcrumb navigation.
+ * * @returns {JSX.Element} The assembled product detail screen layout.
+ */
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();

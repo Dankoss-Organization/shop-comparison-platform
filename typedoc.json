@@ -1,0 +1,14 @@
+{
+  "entryPointStrategy": "expand",
+  "entryPoints": ["./src"],
+  "out": "./docs",
+  "tsconfig": "./tsconfig.json",
+  "name": "Dankoss Docs",
+  "includeVersion": true,
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**",
+    "**/node_modules/**"
+  ]
+}
