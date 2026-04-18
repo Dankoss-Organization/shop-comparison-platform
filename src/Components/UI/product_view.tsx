@@ -10,7 +10,7 @@ import React, { useState, useMemo, useEffect, ReactNode } from "react";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useCartStore } from "@/Store/use_cart_store";
 import SmartImage from "./smart_image";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Lib/utils";
 import type { DealCard } from "@/Data/home_data";
 
 /**

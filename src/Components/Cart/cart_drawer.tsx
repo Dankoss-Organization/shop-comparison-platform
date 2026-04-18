@@ -13,7 +13,7 @@ import { CartItemUI } from "./cart_item_ui";
 import { CheckoutButton } from "./checkout_button";
 import { ProductModal } from "../UI/product_modal";
 import { type DealCard as DealCardType } from "@/Data/home_data";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Lib/utils";
 
 /**
  * @description Renders the sliding drawer for the shopping cart.

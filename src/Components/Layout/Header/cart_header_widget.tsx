@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useCartStore } from "@/Store/use_cart_store";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Lib/utils";
 
 /**
  * @description Renders the cart button with total price, item count, and an add-to-cart animation effect.

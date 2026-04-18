@@ -12,7 +12,7 @@ import { cardSizes } from "@/Components/UI/card_config";
 import SmartImage from "@/Components/UI/smart_image";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useCartStore } from "@/Store/use_cart_store";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Lib/utils";
 
 /**
  * Defines the layout areas where a card might be used, automatically dictating its default size.

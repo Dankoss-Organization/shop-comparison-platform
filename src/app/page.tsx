@@ -3,7 +3,7 @@
  * @description Home page assembling various promotional banners, seasonal product carousels, and navigation sections.
  */
 import Header from "@/Components/Layout/header";
-import Footer from "@/Components/Layout/footer_fix";
+import Footer from "@/Components/Layout/footer";
 import Banner from "@/Components/Sections/banner";
 import Hero from "@/Components/Sections/hero";
 import Newsletter from "@/Components/Sections/newsletter";

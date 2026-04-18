@@ -7,7 +7,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter, usePathname } from "next/navigation";
 import Header from "@/Components/Layout/header";
-import Footer from "@/Components/Layout/footer_fix";
+import Footer from "@/Components/Layout/footer";
 import ProductCarousel from "@/Components/Sections/product_carousel";
 import { useCartStore } from "@/Store/use_cart_store";
 import { CartDrawer } from "@/Components/Cart/cart_drawer"; 

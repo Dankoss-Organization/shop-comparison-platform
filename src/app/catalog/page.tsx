@@ -7,9 +7,9 @@
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/Components/Layout/header";
-import Footer from "@/Components/Layout/footer_fix";
+import Footer from "@/Components/Layout/footer";
 import DealCardFactory from "@/Components/UI/deal_card";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Lib/utils";
 import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
 import { useCatalogFacade } from "@/Lib/use_catalog_facade";
 
