@@ -3,7 +3,7 @@ name: Deploy TypeDoc to GitHub Pages
 on:
   push:
     branches:
-      - anzhela/37-docs-deploy
+      - main
 
 permissions:
   contents: write
