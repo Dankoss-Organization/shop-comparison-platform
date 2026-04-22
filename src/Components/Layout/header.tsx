@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CatalogProvider, useCatalog } from "@/Context/catalog_context";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
+import ProfileDropdown from "@/Components/Layout/Header/profile_dropdown";
 
 /**
  * @brief Wrapper component that provides the catalog context to the header.
@@ -40,10 +41,12 @@ export default function Header() {
 export function HeaderContent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); 
   const [currentLang, setCurrentLang] = useState("EN");
   const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
   const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
   const [isMounted, setIsMounted] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
   
   useEffect(() => setIsMounted(true), []);
 
@@ -54,16 +57,20 @@ export function HeaderContent() {
       if (!target.closest("#catalog-trigger") && !target.closest("#catalog-dropdown")) {
         closeCatalog(); 
       }
+      
+      if (!target.closest("#profile-trigger") && !target.closest("#profile-dropdown")) {
+        setIsProfileOpen(false);
+      }
     };
 
-    if (isCatalogOpen) {
+    if (isCatalogOpen || isProfileOpen) {
       window.addEventListener("click", handleClick);
     }
 
     return () => {
       window.removeEventListener("click", handleClick);
     };
-  }, [isCatalogOpen, closeCatalog]);
+  }, [isCatalogOpen, closeCatalog, isProfileOpen]);
 
   return (
     <header className="sticky top-0 z-[90] w-full border-b border-[#1A181C] bg-[#2B262C] font-sans shadow-lg">
@@ -112,7 +119,6 @@ export function HeaderContent() {
               <span className="relative mx-[2px] flex h-[35px] w-[35px] items-center justify-center">
                 <div className="absolute inset-0 m-auto w-[25px] h-[25px] rounded-full bg-[#EC5800] opacity-0 blur-[12px] transition-opacity duration-500 group-hover/logo:opacity-50" />
                 <span className="opacity-0 absolute">O</span>
-                {/* ПОВНИЙ ЛОГОТИП */}
                 <svg viewBox="0 0 61 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute w-[45px] h-[45px] top-[-5px] transition-transform duration-500 group-hover/logo:scale-105">
                   <g filter="url(#filter0_d_486_1007)">
                     <circle cx="28.6267" cy="36.9091" r="25.1365" fill="url(#paint0_radial_486_1007)"/>
@@ -295,9 +301,28 @@ export function HeaderContent() {
 
             <Connection />
 
-            <ChainIcon>
-              <Image src="/user.svg" alt="user" width={20} height={20} />
-            </ChainIcon>
+            <div className="relative z-50 flex items-center justify-center h-[42px] w-[42px]">
+              <div 
+                id="profile-trigger"
+                onClick={() => setIsProfileOpen(!isProfileOpen)} 
+                className="cursor-pointer"
+              >
+                <ChainIcon>
+                  <Image src="/user.svg" alt="user" width={20} height={20} />
+                </ChainIcon>
+              </div>
+
+              <div id="profile-dropdown">
+                <ProfileDropdown 
+                  isOpen={isProfileOpen} 
+                  onClose={() => setIsProfileOpen(false)} 
+                  isAuthenticated={isAuth}
+                  onLogout={() => setIsAuth(false)}
+                  onLogin={() => setIsAuth(true)}
+                />
+              </div>
+            </div>
+
           </div>
           <CartHeaderWidget />
         </div>
