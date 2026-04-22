@@ -315,6 +315,7 @@ export function HeaderContent() {
                 <ProfileDropdown 
                   isOpen={isProfileOpen} 
                   onClose={() => setIsProfileOpen(false)} 
+                  isAuthenticated={false}
                 />
               </div>
             </div>
