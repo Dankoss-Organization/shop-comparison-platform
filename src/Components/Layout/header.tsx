@@ -46,6 +46,7 @@ export function HeaderContent() {
   const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
   const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
   const [isMounted, setIsMounted] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
   
   useEffect(() => setIsMounted(true), []);
 
@@ -315,7 +316,9 @@ export function HeaderContent() {
                 <ProfileDropdown 
                   isOpen={isProfileOpen} 
                   onClose={() => setIsProfileOpen(false)} 
-                  isAuthenticated={false}
+                  isAuthenticated={isAuth}
+                  onLogout={() => setIsAuth(false)}
+                  onLogin={() => setIsAuth(true)}
                 />
               </div>
             </div>

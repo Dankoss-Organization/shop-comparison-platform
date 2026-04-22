@@ -15,15 +15,17 @@ interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   isAuthenticated?: boolean; 
+  onLogout?: () => void;
+  onLogin?: () => void; 
 }
 
-export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false }: ProfileDropdownProps) {
+export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false, onLogout, onLogin }: ProfileDropdownProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   const themeToggleBtn = (
     <button 
       onClick={(e) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         setIsDarkMode(!isDarkMode);
       }}
       className="group flex items-center justify-between rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-[#FFDEBA]/5 hover:shadow-sm"
@@ -70,8 +72,8 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
            <Image src="/user.svg" alt="Avatar" width={22} height={22} className="opacity-90" />
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">Sofiia M.</span>
-          <span className="text-[12px] font-medium tracking-[-0.2px] text-[#FFDEBA]/50 leading-tight">sofia@knu.ua</span>
+          <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">Blabla C.</span>
+          <span className="text-[12px] font-medium tracking-[-0.2px] text-[#FFDEBA]/50 leading-tight">blabla@knu.ua</span>
         </div>
       </div>
 
@@ -102,7 +104,17 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
 
       <div className="flex flex-col p-2.5 gap-1">
         {themeToggleBtn}
-        <button onClick={onClose} className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-red-500/10 hover:shadow-sm">
+        
+        <button 
+          onClick={(e) => {
+            e.preventDefault();
+            onClose(); 
+            setTimeout(() => {
+              if (onLogout) onLogout();
+            }, 300);
+          }} 
+          className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-red-500/10 hover:shadow-sm"
+        >
           <div className="flex h-5 w-5 items-center justify-center text-red-400/80 group-hover:text-red-500 transition-colors">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
           </div>
@@ -121,9 +133,18 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
         </div>
         <span className="text-[15px] font-bold text-[#FFDEBA] leading-tight mt-1">Welcome to DANKOSS</span>
         <div className="flex w-full flex-col gap-2 mt-2">
-          <Link href="/login" onClick={onClose} className="flex h-[38px] w-full items-center justify-center rounded-xl bg-[#EC5800] text-[13px] font-bold text-white shadow-[0_0_15px_rgba(236,88,0,0.4)] transition-all hover:bg-[#ff6a0d] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              onClose(); 
+              setTimeout(() => {
+                if (onLogin) onLogin(); 
+              }, 300);
+            }} 
+            className="flex h-[38px] w-full items-center justify-center rounded-xl bg-[#EC5800] text-[13px] font-bold text-white shadow-[0_0_15px_rgba(236,88,0,0.4)] transition-all hover:bg-[#ff6a0d] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95"
+          >
             Sign In / Register
-          </Link>
+          </button>
         </div>
       </div>
 
