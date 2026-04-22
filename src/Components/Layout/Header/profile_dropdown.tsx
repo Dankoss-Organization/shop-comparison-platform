@@ -1,7 +1,7 @@
 /**
  * @file profile_dropdown.tsx
  * @brief Dropdown menu for user profile actions, handling both authenticated and guest states.
- * @pattern Flush Header Dropdown, Framer Motion Micro-interactions
+ * @pattern Flush Header Dropdown, Framer Motion Micro-interactions, Hover Text-Swap
  */
 
 "use client";
@@ -108,10 +108,8 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
         <button 
           onClick={(e) => {
             e.preventDefault();
-            onClose(); 
-            setTimeout(() => {
-              if (onLogout) onLogout();
-            }, 300);
+            onClose();
+            setTimeout(() => { if (onLogout) onLogout(); }, 300);
           }} 
           className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-red-500/10 hover:shadow-sm"
         >
@@ -136,10 +134,8 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
           <button 
             onClick={(e) => {
               e.preventDefault();
-              onClose(); 
-              setTimeout(() => {
-                if (onLogin) onLogin(); 
-              }, 300);
+              onClose();
+              setTimeout(() => { if (onLogin) onLogin(); }, 300);
             }} 
             className="flex h-[38px] w-full items-center justify-center rounded-xl bg-[#EC5800] text-[13px] font-bold text-white shadow-[0_0_15px_rgba(236,88,0,0.4)] transition-all hover:bg-[#ff6a0d] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95"
           >
@@ -148,29 +144,51 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
         </div>
       </div>
 
-      <div className="flex flex-col p-3 gap-2 relative">
+      <div className="flex flex-col p-2.5 gap-1 relative">
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#FFDEBA]/10" />
-        <span className="px-2 text-[11px] font-bold uppercase tracking-[1px] text-[#FFDEBA]/40">Registered User Features</span>
+        <span className="px-3 pt-1 pb-1 text-[11px] font-bold uppercase tracking-[1px] text-[#FFDEBA]/40">Registered User Features</span>
         
-        <div className="group flex items-center gap-3.5 rounded-2xl px-2 py-2 opacity-60 cursor-not-allowed">
-          <div className="flex h-5 w-5 items-center justify-center text-[#FFDEBA]/50">
+        <button 
+          onClick={(e) => { e.preventDefault(); onClose(); setTimeout(() => { if (onLogin) onLogin(); }, 300); }}
+          className="group relative flex w-full items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-[#EC5800]/10 text-left"
+        >
+          <div className="flex h-5 w-5 items-center justify-center text-[#FFDEBA]/40 transition-colors duration-300 group-hover:text-[#EC5800]/80">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
-          <div className="flex flex-col">
-            <span className="text-[13px] font-medium text-[#FFDEBA]/80">Unlock Saved Baskets</span>
-            <span className="text-[11px] text-[#FFDEBA]/40">Save your smart carts forever</span>
+          <div className="flex flex-col items-start w-full">
+            <span className="text-[14px] font-medium text-[#FFDEBA]/60 group-hover:text-[#EC5800] transition-colors duration-300 leading-tight">Saved Baskets</span>
+            <div className="relative w-full h-[15px] mt-0.5 overflow-hidden">
+              <span className="absolute inset-0 text-[11px] text-[#FFDEBA]/40 transition-all duration-300 group-hover:-translate-y-full group-hover:opacity-0 leading-tight">
+                Save your smart carts forever
+              </span>
+              <span className="absolute inset-0 text-[11px] font-bold text-[#EC5800] translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 flex items-center gap-1 leading-tight">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Sign in to unlock
+              </span>
+            </div>
           </div>
-        </div>
+        </button>
 
-        <div className="group flex items-center gap-3.5 rounded-2xl px-2 py-2 opacity-60 cursor-not-allowed">
-          <div className="flex h-5 w-5 items-center justify-center text-[#FFDEBA]/50">
+        <button 
+          onClick={(e) => { e.preventDefault(); onClose(); setTimeout(() => { if (onLogin) onLogin(); }, 300); }}
+          className="group relative flex w-full items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-[#EC5800]/10 text-left"
+        >
+          <div className="flex h-5 w-5 items-center justify-center text-[#FFDEBA]/40 transition-colors duration-300 group-hover:text-[#EC5800]/80">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           </div>
-          <div className="flex flex-col">
-            <span className="text-[13px] font-medium text-[#FFDEBA]/80">Set Price Alerts</span>
-            <span className="text-[11px] text-[#FFDEBA]/40">Get notified when prices drop</span>
+          <div className="flex flex-col items-start w-full">
+            <span className="text-[14px] font-medium text-[#FFDEBA]/60 group-hover:text-[#EC5800] transition-colors duration-300 leading-tight">Price Alerts</span>
+            <div className="relative w-full h-[15px] mt-0.5 overflow-hidden">
+              <span className="absolute inset-0 text-[11px] text-[#FFDEBA]/40 transition-all duration-300 group-hover:-translate-y-full group-hover:opacity-0 leading-tight">
+                Get notified when prices drop
+              </span>
+              <span className="absolute inset-0 text-[11px] font-bold text-[#EC5800] translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 flex items-center gap-1 leading-tight">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Sign in to unlock
+              </span>
+            </div>
           </div>
-        </div>
+        </button>
       </div>
 
       <div className="flex flex-col p-2.5 gap-1">
@@ -202,7 +220,6 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
           className="absolute top-[65px] right-[-14px] flex w-[290px] flex-col overflow-hidden rounded-b-[24px] rounded-t-none bg-[rgba(70,59,70,0.25)] backdrop-blur-[35px] border-x border-b border-[#FFDEBA]/5 shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
         >
           <div className={`absolute top-0 left-0 w-full h-[2px] z-10 bg-gradient-to-r from-transparent via-[#EC5800] to-transparent transition-all duration-700 ${isOpen ? "opacity-60 scale-x-100" : "opacity-0 scale-x-0"}`} />
-
           {isAuthenticated ? authenticatedContent : guestContent}
         </motion.div>
       )}
