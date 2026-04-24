@@ -13,7 +13,10 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   const pathname = usePathname();
 
   const navItems = [
-    { name: "Personal Info", path: "/profile", icon: (
+    { name: "Overview", path: "/profile", icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+    )},
+    { name: "Personal Info", path: "/profile/settings", icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     )},
     { name: "My Baskets", path: "/profile/baskets", icon: (
@@ -33,9 +36,9 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-85px)] w-full max-w-[1440px] gap-8 p-6 md:p-8 xl:p-10">
       
-      <aside className="hidden w-[280px] shrink-0 flex-col gap-8 lg:flex">
+      <aside className="hidden w-[280px] shrink-0 flex-col gap-8 lg:flex z-10">
         <div className="flex flex-col gap-1 px-2">
-          <h1 className="text-[24px] font-bold tracking-[1px] text-[#FFDEBA] uppercase">
+          <h1 className="text-[24px] font-bold tracking-[1px] text-[#FFDEBA] uppercase font-serif">
             Dashboard
           </h1>
           <p className="text-[13px] text-[#FFDEBA]/50">Manage your DANKOSS experience</p>
@@ -91,7 +94,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
         </div>
       </aside>
 
-      <main className="flex-1 overflow-hidden rounded-[40px] bg-[rgba(30,26,30,0.3)] backdrop-blur-[20px] border border-[#FFDEBA]/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+      <main className="flex-1 overflow-hidden rounded-[40px] bg-[rgba(30,26,30,0.3)] backdrop-blur-[20px] border border-[#FFDEBA]/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10">
         <div className="h-full w-full p-8 xl:p-12 overflow-y-auto custom-scrollbar">
           {children}
         </div>
