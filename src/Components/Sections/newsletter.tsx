@@ -1,6 +1,6 @@
 /**
- * @file Newsletter.tsx
- * @brief Newsletter subscription form with integrated Telegram bot link.
+ * @file newsletter.tsx
+ * @brief newsletter subscription form with integrated Telegram bot link.
  * @pattern Framer Motion - Added scroll-triggered entrance animations and spring interactions.
  */
 

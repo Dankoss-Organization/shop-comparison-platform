@@ -111,6 +111,19 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
             <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}><HeartIcon filled={isFavourite} size={size.iconSize || 20} /></div>
           </button>
         </div>
+        <div className={compact ? "absolute bottom-3 left-3 flex items-center gap-1.5" : "absolute bottom-4 left-4 flex items-center gap-2"}>
+          <span className={cn("rounded-full bg-[#EC5800] font-semibold text-white shadow-[0_8px_16px_#5e1f0033]", size.badge)}>
+            {item.discount}
+          </span>
+          <span
+            className={cn(
+              "rounded-full border border-[#ffffff10] bg-[#171316CC] font-semibold text-[#FFDEBA] backdrop-blur-md",
+              size.badge,
+            )}
+          >
+            ★ {item.rating}
+          </span>
+        </div>
       </div>
       <div className={cn("relative z-[1] -mt-px bg-[#342e34]", size.container)}>
         <h3 className={cn(size.title, "font-black text-white")}>{item.title}</h3>
