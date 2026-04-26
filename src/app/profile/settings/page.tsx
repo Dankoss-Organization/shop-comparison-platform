@@ -1,6 +1,6 @@
 /**
  * @file page.tsx
- * @brief Personal Info and Settings page with functional autocomplete and Zustand global state integration.
+ * @brief Personal Info and Settings page with placeholder styling matching the Footer design.
  */
 
 "use client";
@@ -24,6 +24,7 @@ export default function SettingsPage() {
   const [localName, setLocalName] = useState(globalName);
   const [localEmail, setLocalEmail] = useState(globalEmail);
   const [localCity, setLocalCity] = useState(globalCity);
+
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [pushAlerts, setPushAlerts] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -65,13 +66,13 @@ export default function SettingsPage() {
       
       setDisplayName(localName);
       setEmail(localEmail);
-      setPrimaryCity(localCity); 
+      setPrimaryCity(localCity);
 
       setTimeout(() => setIsSaved(false), 3000);
     }, 1000);
   };
 
-  const isEmailVerified = localEmail === globalEmail;
+  const isEmailVerified = localEmail === globalEmail && localEmail.length > 0;
 
   if (!isMounted) return null; 
 
@@ -108,7 +109,14 @@ export default function SettingsPage() {
                     type="text" 
                     value={localName}
                     onChange={(e) => setLocalName(e.target.value)}
-                    className="w-full rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                    placeholder="Enter your display name..."
+                    className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/50 focus:ring-2 focus:ring-[#EC5800]/50"
+                    style={{
+                      background: "rgba(45, 40, 45, 0.4)",
+                      boxShadow: "2px 2px 1px #EC5800",
+                      backdropFilter: "blur(5px)",
+                      WebkitBackdropFilter: "blur(5px)",
+                    }}
                   />
                 </div>
                 
@@ -132,7 +140,14 @@ export default function SettingsPage() {
                     type="email" 
                     value={localEmail} 
                     onChange={(e) => setLocalEmail(e.target.value)}
-                    className="w-full rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                    placeholder="Enter your email address..."
+                    className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/50 focus:ring-2 focus:ring-[#EC5800]/50"
+                    style={{
+                      background: "rgba(45, 40, 45, 0.4)",
+                      boxShadow: "2px 2px 1px #EC5800",
+                      backdropFilter: "blur(5px)",
+                      WebkitBackdropFilter: "blur(5px)",
+                    }}
                   />
                 </div>
 
@@ -147,8 +162,14 @@ export default function SettingsPage() {
                         setIsCityDropdownOpen(true);
                       }}
                       onFocus={() => setIsCityDropdownOpen(true)}
-                      placeholder="Type your city..."
-                      className="w-full rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                      placeholder="Enter your primary city..."
+                      className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/50 focus:ring-2 focus:ring-[#EC5800]/50"
+                      style={{
+                        background: "rgba(45, 40, 45, 0.4)",
+                        boxShadow: "2px 2px 1px #EC5800",
+                        backdropFilter: "blur(5px)",
+                        WebkitBackdropFilter: "blur(5px)",
+                      }}
                     />
                     <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#FFDEBA]/30">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -159,7 +180,7 @@ export default function SettingsPage() {
                     {isCityDropdownOpen && filteredCities.length > 0 && (
                       <motion.div 
                         initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                        className="absolute top-[80px] left-0 w-full bg-[rgba(45,40,45,0.95)] backdrop-blur-xl border border-[#FFDEBA]/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[200px] overflow-y-auto custom-scrollbar"
+                        className="absolute top-[65px] left-0 w-full bg-[rgba(45,40,45,0.95)] backdrop-blur-xl border border-[#FFDEBA]/10 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden z-50 max-h-[200px] overflow-y-auto custom-scrollbar"
                       >
                         {filteredCities.map((city) => (
                           <div 
@@ -182,10 +203,10 @@ export default function SettingsPage() {
                   <button 
                     type="submit" 
                     disabled={isSaving || isSaved}
-                    className={`relative overflow-hidden flex items-center justify-center rounded-xl w-[160px] h-[48px] text-[14px] font-bold text-white transition-all duration-300 ${
+                    className={`relative overflow-hidden flex items-center justify-center rounded-[16px] w-[160px] h-[48px] text-[14px] font-bold text-white transition-all duration-300 ${
                       isSaved 
                         ? 'bg-green-500 shadow-[0_0_20px_rgba(34,197,94,0.4)] border-green-400' 
-                        : 'bg-[#EC5800] shadow-[0_8px_20px_rgba(236,88,0,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(236,88,0,0.4)] active:scale-95'
+                        : 'bg-[#EC5800] shadow-[2px_2px_1px_rgba(30,26,30,0.8)] hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95'
                     }`}
                   >
                     <AnimatePresence mode="wait">
@@ -302,6 +323,7 @@ export default function SettingsPage() {
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: isDarkMode ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
+
                 <div onClick={() => setEmailAlerts(!emailAlerts)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors mt-2">
                   <div className="flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">
@@ -316,6 +338,7 @@ export default function SettingsPage() {
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: emailAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
+
                 <div onClick={() => setPushAlerts(!pushAlerts)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">
@@ -330,9 +353,11 @@ export default function SettingsPage() {
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: pushAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
+
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>

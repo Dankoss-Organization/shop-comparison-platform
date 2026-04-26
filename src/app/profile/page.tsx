@@ -1,25 +1,118 @@
 /**
  * @file page.tsx
- * @brief Dashboard Overview page featuring Catalog-style deep glassmorphism.
+ * @brief Dashboard Overview with pixel-perfect Avatar UI and Catalog glassmorphism.
  */
 
 "use client";
 
-import Image from "next/image";
 import { motion, animate } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUserStore } from "@/Store/user_store";
 
 export default function OverviewPage() {
-  const { displayName, email } = useUserStore();
+  const [isMounted, setIsMounted] = useState(false);
+  
+  const { displayName, email, avatarUrl, setAvatarUrl } = useUserStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 400;
+        
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const highQualityBase64 = canvas.toDataURL('image/jpeg', 0.95);
+          setAvatarUrl(highQualityBase64);
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAvatarUrl("/user.svg");
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  if (!isMounted) return null;
+
   return (
     <div className="relative flex flex-col gap-10 w-full pb-10">
       
       <div className="flex flex-col gap-6 z-10">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8 relative">
-          <div className="relative p-[3px] rounded-full bg-gradient-to-br from-[#EC5800] via-[#EC5800]/30 to-transparent shadow-[0_0_30px_rgba(236,88,0,0.25)] shrink-0">
-            <div className="relative flex h-[104px] w-[104px] items-center justify-center rounded-full bg-[rgba(30,26,30,0.8)] overflow-hidden">
-               <Image src="/user.svg" alt="Sofiia M." width={50} height={50} className="opacity-90" />
+          
+          <div className="relative group shrink-0 w-[110px] h-[110px]">
+            <div 
+              className="absolute inset-0 p-[3px] rounded-full bg-gradient-to-br from-[#EC5800] via-[#EC5800]/30 to-transparent shadow-[0_0_30px_rgba(236,88,0,0.25)] cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <div className="relative flex h-full w-full items-center justify-center rounded-full bg-[rgba(30,26,30,0.8)] overflow-hidden">
+                 
+                 <img 
+                   src={avatarUrl} 
+                   alt={displayName} 
+                   className={`transition-opacity duration-300 group-hover:opacity-30 ${
+                     avatarUrl === "/user.svg" 
+                       ? "w-[50px] h-[50px] object-contain opacity-80" 
+                       : "h-full w-full object-cover opacity-90"
+                   }`} 
+                 />
+                 
+                 <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                 </div>
+              </div>
+              <input type="file" accept="image/*" hidden ref={fileInputRef} onChange={handleImageUpload} />
+            </div>
+
+            {avatarUrl !== "/user.svg" && (
+              <button
+                onClick={handleRemovePhoto}
+                title="Remove photo"
+                className="absolute -top-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-transform hover:scale-110 active:scale-95 z-20 border-2 border-[rgba(30,26,30,0.8)]"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+            )}
+
+            <div className="absolute bottom-0 right-0 pointer-events-none flex h-8 w-8 items-center justify-center rounded-full bg-[#EC5800] text-white shadow-lg transition-transform group-hover:scale-110 z-10 border-2 border-[rgba(30,26,30,0.8)]">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
             </div>
           </div>
           
@@ -28,28 +121,25 @@ export default function OverviewPage() {
               <h2 className="text-[36px] font-bold tracking-[1px] text-[#FFDEBA] leading-none font-serif drop-shadow-md">
                 {displayName}
               </h2>
-    
               <span className="flex items-center gap-1.5 rounded-full bg-[rgba(236,88,0,0.15)] border border-[#EC5800]/30 px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[1px] text-[#EC5800] backdrop-blur-md shadow-[0_0_15px_rgba(236,88,0,0.2)]">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 15l-2 5l9-5l-9-5l2 5Z"/><circle cx="12" cy="12" r="10"/></svg>
                 Savvy Shopper
               </span>
             </div>
-              <p className="text-[16px] font-medium text-[#FFDEBA]/50 tracking-wide cursor-default select-none">
-                {email}
-              </p>
+            <p className="text-[16px] font-medium text-[#FFDEBA]/50 tracking-wide cursor-default select-none">{email}</p>
           </div>
         </div>
 
         <div className="flex flex-col gap-2 max-w-md mt-2">
           <div className="flex justify-between items-end">
             <span className="text-[12px] font-bold uppercase tracking-[1px] text-[#FFDEBA]/60">Profile Setup</span>
-            <span className="text-[13px] font-bold text-[#EC5800]">80%</span>
+            <span className="text-[13px] font-bold text-[#EC5800]">100%</span>
           </div>
           <div className="h-2 w-full rounded-full bg-[rgba(50,45,50,0.4)] overflow-hidden shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)] border border-[#FFDEBA]/5">
-            <motion.div initial={{ width: 0 }} animate={{ width: "80%" }} transition={{ duration: 1.5, ease: "easeOut" }} className="h-full bg-gradient-to-r from-[#EC5800] to-[#ff7e33] rounded-full shadow-[0_0_10px_rgba(236,88,0,0.5)]" />
+            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5, ease: "easeOut" }} className="h-full bg-gradient-to-r from-[#EC5800] to-[#ff7e33] rounded-full shadow-[0_0_10px_rgba(236,88,0,0.5)]" />
           </div>
           <span className="text-[11px] text-[#FFDEBA]/40 cursor-default select-none">
-            Add a primary city to get localized grocery deals.
+            Your profile is fully optimized!
           </span>
         </div>
       </div>
@@ -59,7 +149,6 @@ export default function OverviewPage() {
           Your Impact
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          
           <div className="group flex flex-col justify-between rounded-[32px] bg-[linear-gradient(135deg,rgba(55,50,55,0.15),rgba(30,26,30,0.15))] backdrop-blur-[20px] shadow-[inset_0_1px_0_rgba(255,222,186,0.05),_0_15px_35px_rgba(0,0,0,0.3)] p-7 transition-all duration-500 hover:shadow-[inset_0_1px_0_rgba(255,222,186,0.15),_0_20px_45px_rgba(0,0,0,0.5)] hover:-translate-y-1">
             <span className="text-[13px] font-bold text-[#FFDEBA]/50 uppercase tracking-[1.5px] cursor-default select-none">Total Savings</span>
             <div className="mt-4 flex flex-col cursor-default select-none">
@@ -100,12 +189,10 @@ export default function OverviewPage() {
                <span className="text-[120px] font-black italic">С</span>
             </div>
           </div>
-
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 z-10">
-        
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-end pl-1 pr-2">
             <h3 className="text-[20px] font-bold tracking-[1px] text-[#FFDEBA]/90 font-serif cursor-default select-none drop-shadow-md">Recent Baskets</h3>
@@ -128,7 +215,6 @@ export default function OverviewPage() {
                   <span className="text-[20px] font-black text-[#EC5800] drop-shadow-sm">$42.50</span>
                 </div>
               </div>
-              
               <div className="flex flex-col gap-3">
                 <span className="text-[12px] font-bold uppercase tracking-[1px] text-[#FFDEBA]/40">Optimized across:</span>
                 <div className="flex items-center gap-3">
@@ -197,7 +283,6 @@ export default function OverviewPage() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

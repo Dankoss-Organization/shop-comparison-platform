@@ -22,7 +22,7 @@ interface ProfileDropdownProps {
 
 export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false, onLogout, onLogin }: ProfileDropdownProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const { displayName, email } = useUserStore();
+  const { displayName, email, avatarUrl } = useUserStore();
   const themeToggleBtn = (
     <button 
       onClick={(e) => {
@@ -69,8 +69,16 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
     <>
       <div className="flex items-center gap-4 p-5 bg-[linear-gradient(135deg,rgba(55,50,55,0.15),rgba(30,26,30,0.15))] relative">
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#FFDEBA]/10" />
-        <div className="relative flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-[rgba(30,26,30,0.4)] shadow-[inset_0_1px_0_rgba(255,222,186,0.1)]">
-           <Image src="/user.svg" alt="Avatar" width={22} height={22} className="opacity-90" />
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(30,26,30,0.8)] overflow-hidden border border-[#FFDEBA]/10 shadow-sm">
+          <img 
+            src={avatarUrl} 
+            alt="Profile" 
+            className={
+              avatarUrl === "/user.svg" 
+                ? "h-[60%] w-[60%] object-contain opacity-80" 
+                : "h-full w-full object-cover"
+            }
+          />
         </div>
         <div className="flex flex-col gap-0.5">
           <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">{displayName}</span>
