@@ -1,6 +1,6 @@
 /**
  * @file page.tsx
- * @brief Security settings page with password validation and session management.
+ * @brief Security settings page with password validation and field clearing.
  */
 
 "use client";
@@ -14,13 +14,15 @@ export default function SecurityPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [twoFactor, setTwoFactor] = useState(false);
 
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => setIsMounted(true), []);
 
+  const isLengthValid = newPassword.length >= 8 || newPassword.length === 0;
   const passwordsMatch = newPassword === confirmPassword;
-  const canSubmit = newPassword.length >= 6 && passwordsMatch && !isSaving;
+  const canSubmit = currentPassword.length > 0 && newPassword.length >= 8 && passwordsMatch && !isSaving;
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +32,11 @@ export default function SecurityPage() {
     setTimeout(() => {
       setIsSaving(false);
       setIsSaved(true);
+      
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      
       setTimeout(() => setIsSaved(false), 3000);
     }, 1000);
   };
@@ -53,17 +58,29 @@ export default function SecurityPage() {
           <div className="relative rounded-[36px] p-[1px] bg-gradient-to-br from-[#EC5800] via-[#FFDEBA]/10 to-transparent shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
             <div className="flex flex-col rounded-[36px] bg-[linear-gradient(135deg,rgba(50,45,50,0.5),rgba(30,26,30,0.4))] backdrop-blur-[20px] p-8 h-full">
               <form onSubmit={handlePasswordChange} className="flex flex-col gap-5">
-                <SecurityInput label="Current Password" type="password" placeholder="••••••••" />
+                
+                <SecurityInput 
+                  label="Current Password" 
+                  type="password" 
+                  placeholder="Enter current password" 
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
                 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2">New Password</label>
+                  <div className="flex justify-between items-center pr-2">
+                    <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2">New Password</label>
+                    {!isLengthValid && (
+                      <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider animate-pulse">Too short (Min 8)</span>
+                    )}
+                  </div>
                   <input 
                     type="password" 
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Min. 6 characters"
-                    className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/30 focus:ring-2 focus:ring-[#EC5800]/50"
-                    style={{ background: "rgba(45, 40, 45, 0.4)", boxShadow: "2px 2px 1px #EC5800", backdropFilter: "blur(5px)" }}
+                    placeholder="Min. 8 characters"
+                    className={`w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/30 focus:ring-2 ${!isLengthValid ? 'focus:ring-red-500/50' : 'focus:ring-[#EC5800]/50'}`}
+                    style={{ background: "rgba(45, 40, 45, 0.4)", boxShadow: `2px 2px 1px ${!isLengthValid ? '#EF4444' : '#EC5800'}`, backdropFilter: "blur(5px)" }}
                   />
                 </div>
 
@@ -89,7 +106,7 @@ export default function SecurityPage() {
                     disabled={!canSubmit || isSaved}
                     className={`relative flex items-center justify-center rounded-[16px] w-[180px] h-[48px] text-[14px] font-bold text-white transition-all duration-300 ${
                       isSaved ? 'bg-green-500 shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 
-                      canSubmit ? 'bg-[#EC5800] shadow-[2px_2px_1px_rgba(30,26,30,0.8)] hover:-translate-y-1 hover:shadow-xl' : 
+                      canSubmit ? 'bg-[#EC5800] shadow-[2px_2px_1px_rgba(30,26,30,0.8)] hover:-translate-y-[2px] hover:shadow-xl' : 
                       'bg-[#3F363F] text-[#FFDEBA]/20 cursor-not-allowed opacity-50'
                     }`}
                   >
@@ -141,11 +158,18 @@ export default function SecurityPage() {
   );
 }
 
-function SecurityInput({ label, type, placeholder }: { label: string; type: string; placeholder: string }) {
+function SecurityInput({ label, type, placeholder, value, onChange }: { label: string; type: string; placeholder: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2">{label}</label>
-      <input type={type} placeholder={placeholder} className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/30 focus:ring-2 focus:ring-[#EC5800]/50" style={{ background: "rgba(45, 40, 45, 0.4)", boxShadow: "2px 2px 1px #EC5800", backdropFilter: "blur(5px)" }} />
+      <input 
+        type={type} 
+        placeholder={placeholder} 
+        value={value}
+        onChange={onChange}
+        className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/30 focus:ring-2 focus:ring-[#EC5800]/50" 
+        style={{ background: "rgba(45, 40, 45, 0.4)", boxShadow: "2px 2px 1px #EC5800", backdropFilter: "blur(5px)" }} 
+      />
     </div>
   );
 }
