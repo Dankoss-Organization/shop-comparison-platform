@@ -8,8 +8,10 @@
 import Image from "next/image";
 import { motion, animate } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useUserStore } from "@/Store/user_store";
 
 export default function OverviewPage() {
+  const { displayName, email } = useUserStore();
   return (
     <div className="relative flex flex-col gap-10 w-full pb-10">
       
@@ -24,14 +26,17 @@ export default function OverviewPage() {
           <div className="flex flex-col gap-2.5 w-full">
             <div className="flex flex-wrap items-center gap-4">
               <h2 className="text-[36px] font-bold tracking-[1px] text-[#FFDEBA] leading-none font-serif drop-shadow-md">
-                Sofiia M.
+                {displayName}
               </h2>
+    
               <span className="flex items-center gap-1.5 rounded-full bg-[rgba(236,88,0,0.15)] border border-[#EC5800]/30 px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[1px] text-[#EC5800] backdrop-blur-md shadow-[0_0_15px_rgba(236,88,0,0.2)]">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 15l-2 5l9-5l-9-5l2 5Z"/><circle cx="12" cy="12" r="10"/></svg>
                 Savvy Shopper
               </span>
             </div>
-            <p className="text-[16px] font-medium text-[#FFDEBA]/50 tracking-wide cursor-default select-none">sofia@knu.ua</p>
+              <p className="text-[16px] font-medium text-[#FFDEBA]/50 tracking-wide cursor-default select-none">
+                {email}
+              </p>
           </div>
         </div>
 

@@ -1,22 +1,59 @@
 /**
  * @file page.tsx
- * @brief Personal Info and Settings page, featuring functional forms, distinct card hierarchy, and interactive states.
+ * @brief Personal Info and Settings page with functional autocomplete and Zustand global state integration.
  */
 
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useUserStore } from "@/Store/user_store";
+
+const UKRAINIAN_CITIES = [
+  "Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia", 
+  "Vinnytsia", "Poltava", "Chernihiv", "Chernivtsi", "Ivano-Frankivsk", 
+  "Ternopil", "Lutsk", "Rivne", "Zhytomyr", "Sumy", "Cherkasy", 
+  "Kropyvnytskyi", "Mykolaiv", "Kherson", "Uzhhorod", "Khmelnytskyi"
+];
 
 export default function SettingsPage() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  const { displayName: globalName, email: globalEmail, primaryCity: globalCity, setDisplayName, setEmail, setPrimaryCity } = useUserStore();
+
+  const [localName, setLocalName] = useState(globalName);
+  const [localEmail, setLocalEmail] = useState(globalEmail);
+  const [localCity, setLocalCity] = useState(globalCity);
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [pushAlerts, setPushAlerts] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
-  const [displayName, setDisplayName] = useState("Sofiia M.");
-  const [city, setCity] = useState("kyiv");
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const cityRef = useRef<HTMLDivElement>(null);
+  
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    setLocalName(globalName);
+    setLocalEmail(globalEmail);
+    setLocalCity(globalCity);
+  }, [globalName, globalEmail, globalCity]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cityRef.current && !cityRef.current.contains(event.target as Node)) {
+        setIsCityDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredCities = UKRAINIAN_CITIES.filter(city => 
+    city.toLowerCase().includes(localCity.toLowerCase())
+  );
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +62,18 @@ export default function SettingsPage() {
     setTimeout(() => {
       setIsSaving(false);
       setIsSaved(true);
+      
+      setDisplayName(localName);
+      setEmail(localEmail);
+      setPrimaryCity(localCity); 
+
       setTimeout(() => setIsSaved(false), 3000);
-    }, 800);
+    }, 1000);
   };
+
+  const isEmailVerified = localEmail === globalEmail;
+
+  if (!isMounted) return null; 
 
   return (
     <div className="relative flex flex-col gap-10 w-full pb-10 z-10">
@@ -60,8 +106,8 @@ export default function SettingsPage() {
                   <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2 cursor-default select-none">Display Name</label>
                   <input 
                     type="text" 
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
+                    value={localName}
+                    onChange={(e) => setLocalName(e.target.value)}
                     className="w-full rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                   />
                 </div>
@@ -69,44 +115,74 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-end pl-2">
                     <label className="text-[13px] font-medium text-[#FFDEBA]/60 cursor-default select-none">Email Address</label>
-                    <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[1px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20 cursor-default select-none">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3 h-3"><path d="M20 6 9 17l-5-5"/></svg>
-                      Verified
-                    </span>
+                    <AnimatePresence mode="wait">
+                      {isEmailVerified ? (
+                        <motion.span key="verified" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[1px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3 h-3"><path d="M20 6 9 17l-5-5"/></svg>
+                          Verified
+                        </motion.span>
+                      ) : (
+                        <motion.span key="unverified" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[1px] text-[#FFDEBA]/50 bg-[#FFDEBA]/5 px-2 py-0.5 rounded-md border border-[#FFDEBA]/10">
+                          Pending Verification
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <input 
                     type="email" 
-                    value="sofia@knu.ua" 
-                    disabled
-                    className="w-full rounded-2xl bg-[rgba(30,26,30,0.3)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA]/50 outline-none cursor-not-allowed shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]"
+                    value={localEmail} 
+                    onChange={(e) => setLocalEmail(e.target.value)}
+                    className="w-full rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                   />
-                  <span className="pl-2 text-[11px] text-[#FFDEBA]/30 cursor-default select-none">Contact support to change your email address.</span>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2 cursor-default select-none">Primary City (For Local Pricing)</label>
+                <div className="flex flex-col gap-2 relative" ref={cityRef}>
+                  <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2 cursor-default select-none">Primary City</label>
                   <div className="relative">
-                    <select 
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      className="w-full appearance-none rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] cursor-pointer"
-                    >
-                      <option value="kyiv">Kyiv</option>
-                      <option value="lviv">Lviv</option>
-                      <option value="odesa">Odesa</option>
-                      <option value="kharkiv">Kharkiv</option>
-                    </select>
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#FFDEBA]/50">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="m6 9 6 6 6-6"/></svg>
+                    <input 
+                      type="text"
+                      value={localCity}
+                      onChange={(e) => {
+                        setLocalCity(e.target.value);
+                        setIsCityDropdownOpen(true);
+                      }}
+                      onFocus={() => setIsCityDropdownOpen(true)}
+                      placeholder="Type your city..."
+                      className="w-full rounded-2xl bg-[rgba(30,26,30,0.6)] border border-transparent px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all focus:border-[#EC5800]/50 focus:bg-[rgba(30,26,30,0.8)] focus:shadow-[0_0_15px_rgba(236,88,0,0.15)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                    />
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#FFDEBA]/30">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     </div>
                   </div>
+
+                  <AnimatePresence>
+                    {isCityDropdownOpen && filteredCities.length > 0 && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
+                        className="absolute top-[80px] left-0 w-full bg-[rgba(45,40,45,0.95)] backdrop-blur-xl border border-[#FFDEBA]/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[200px] overflow-y-auto custom-scrollbar"
+                      >
+                        {filteredCities.map((city) => (
+                          <div 
+                            key={city}
+                            onClick={() => {
+                              setLocalCity(city);
+                              setIsCityDropdownOpen(false);
+                            }}
+                            className="px-5 py-3 text-[14px] text-[#FFDEBA]/80 hover:bg-[#EC5800]/20 hover:text-[#EC5800] cursor-pointer transition-colors"
+                          >
+                            {city}
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div className="mt-4 flex justify-end pt-5 border-t border-[#FFDEBA]/5">
                   <button 
                     type="submit" 
                     disabled={isSaving || isSaved}
-                    className={`relative overflow-hidden flex items-center justify-center rounded-xl px-8 py-3.5 text-[14px] font-bold text-white transition-all duration-300 ${
+                    className={`relative overflow-hidden flex items-center justify-center rounded-xl w-[160px] h-[48px] text-[14px] font-bold text-white transition-all duration-300 ${
                       isSaved 
                         ? 'bg-green-500 shadow-[0_0_20px_rgba(34,197,94,0.4)] border-green-400' 
                         : 'bg-[#EC5800] shadow-[0_8px_20px_rgba(236,88,0,0.3)] hover:-translate-y-1 hover:shadow-[0_12px_25px_rgba(236,88,0,0.4)] active:scale-95'
@@ -114,18 +190,18 @@ export default function SettingsPage() {
                   >
                     <AnimatePresence mode="wait">
                       {isSaving ? (
-                        <motion.div key="saving" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-1">
+                        <motion.div key="saving" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-1.5 absolute">
                           <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
                           <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
                           <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                         </motion.div>
                       ) : isSaved ? (
-                        <motion.div key="saved" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-2">
+                        <motion.div key="saved" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-2 absolute">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M20 6 9 17l-5-5"/></svg>
                           Saved
                         </motion.div>
                       ) : (
-                        <motion.span key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                        <motion.span key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute">
                           Save Changes
                         </motion.span>
                       )}
@@ -226,7 +302,6 @@ export default function SettingsPage() {
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: isDarkMode ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
-
                 <div onClick={() => setEmailAlerts(!emailAlerts)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors mt-2">
                   <div className="flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">
@@ -241,11 +316,23 @@ export default function SettingsPage() {
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: emailAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
-
+                <div onClick={() => setPushAlerts(!pushAlerts)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">
+                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </div>
+                    <div className="flex flex-col select-none">
+                      <span className="text-[15px] font-medium text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">Push Notifications</span>
+                      <span className="text-[12px] text-[#FFDEBA]/50">Real-time browser alerts</span>
+                    </div>
+                  </div>
+                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${pushAlerts ? 'bg-[#EC5800]' : 'bg-[#3F363F]'}`}>
+                     <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: pushAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          
         </div>
       </div>
     </div>

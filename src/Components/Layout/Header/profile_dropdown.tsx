@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useUserStore } from "@/Store/user_store";
 
 interface ProfileDropdownProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ interface ProfileDropdownProps {
 
 export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false, onLogout, onLogin }: ProfileDropdownProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
-
+  const { displayName, email } = useUserStore();
   const themeToggleBtn = (
     <button 
       onClick={(e) => {
@@ -72,8 +73,8 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
            <Image src="/user.svg" alt="Avatar" width={22} height={22} className="opacity-90" />
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">Blabla C.</span>
-          <span className="text-[12px] font-medium tracking-[-0.2px] text-[#FFDEBA]/50 leading-tight">blabla@knu.ua</span>
+          <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">{displayName}</span>
+<span className="text-[12px] font-medium tracking-[-0.2px] text-[#FFDEBA]/50 leading-tight">{email}</span>
         </div>
       </div>
 
