@@ -3,11 +3,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useUserStore, Basket } from "@/Store/user_store";
+import { useCartStore } from "@/Store/use_cart_store"; 
 
 export default function HistoryPage() {
   const [isMounted, setIsMounted] = useState(false);
-  const { baskets, reorderBasket } = useUserStore();
-  
+  const { baskets } = useUserStore(); 
+  const { items: cartItems, addItem, setOpen } = useCartStore(); 
+
   const [error, setError] = useState<string | null>(null);
   const [selectedBasket, setSelectedBasket] = useState<Basket | null>(null);
 
@@ -17,12 +19,35 @@ export default function HistoryPage() {
 
   const handleReorder = (e: React.MouseEvent, id: number) => {
     e.stopPropagation(); 
-    const result = reorderBasket(id);
-    if (!result.success) {
-      setError(result.message || "Error");
+    
+    if (cartItems.length > 0) {
+      setError("Your current basket is not empty. Please clear it before reordering.");
       setTimeout(() => setError(null), 4000);
+      return;
+    }
+
+    const historicalBasket = baskets.find(b => b.id === id);
+    
+    if (historicalBasket && historicalBasket.items.length > 0) {
+      historicalBasket.items.forEach(item => {
+        addItem({
+          title: item.name,
+          price: `$${item.price.toFixed(2)}`, 
+          image: item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=900&auto=format&fit=crop", // Використовуємо збережену картинку
+          market: "DANKOSS",
+          oldPrice: `$${item.price.toFixed(2)}`,
+          discount: "0%",
+          rating: "5.0",
+          description: "Reordered from history.",
+          quantity: "1 pc",
+          nutrition: { calories: "0 kcal", carbs: "0 g", fats: "0 g", protein: "0 g", fiber: "0 g", sugar: "0 g" }
+        });
+      });
+      
+      setOpen(true);
     } else {
-      alert("Success! Items added to your active basket.");
+      setError("This basket is empty or not found.");
+      setTimeout(() => setError(null), 4000);
     }
   };
 

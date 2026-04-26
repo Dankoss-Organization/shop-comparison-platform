@@ -11,26 +11,20 @@
 import { useState } from "react";
 import { cn } from "@/Lib/utils";
 import { useCartStore } from "@/Store/use_cart_store";
-
-/**
- * @description Represents the potential processing states of the checkout action.
- */
+import { useUserStore } from "@/Store/user_store"; 
 export type CheckoutStatus = "IDLE" | "LOADING" | "SUCCESS";
 
-/**
- * @description CheckoutButton Component.
- * Acts as the context for the State pattern, changing its UI based on `CheckoutStatus`.
- * Manages the pseudo-asynchronous delay and handles clearing the cart upon success.
- * * **Internal Behavior (`handleCheckout`):**
- * Handles the state transitions for the checkout process.
- * Simulates an async network request: `IDLE` -> `LOADING` -> `SUCCESS` -> `IDLE`.
- * Resolves when the fake checkout delay is complete.
- * @returns {JSX.Element} The stateful checkout action button.
- */
+const COLORS = ["#EC5800", "#4ADE80", "#3B82F6", "#A855F7", "#D946EF", "#EAB308"];
+
 export function CheckoutButton() {
   const [status, setStatus] = useState<CheckoutStatus>("IDLE");
+  
   const clearCart = useCartStore(state => state.clearCart);
   const setOpen = useCartStore(state => state.setOpen);
+  const items = useCartStore(state => state.items);
+  const getTotalPrice = useCartStore(state => state.getTotalPrice);
+
+  const addBasket = useUserStore(state => state.addBasket);
 
   const handleCheckout = async () => {
     if (status !== "IDLE") return;
@@ -38,12 +32,39 @@ export function CheckoutButton() {
     setStatus("LOADING");
     await new Promise(resolve => setTimeout(resolve, 2000));
     
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const orderNumber = Math.floor(1000 + Math.random() * 9000);
+
+    const historicalItems = items.map((item, index) => {
+  const numericPrice = parseFloat(item.price.replace('$', '')) || 0;
+  
+  return {
+    id: index, 
+    name: item.title,
+    price: numericPrice,
+    image: item.image, 
+    emoji: "🛍️",       
+  };
+});
+
+    addBasket({
+      id: Date.now(),
+      name: `Order #${orderNumber}`,
+      date: formattedDate,
+      price: getTotalPrice(),
+      items: historicalItems,
+      stores: ["DANKOSS Checkout"],
+      color: COLORS[Math.floor(Math.random() * COLORS.length)]
+    });
+
+
     setStatus("SUCCESS");
     
     setTimeout(() => {
-      clearCart();
-      setOpen(false);
-      setStatus("IDLE");
+      clearCart(); 
+      setOpen(false); 
+      setStatus("IDLE"); 
     }, 2500);
   };
 
