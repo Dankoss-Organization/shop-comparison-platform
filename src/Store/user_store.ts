@@ -24,6 +24,20 @@ export interface Basket {
   color: string;
 }
 
+export interface UserPreferences {
+  allergies: string[]; 
+  healthGoals: string[];
+  diet: string | null;
+  lifestyle: string[];
+}
+
+export interface SavedLocation {
+  id: string;
+  title: string;
+  address: string;
+  isDefault: boolean;
+}
+
 interface UserState {
   displayName: string;
   email: string;
@@ -31,6 +45,9 @@ interface UserState {
   avatarUrl: string;
   baskets: Basket[];
   isAuthenticated: boolean;
+  preferences: UserPreferences;
+  locations: SavedLocation[];
+  isSmartLocationActive: boolean;
   
   setDisplayName: (name: string) => void;
   setEmail: (email: string) => void;
@@ -40,6 +57,15 @@ interface UserState {
   addBasket: (basket: Basket) => void; 
   login: () => void;
   logout: () => void;
+
+  toggleAllergy: (allergy: string) => void;
+  toggleHealthGoal: (goal: string) => void;
+  setDiet: (diet: string | null) => void;
+  toggleLifestyle: (item: string) => void;
+
+  toggleSmartLocation: () => void;
+  setDefaultLocation: (id: string) => void;
+  deleteLocation: (id: string) => void;
 }
 
 const COLORS = ["#EC5800", "#4ADE80", "#3B82F6", "#A855F7", "#D946EF", "#EAB308"];
@@ -84,6 +110,19 @@ export const useUserStore = create<UserState>()(
       baskets: INITIAL_BASKETS,
       isAuthenticated: true,
 
+      preferences: {
+        allergies: [],
+        healthGoals: [],
+        diet: null,
+        lifestyle: [],
+      },
+
+      locations: [
+        { id: "1", title: "Гуртожиток", address: "Київ, вул. Ломоносова", isDefault: true },
+        { id: "2", title: "Університет", address: "Київ, пр-т Глушкова (KNU)", isDefault: false },
+      ],
+      isSmartLocationActive: false,
+
       setDisplayName: (name) => set({ displayName: name }),
       setEmail: (email) => set({ email: email }),
       setPrimaryCity: (city) => set({ primaryCity: city }),
@@ -94,7 +133,54 @@ export const useUserStore = create<UserState>()(
       })),
       
       login: () => set({ isAuthenticated: true }),
-      logout: () => set({ isAuthenticated: false })
+      logout: () => set({ isAuthenticated: false }),
+
+      toggleAllergy: (allergy) => set((state) => {
+        const exists = state.preferences.allergies.includes(allergy);
+        return {
+          preferences: {
+            ...state.preferences,
+            allergies: exists 
+              ? state.preferences.allergies.filter((a) => a !== allergy)
+              : [...state.preferences.allergies, allergy]
+          }
+        };
+      }),
+
+      toggleHealthGoal: (goal) => set((state) => {
+        const exists = state.preferences.healthGoals.includes(goal);
+        return {
+          preferences: {
+            ...state.preferences,
+            healthGoals: exists 
+              ? state.preferences.healthGoals.filter((g) => g !== goal)
+              : [...state.preferences.healthGoals, goal]
+          }
+        };
+      }),
+
+      setDiet: (diet) => set((state) => ({
+        preferences: { ...state.preferences, diet }
+      })),
+
+      toggleLifestyle: (item) => set((state) => {
+        const exists = state.preferences.lifestyle.includes(item);
+        return {
+          preferences: {
+            ...state.preferences,
+            lifestyle: exists 
+              ? state.preferences.lifestyle.filter((l) => l !== item)
+              : [...state.preferences.lifestyle, item]
+          }
+        };
+      }),
+      toggleSmartLocation: () => set((state) => ({ isSmartLocationActive: !state.isSmartLocationActive })),
+      setDefaultLocation: (id) => set((state) => ({
+        locations: state.locations.map(loc => ({ ...loc, isDefault: loc.id === id }))
+      })),
+      deleteLocation: (id) => set((state) => ({
+        locations: state.locations.filter(loc => loc.id !== id)
+      })),
     }),
     {
       name: 'dankoss-user-storage',
