@@ -5,10 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Header from "@/Components/Layout/header"; 
 import Footer from "@/Components/Layout/footer";
+import { useUserStore } from "@/Store/user_store";
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useUserStore();
 
   const navItems = [
     { name: "Overview", path: "/profile", icon: (
@@ -29,6 +31,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   ];
 
   const handleLogout = () => {
+    logout();
     router.push("/");
   };
 

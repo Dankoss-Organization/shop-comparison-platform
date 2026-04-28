@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 /**
  * @file user_store.ts
- * @description Global state management for user profile and order history.
+ * @description Global state management for user profile, authentication state, and order history.
  */
 
 export interface Product {
@@ -30,6 +30,7 @@ interface UserState {
   primaryCity: string;
   avatarUrl: string;
   baskets: Basket[];
+  isAuthenticated: boolean;
   
   setDisplayName: (name: string) => void;
   setEmail: (email: string) => void;
@@ -37,6 +38,8 @@ interface UserState {
   setAvatarUrl: (url: string) => void;
   
   addBasket: (basket: Basket) => void; 
+  login: () => void;
+  logout: () => void;
 }
 
 const COLORS = ["#EC5800", "#4ADE80", "#3B82F6", "#A855F7", "#D946EF", "#EAB308"];
@@ -79,6 +82,7 @@ export const useUserStore = create<UserState>()(
       primaryCity: "Kyiv",
       avatarUrl: "/user.svg",
       baskets: INITIAL_BASKETS,
+      isAuthenticated: true,
 
       setDisplayName: (name) => set({ displayName: name }),
       setEmail: (email) => set({ email: email }),
@@ -88,6 +92,9 @@ export const useUserStore = create<UserState>()(
       addBasket: (basket) => set((state) => ({ 
         baskets: [basket, ...state.baskets] 
       })),
+      
+      login: () => set({ isAuthenticated: true }),
+      logout: () => set({ isAuthenticated: false })
     }),
     {
       name: 'dankoss-user-storage',
