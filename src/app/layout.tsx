@@ -4,6 +4,7 @@
  */
 import type { Metadata } from "next";
 import "@/app/globals.css";
+import { CartDrawer } from "@/Components/Cart/cart_drawer";
 
 /**
  * @description Core SEO and descriptive metadata configuration exported for Next.js indexers.
@@ -27,7 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <CartDrawer />
+        {children}</body>
     </html>
   );
 }

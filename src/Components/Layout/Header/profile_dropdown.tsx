@@ -1,15 +1,10 @@
-/**
- * @file profile_dropdown.tsx
- * @brief Dropdown menu for user profile actions, handling both authenticated and guest states.
- * @pattern Flush Header Dropdown, Framer Motion Micro-interactions, Hover Text-Swap
- */
-
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useUserStore } from "@/Store/user_store";
+import { useRouter } from "next/navigation";
 
 interface ProfileDropdownProps {
   isOpen: boolean;
@@ -21,6 +16,8 @@ interface ProfileDropdownProps {
 
 export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false, onLogout, onLogin }: ProfileDropdownProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const router = useRouter();
+  const { displayName, email, avatarUrl, logout } = useUserStore();
 
   const themeToggleBtn = (
     <button 
@@ -68,12 +65,20 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
     <>
       <div className="flex items-center gap-4 p-5 bg-[linear-gradient(135deg,rgba(55,50,55,0.15),rgba(30,26,30,0.15))] relative">
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#FFDEBA]/10" />
-        <div className="relative flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-[rgba(30,26,30,0.4)] shadow-[inset_0_1px_0_rgba(255,222,186,0.1)]">
-           <Image src="/user.svg" alt="Avatar" width={22} height={22} className="opacity-90" />
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[rgba(30,26,30,0.8)] overflow-hidden border border-[#FFDEBA]/10 shadow-sm">
+          <img 
+            src={avatarUrl} 
+            alt="Profile" 
+            className={
+              avatarUrl === "/user.svg" 
+                ? "h-[60%] w-[60%] object-contain opacity-80" 
+                : "h-full w-full object-cover"
+            }
+          />
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">Blabla C.</span>
-          <span className="text-[12px] font-medium tracking-[-0.2px] text-[#FFDEBA]/50 leading-tight">blabla@knu.ua</span>
+          <span className="text-[16px] font-bold tracking-[0.5px] text-[#FFDEBA] leading-tight">{displayName}</span>
+          <span className="text-[12px] font-medium tracking-[-0.2px] text-[#FFDEBA]/50 leading-tight">{email}</span>
         </div>
       </div>
 
@@ -86,11 +91,11 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
           <span className="text-[14px] font-medium text-[#FFDEBA]/80 group-hover:text-[#EC5800] transition-colors">My Account</span>
         </Link>
 
-        <Link href="/profile/baskets" onClick={onClose} className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-[#EC5800]/15 hover:shadow-sm">
+        <Link href="/profile/history" onClick={onClose} className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-[#EC5800]/15 hover:shadow-sm">
           <div className="flex h-5 w-5 items-center justify-center text-[#FFDEBA]/60 group-hover:text-[#EC5800] transition-colors">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
-          <span className="text-[14px] font-medium text-[#FFDEBA]/80 group-hover:text-[#EC5800] transition-colors">Saved Baskets</span>
+          <span className="text-[14px] font-medium text-[#FFDEBA]/80 group-hover:text-[#EC5800] transition-colors">Basket History</span>
         </Link>
 
         <Link href="/profile/alerts" onClick={onClose} className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-[#EC5800]/15 hover:shadow-sm">
@@ -109,7 +114,11 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
           onClick={(e) => {
             e.preventDefault();
             onClose();
-            setTimeout(() => { if (onLogout) onLogout(); }, 300);
+            setTimeout(() => { 
+              logout(); 
+              if (onLogout) onLogout();
+              router.push("/");
+            }, 300);
           }} 
           className="group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-300 hover:bg-red-500/10 hover:shadow-sm"
         >
@@ -156,10 +165,10 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
           <div className="flex flex-col items-start w-full">
-            <span className="text-[14px] font-medium text-[#FFDEBA]/60 group-hover:text-[#EC5800] transition-colors duration-300 leading-tight">Saved Baskets</span>
+            <span className="text-[14px] font-medium text-[#FFDEBA]/60 group-hover:text-[#EC5800] transition-colors duration-300 leading-tight">Basket History</span>
             <div className="relative w-full h-[15px] mt-0.5 overflow-hidden">
               <span className="absolute inset-0 text-[11px] text-[#FFDEBA]/40 transition-all duration-300 group-hover:-translate-y-full group-hover:opacity-0 leading-tight">
-                Save your smart carts forever
+                See your smart carts history
               </span>
               <span className="absolute inset-0 text-[11px] font-bold text-[#EC5800] translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 flex items-center gap-1 leading-tight">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>

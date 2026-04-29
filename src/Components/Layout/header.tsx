@@ -19,6 +19,7 @@ import { CatalogProvider, useCatalog } from "@/Context/catalog_context";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
 import ProfileDropdown from "@/Components/Layout/Header/profile_dropdown";
+import { useUserStore } from "@/Store/user_store";
 
 /**
  * @brief Wrapper component that provides the catalog context to the header.
@@ -46,8 +47,8 @@ export function HeaderContent() {
   const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
   const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
   const [isMounted, setIsMounted] = useState(false);
-  const [isAuth, setIsAuth] = useState(true);
-  
+  const { email, setEmail, setDisplayName, setAvatarUrl, isAuthenticated, login } = useUserStore();
+
   useEffect(() => setIsMounted(true), []);
 
   useEffect(() => {
@@ -313,14 +314,15 @@ export function HeaderContent() {
               </div>
 
               <div id="profile-dropdown">
-                <ProfileDropdown 
-                  isOpen={isProfileOpen} 
-                  onClose={() => setIsProfileOpen(false)} 
-                  isAuthenticated={isAuth}
-                  onLogout={() => setIsAuth(false)}
-                  onLogin={() => setIsAuth(true)}
-                />
-              </div>
+              <ProfileDropdown 
+                isOpen={isProfileOpen} 
+                onClose={() => setIsProfileOpen(false)} 
+                isAuthenticated={isAuthenticated}
+                onLogin={() => {
+                  login();
+                }}
+              />
+            </div>
             </div>
 
           </div>
