@@ -4,18 +4,13 @@
  * @pattern Facade: Hides the complex orchestration of Next.js routers, Zustand stores, and data filtering logic behind a simple, unified interface (`state` and `actions`).
  * @pattern URL-State Sync: Initializes and updates component state based on URL search parameters, ensuring shareable links and proper browser history navigation.
  */
-
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCartStore } from "@/Store/use_cart_store";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { strategies } from "./use_catalog_strategy";
+import type { CatalogCategory } from "./use_catalog_strategy";
 import type { DealCard } from "@/Data/home_data";
-
-interface CartState {
-  setOpen: (open: boolean) => void;
-}
 
 export type CatalogSortKey =
   | "featured"
@@ -24,403 +19,284 @@ export type CatalogSortKey =
   | "discount-desc"
   | "rating-desc";
 
-type CatalogItem = DealCard & { _cat: string; _uniqueId: string; market: string };
+export type CatalogItem = DealCard & {
+  _cat?: string;
+  _uniqueId?: string;
+  market?: string;
+  discount?: number | string;
+};
+
 type PriceBounds = { min: number; max: number };
 
-type ActiveFilterChip =
+export type ActiveFilterChip =
   | { key: "search"; label: string }
   | { key: "price"; label: string }
   | { key: "rating"; label: string }
   | { key: "discount"; label: string }
-  | { key: "market"; value: string; label: string };
+  | { key: "market"; label: string; value: string };
 
-const sortOptions: { value: CatalogSortKey; label: string }[] = [
+const ITEMS_PER_PAGE = 12;
+
+const parsePrice = (priceStr: string | number): number => {
+  if (typeof priceStr === "number") return priceStr;
+  const match = priceStr.match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : 0;
+};
+
+const parseDiscount = (discount: string | number | undefined): number => {
+  if (discount === undefined || discount === null) return 0;
+  if (typeof discount === "number") return discount;
+  const match = String(discount).match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : 0;
+};
+
+export const sortOptions = [
   { value: "featured", label: "Featured" },
-  { value: "price-asc", label: "Price: low to high" },
-  { value: "price-desc", label: "Price: high to low" },
-  { value: "discount-desc", label: "Biggest discount" },
-  { value: "rating-desc", label: "Top rated" },
-];
-
-const PRICE_FILTER_EPSILON = 0.005;
-
-const isSortKey = (value: string | null): value is CatalogSortKey =>
-  sortOptions.some((option) => option.value === value);
-
-const parseMoney = (price: string) => Number.parseFloat(price.replace(/[^\d.]/g, ""));
-const parseDiscount = (discount: string) => Math.abs(Number.parseFloat(discount.replace(/[^\d.-]/g, "")));
-const parseRating = (rating: string) => Number.parseFloat(rating);
-
-function uniqueCatalogItems(items: CatalogItem[]) {
-  const uniqueMap = new Map<string, CatalogItem>();
-
-  for (const item of items) {
-    const uniqueKey = `${item._cat}::${item.title}::${item.market}`;
-    if (!uniqueMap.has(uniqueKey)) {
-      uniqueMap.set(uniqueKey, item);
-    }
-  }
-
-  return [...uniqueMap.values()];
-}
-
-function getPriceBounds(items: CatalogItem[]): PriceBounds {
-  if (items.length === 0) return { min: 0, max: 0 };
-  let min = Number.POSITIVE_INFINITY;
-  let max = Number.NEGATIVE_INFINITY;
-  for (const item of items) {
-    const price = parseMoney(item.price);
-    if (price < min) min = price;
-    if (price > max) max = price;
-  }
-  return {
-    min: min === Number.POSITIVE_INFINITY ? 0 : min,
-    max: max === Number.NEGATIVE_INFINITY ? 0 : max,
-  };
-}
-
-function compareCatalogItems(
-  left: CatalogItem,
-  right: CatalogItem,
-  sortBy: CatalogSortKey,
-  categoryOrder: Map<string, number>,
-) {
-  switch (sortBy) {
-    case "price-asc":
-      return parseMoney(left.price) - parseMoney(right.price) || left.title.localeCompare(right.title);
-    case "price-desc":
-      return parseMoney(right.price) - parseMoney(left.price) || left.title.localeCompare(right.title);
-    case "discount-desc":
-      return parseDiscount(right.discount) - parseDiscount(left.discount) || left.title.localeCompare(right.title);
-    case "rating-desc":
-      return parseRating(right.rating) - parseRating(left.rating) || left.title.localeCompare(right.title);
-    default:
-      return (
-        (categoryOrder.get(left._cat) ?? Number.MAX_SAFE_INTEGER) -
-          (categoryOrder.get(right._cat) ?? Number.MAX_SAFE_INTEGER) ||
-        left.title.localeCompare(right.title)
-      );
-  }
-}
-
-function sortCatalogItems(items: CatalogItem[], sortBy: CatalogSortKey, categoriesOrder: string[]) {
-  if (sortBy === "featured") {
-    return items;
-  }
-
-  const categoryOrder = new Map(categoriesOrder.map((id, index) => [id, index]));
-  const groupedByTitle = new Map<string, CatalogItem[]>();
-
-  for (const item of items) {
-    const existingGroup = groupedByTitle.get(item.title);
-    if (existingGroup) {
-      existingGroup.push(item);
-    } else {
-      groupedByTitle.set(item.title, [item]);
-    }
-  }
-
-  const orderedGroups = [...groupedByTitle.values()].sort((leftGroup, rightGroup) =>
-    compareCatalogItems(leftGroup[0], rightGroup[0], sortBy, categoryOrder),
-  );
-
-  const interleaved: CatalogItem[] = [];
-  let hasItemsLeft = true;
-
-  while (hasItemsLeft) {
-    hasItemsLeft = false;
-
-    for (const group of orderedGroups) {
-      const nextItem = group.shift();
-      if (nextItem) {
-        interleaved.push(nextItem);
-        hasItemsLeft = true;
-      }
-    }
-  }
-
-  return interleaved;
-}
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "discount-desc", label: "Biggest Discount" },
+  { value: "rating-desc", label: "Top Rated" },
+] as const;
 
 /**
- * The primary hook driving the Catalog/Browsing experience.
+ * @description The primary hook driving the Catalog/Browsing experience.
  * Manages tabs (Products vs. Recipes), category filtering, pagination, and URL routing.
  * @returns {Object} An object divided into `state` (readonly data/UI properties) and `actions` (event handlers).
  */
 export function useCatalogFacade() {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const setOpen = useCartStore((state: CartState) => state.setOpen);
 
-  const config = useMemo(() => ({
-    itemsPerLoad: 8,
-    maxRowsPerPage: 3,
-    get itemsPerPage() { return this.itemsPerLoad * this.maxRowsPerPage; }
-  }), []);
+  const defaultTab = searchParams.get("tab") || "products";
+  const defaultCategory = searchParams.get("category") || "all";
 
-  const urlTab = searchParams.get("tab") === "recipes" ? "recipes" : "products";
-  const urlCategory = searchParams.get("category") || "all";
-  const urlPage = parseInt(searchParams.get("page") || "1", 10);
-  const urlSort = searchParams.get("sort");
-
-  const [activeTab, setActiveTab] = useState<"products" | "recipes">(urlTab);
-  const [activeCategory, setActiveCategory] = useState<string>(urlCategory);
-  const [currentPage, setCurrentPage] = useState(urlPage > 0 ? urlPage : 1);
-  const [sortBy, setSortBy] = useState<CatalogSortKey>(isSortKey(urlSort) ? urlSort : "featured");
-  const [visibleCount, setVisibleCount] = useState(config.itemsPerLoad);
-
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [activeCategory, setActiveCategory] = useState(defaultCategory);
   const [searchTerm, setSearchTerm] = useState("");
-  const [maxPrice, setMaxPrice] = useState(0);
   const [minRating, setMinRating] = useState(0);
   const [minDiscount, setMinDiscount] = useState(0);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<CatalogSortKey>("featured");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+
+  const strategy = useMemo(
+    () => strategies[activeTab as keyof typeof strategies] || strategies.products,
+    [activeTab],
+  );
+
+  const rawData = useMemo(
+    () => strategy.getData() as unknown as CatalogItem[],
+    [strategy],
+  );
+
+  const categoryData = useMemo(() => {
+    if (activeCategory === "all") return rawData;
+    return rawData.filter((item) => item._cat === activeCategory);
+  }, [rawData, activeCategory]);
+
+  const priceBounds = useMemo<PriceBounds>(() => {
+    if (!categoryData.length) return { min: 0, max: 1000 };
+    const prices = categoryData.map((item) => parsePrice(item.price));
+    return {
+      min: Math.floor(Math.min(...prices)),
+      max: Math.ceil(Math.max(...prices)),
+    };
+  }, [categoryData]);
+
+  const resetFilters = useCallback(() => {
+    setSearchTerm("");
+    setMinRating(0);
+    setMinDiscount(0);
+    setMaxPrice(null);
+    setSelectedMarkets([]);
+    setCurrentPage(1);
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, []);
 
   useEffect(() => {
-    setOpen(false);
-  }, [pathname, setOpen]);
-
-  useEffect(() => {
-    const currentQuery = `?tab=${activeTab}&category=${activeCategory}&page=${currentPage}&sort=${sortBy}`;
-    sessionStorage.setItem("lastCatalogUrl", `${pathname}${currentQuery}`);
-  }, [pathname, activeTab, activeCategory, currentPage, sortBy]);
-
-  const allProducts = useMemo(() => uniqueCatalogItems(strategies.products.getData() as CatalogItem[]), []);
-  const allRecipes = useMemo(() => uniqueCatalogItems(strategies.recipes.getData() as CatalogItem[]), []);
-
-  const currentCats = activeTab === "products" ? strategies.products.categories : strategies.recipes.categories;
-  const currentCatLabel = currentCats.find((c) => c.id === activeCategory)?.label || "Items";
-
-  const activeData = useMemo(() => {
-    let data = activeTab === "products" ? allProducts : allRecipes;
-    if (activeCategory !== "all") {
-      data = data.filter((item) => item._cat === activeCategory);
+    if (maxPrice === null && priceBounds.max > 0) {
+      setMaxPrice(priceBounds.max);
     }
-    return data;
-  }, [activeTab, activeCategory, allProducts, allRecipes]);
+  }, [priceBounds.max, maxPrice]);
 
-  const priceBounds = useMemo(() => getPriceBounds(activeData), [activeData]);
+  useEffect(() => {
+    const tab = searchParams.get("tab") || "products";
+    const cat = searchParams.get("category") || "all";
+    if (tab !== activeTab || cat !== activeCategory) {
+      setActiveTab(tab);
+      setActiveCategory(cat);
+      resetFilters();
+    }
+  }, [searchParams, activeTab, activeCategory, resetFilters]);
+
+  const filteredAndSortedData = useMemo(() => {
+    const filtered = categoryData.filter((item) => {
+      const itemPrice = parsePrice(item.price);
+      const itemRating = Number(item.rating || 0);
+      const itemDiscount = parseDiscount(item.discount);
+      const itemMarket = item.market || "Unknown";
+
+      const matchesSearch =
+        !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesPrice = maxPrice === null || itemPrice <= maxPrice;
+      const matchesRating = itemRating >= minRating;
+      const matchesDiscount = itemDiscount >= minDiscount;
+      const matchesMarket =
+        selectedMarkets.length === 0 || selectedMarkets.includes(itemMarket);
+
+      return matchesSearch && matchesPrice && matchesRating && matchesDiscount && matchesMarket;
+    });
+
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case "price-asc":
+          return parsePrice(a.price) - parsePrice(b.price);
+        case "price-desc":
+          return parsePrice(b.price) - parsePrice(a.price);
+        case "rating-desc":
+          return Number(b.rating || 0) - Number(a.rating || 0);
+        case "discount-desc":
+          return parseDiscount(b.discount) - parseDiscount(a.discount);
+        default:
+          return 0;
+      }
+    });
+  }, [categoryData, searchTerm, maxPrice, minRating, minDiscount, selectedMarkets, sortBy]);
+
+  const effectiveMaxPrice = maxPrice ?? priceBounds.max;
+
+  const activeFilterChips = useMemo(() => {
+    const chips: ActiveFilterChip[] = [];
+    if (searchTerm) chips.push({ key: "search", label: `"${searchTerm}"` });
+    if (maxPrice !== null && maxPrice < priceBounds.max)
+      chips.push({ key: "price", label: `Up to $${maxPrice.toFixed(2)}` });
+    if (minRating > 0) chips.push({ key: "rating", label: `${minRating}+ Stars` });
+    if (minDiscount > 0) chips.push({ key: "discount", label: `${minDiscount}%+ Off` });
+    selectedMarkets.forEach((m) => chips.push({ key: "market", label: m, value: m }));
+    return chips;
+  }, [searchTerm, maxPrice, priceBounds.max, minRating, minDiscount, selectedMarkets]);
+
+  const activeFilterCount = activeFilterChips.length;
+  const totalPages = Math.ceil(filteredAndSortedData.length / ITEMS_PER_PAGE);
+  const visibleItems = filteredAndSortedData.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredAndSortedData.length;
 
   const availableMarkets = useMemo(() => {
     const markets = new Set<string>();
-    for (const item of activeData) {
-      if (item.market) {
-        markets.add(item.market);
-      }
-    }
-    return Array.from(markets).sort();
-  }, [activeData]);
+    rawData.forEach((item) => { if (item.market) markets.add(item.market); });
+    return Array.from(markets);
+  }, [rawData]);
 
-  const filteredData = useMemo(() => {
-    return activeData.filter((item) => {
-      const matchesSearch = searchTerm ? item.title.toLowerCase().includes(searchTerm.toLowerCase()) : true;
-      const matchesMarket = selectedMarkets.length > 0 ? selectedMarkets.includes(item.market) : true;
-      const matchesRating = minRating > 0 ? parseRating(item.rating) >= minRating : true;
-      const matchesPrice = maxPrice <= 0 || parseMoney(item.price) <= maxPrice;
-      const matchesDiscount = parseDiscount(item.discount) >= minDiscount;
-
-      return matchesSearch && matchesMarket && matchesRating && matchesPrice && matchesDiscount;
-    });
-  }, [activeData, searchTerm, selectedMarkets, minRating, maxPrice, minDiscount]);
-
-  const sortedActiveData = useMemo(
-    () => sortCatalogItems(filteredData, sortBy, currentCats.map((cat) => cat.id)),
-    [filteredData, sortBy, currentCats],
+  const currentCats: CatalogCategory[] = useMemo(
+    () => strategy.categories ?? [{ id: "all", label: "All", slug: "" }],
+    [strategy],
   );
 
-  const isPriceFilterActive =
-    priceBounds.max > 0 &&
-    maxPrice > 0 &&
-    maxPrice < priceBounds.max - PRICE_FILTER_EPSILON;
+  const currentCatLabel = useMemo(
+    () => currentCats.find((c) => c.id === activeCategory)?.label ?? "All",
+    [currentCats, activeCategory],
+  );
 
-  const activeFilterCount =
-    (searchTerm.trim() ? 1 : 0) +
-    (selectedMarkets.length > 0 ? 1 : 0) +
-    (minRating > 0 ? 1 : 0) +
-    (isPriceFilterActive ? 1 : 0) +
-    (minDiscount > 0 ? 1 : 0);
+  const handleTabChange = (tabId: string) => router.push(`?tab=${tabId}&category=all`);
+  const handleCategoryChange = (categoryId: string) => router.push(`?tab=${activeTab}&category=${categoryId}`);
+  const handleBackToBrowsing = () => router.push("/");
 
-  const activeFilterChips = useMemo<ActiveFilterChip[]>(() => {
-    const chips: ActiveFilterChip[] = [];
-
-    if (searchTerm.trim()) {
-      chips.push({ key: "search", label: `Search: ${searchTerm}` });
-    }
-
-    if (isPriceFilterActive) {
-      chips.push({ key: "price", label: `Up to $${maxPrice.toFixed(2)}` });
-    }
-
-    if (minRating > 0) {
-      chips.push({ key: "rating", label: `Rating ${minRating}+` });
-    }
-
-    if (minDiscount > 0) {
-      chips.push({ key: "discount", label: `Discount ${minDiscount}%+` });
-    }
-
-    for (const market of selectedMarkets) {
-      chips.push({ key: "market", value: market, label: market });
-    }
-
-    return chips;
-  }, [searchTerm, maxPrice, isPriceFilterActive, minRating, minDiscount, selectedMarkets]);
-
-  const totalPages = Math.max(1, Math.ceil(sortedActiveData.length / config.itemsPerPage));
-  const startIndex = (currentPage - 1) * config.itemsPerPage;
-  const itemsOnThisPage = sortedActiveData.slice(startIndex, startIndex + config.itemsPerPage);
-  const visibleItems = itemsOnThisPage.slice(0, visibleCount);
-
-  const hasMore = visibleCount < itemsOnThisPage.length;
-
-  const updateUrl = (tab: string, cat: string, page: number, nextSort: CatalogSortKey) => {
-    router.push(`${pathname}?tab=${tab}&category=${cat}&page=${page}&sort=${nextSort}`, { scroll: false });
-  };
-
-  const handleTabChange = (newTab: "products" | "recipes") => {
-    setActiveTab(newTab);
-    setActiveCategory("all");
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
     setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
-    updateUrl(newTab, "all", 1, sortBy);
-  };
-
-  const handleCategoryChange = (catId: string) => {
-    setActiveCategory(catId);
-    setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
-    updateUrl(activeTab, catId, 1, sortBy);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    setVisibleCount(config.itemsPerLoad);
-    updateUrl(activeTab, activeCategory, newPage, sortBy);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleSortChange = (nextSort: CatalogSortKey) => {
-    setSortBy(nextSort);
-    setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
-    updateUrl(activeTab, activeCategory, 1, nextSort);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   const handleMaxPriceChange = (value: number) => {
     setMaxPrice(value);
     setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   const handleMinRatingChange = (value: number) => {
     setMinRating(value);
     setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
-  };
-
-  const handleMarketToggle = (market: string) => {
-    setSelectedMarkets((prev) =>
-      prev.includes(market)
-        ? prev.filter((m) => m !== market)
-        : [...prev, market]
-    );
-    setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   const handleMinDiscountChange = (value: number) => {
     setMinDiscount(value);
     setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
-  const handleResetFilters = () => {
-    setSearchTerm("");
-    setMaxPrice(priceBounds.max);
-    setMinRating(0);
-    setMinDiscount(0);
-    setSelectedMarkets([]);
+  const handleMarketToggle = (market: string) => {
+    setSelectedMarkets((prev) =>
+      prev.includes(market) ? prev.filter((m) => m !== market) : [...prev, market],
+    );
     setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
+
+  const handleSortChange = (value: string) => {
+    setSortBy(value as CatalogSortKey);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => setCurrentPage(page);
+  const handleLoadMore = () => setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  const handleResetFilters = () => resetFilters();
 
   const handleRemoveFilterChip = (chip: ActiveFilterChip) => {
     switch (chip.key) {
-      case "search":
-        setSearchTerm("");
-        break;
-      case "price":
-        setMaxPrice(priceBounds.max);
-        break;
-      case "rating":
-        setMinRating(0);
-        break;
-      case "discount":
-        setMinDiscount(0);
-        break;
+      case "search": setSearchTerm(""); break;
+      case "price": setMaxPrice(priceBounds.max); break;
+      case "rating": setMinRating(0); break;
+      case "discount": setMinDiscount(0); break;
       case "market":
-        setSelectedMarkets((current) => current.filter((market) => market !== chip.value));
+        setSelectedMarkets((prev) => prev.filter((m) => m !== chip.value));
         break;
     }
-
     setCurrentPage(1);
-    setVisibleCount(config.itemsPerLoad);
-  };
-
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + config.itemsPerLoad, itemsOnThisPage.length));
-  };
-
-  const handleBackToBrowsing = () => {
-    router.push(`/#${activeTab}`);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   return {
     state: {
-      activeTab,
+      activeTab: activeTab as "products" | "recipes",
       activeCategory,
       currentPage,
       sortBy,
+      sortOptions: [...sortOptions],
       visibleCount,
       totalPages,
       visibleItems,
-      itemsOnThisPage,
-      currentCats,
-      currentCatLabel,
-      totalItemsCount: sortedActiveData.length,
+      totalItemsCount: filteredAndSortedData.length,
       hasMore,
-      sortOptions,
       searchTerm,
       minRating,
       selectedMarkets,
-      maxPrice,
+      maxPrice: effectiveMaxPrice,
       minDiscount,
       priceBounds,
-      activeFilterCount,
       activeFilterChips,
-      isPriceFilterActive,
+      activeFilterCount,
       availableMarkets,
+      currentCats,
+      currentCatLabel,
     },
     actions: {
       handleTabChange,
       handleCategoryChange,
+      handleSearchChange,
+      handleMaxPriceChange,
+      handleMinRatingChange,
+      handleMinDiscountChange,
+      handleMarketToggle,
+      handleSortChange,
       handlePageChange,
       handleLoadMore,
-      handleBackToBrowsing,
-      handleSortChange,
-      handleSearchChange,
-      handleMinRatingChange,
-      handleMarketToggle,
-      handleMaxPriceChange,
-      handleMinDiscountChange,
       handleResetFilters,
       handleRemoveFilterChip,
-    }
+      handleBackToBrowsing,
+      setCurrentPage,
+    },
   };
 }
