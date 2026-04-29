@@ -19,14 +19,34 @@ import { cn } from "@/Lib/utils";
  * @description Renders the sliding drawer for the shopping cart.
  * Manages its own internal mounted state to prevent hydration mismatches during SSR,
  * and handles the display of cart items, empty state visuals, and the product detail modal.
- * * @returns {JSX.Element | null} The rendered cart drawer overlay and sidebar, or null if not mounted.
+ * @returns {JSX.Element | null} The rendered cart drawer overlay and sidebar, or null if not mounted.
  */
 export function CartDrawer() {
   const { items, isOpen, setOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [isMounted, setIsMounted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DealCardType | null>(null);
+  
+  const [isOptimizing, setIsOptimizing] = useState(false);
 
   useEffect(() => setIsMounted(true), []);
+
+  const handleOptimize = () => {
+    setIsOptimizing(true);
+
+    const worker = new Worker(new URL("../../Lib/Workers/optimizer.worker.ts", import.meta.url));
+
+    worker.onmessage = (event) => {
+      console.log("[UI Thread]: workers answer:", event.data);
+      alert(event.data.message);
+      
+      setIsOptimizing(false);
+      worker.terminate(); 
+    };
+    worker.postMessage({ 
+      type: "START_OPTIMIZATION", 
+      payload: { cartItems: items } 
+    });
+  };
 
   if (!isMounted) return null;
 
@@ -125,11 +145,44 @@ export function CartDrawer() {
                   ${getTotalPrice().toFixed(2)}
                 </span>
               </div>
+
+              <button
+                onClick={handleOptimize}
+                disabled={isOptimizing}
+                className={`group relative mb-3 flex h-[48px] w-full items-center justify-center overflow-hidden rounded-[24px] text-[13px] font-black tracking-[0.2em] transition-all duration-300 ${
+                  isOptimizing
+                    ? "bg-[rgba(45,40,45,0.6)] text-[#FFDEBA]/50 cursor-not-allowed border border-[#FFDEBA]/10"
+                    : "bg-[rgba(45,40,45,0.4)] border border-[#EC5800]/50 text-white shadow-[2px_2px_1px_#EC5800] hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95"
+                }`}
+                style={{ backdropFilter: "blur(25px)", WebkitBackdropFilter: "blur(25px)" }}
+              >
+                {isOptimizing ? (
+                  <div className="flex items-center gap-3">
+                    <svg className="animate-spin h-5 w-5 text-[#EC5800]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>OPTIMIZING...</span>
+                  </div>
+                ) : (
+                  <>
+                    <span className="relative z-10 flex items-center gap-2">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      SMART OPTIMIZE
+                    </span>
+                    <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover:left-[150%]">
+                      <div className="h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[rgba(255,222,186,0.25)] to-transparent" />
+                    </div>
+                  </>
+                )}
+              </button>
+
               <CheckoutButton />
             </div>
           )}
         </div>
       </aside>
+      
       {selectedItem && (
         <ProductModal item={selectedItem} onClose={() => setSelectedItem(null)}>
           <ProductModal.Window>
