@@ -15,12 +15,11 @@ import {
 } from "@/Data/home_data";
 
 /**
- * Represents a selectable category/filter tab within a specific catalog strategy.
- * @property {string} id - The internal identifier used for state matching (e.g., "week-discounts").
+ * @description Represents a selectable category/filter tab within a specific catalog strategy.
+ * @property {string} id - The internal identifier used for state matching.
  * @property {string} label - The human-readable name displayed in the UI.
  * @property {string} slug - The full URL path and query string used for routing.
  */
-
 export interface CatalogCategory {
   id: string;
   label: string;
@@ -28,13 +27,12 @@ export interface CatalogCategory {
 }
 
 /**
- * The common interface that all catalog data sources must implement.
+ * @description The common interface that all catalog data sources must implement.
  * Ensures the facade and UI components can interact with any data type interchangeably.
  * @property {"products" | "recipes"} id - Identifies the strategy domain.
  * @property {CatalogCategory[]} categories - The list of valid filter categories for this domain.
  * @property {Function} getData - A method that returns the fully formatted, flattened array of items.
  */
-
 export interface CatalogStrategy {
   id: "products" | "recipes";
   categories: CatalogCategory[];
@@ -59,10 +57,9 @@ const formatData = (baseArray: DealCard[], categoryId: string) => {
 };
 
 /**
- * Strategy implementation specifically for handling Grocery Products.
+ * @description Strategy implementation specifically for handling Grocery Products.
  * Aggregates weekly, daily, and expiring discounts.
  */
-
 export const ProductStrategy: CatalogStrategy = {
   id: "products",
   categories: [
@@ -79,10 +76,9 @@ export const ProductStrategy: CatalogStrategy = {
 };
 
 /**
- * Strategy implementation specifically for handling Culinary Recipes.
+ * @description Strategy implementation specifically for handling Culinary Recipes.
  * Aggregates seasonal picks and community-liked content.
  */
-
 export const RecipeStrategy: CatalogStrategy = {
   id: "recipes",
   categories: [
@@ -97,10 +93,9 @@ export const RecipeStrategy: CatalogStrategy = {
 };
 
 /**
- * A dictionary exporting all available strategies, allowing dynamic lookup 
- * based on the active tab (e.g., `strategies[activeTab].getData()`).
+ * @description A dictionary exporting all available strategies, allowing dynamic lookup 
+ * based on the active tab.
  */
-
 export const strategies = {
   products: ProductStrategy,
   recipes: RecipeStrategy
