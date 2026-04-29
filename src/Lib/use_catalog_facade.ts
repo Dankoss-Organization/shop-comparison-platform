@@ -12,6 +12,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/Store/use_cart_store";
 import { strategies } from "./use_catalog_strategy";
 import type { DealCard } from "@/Data/home_data";
+
 interface CartState {
   setOpen: (open: boolean) => void;
 }
@@ -23,7 +24,15 @@ export type CatalogSortKey =
   | "discount-desc"
   | "rating-desc";
 
-type CatalogItem = DealCard & { _cat: string; _uniqueId: string };
+type CatalogItem = DealCard & { _cat: string; _uniqueId: string; market: string };
+type PriceBounds = { min: number; max: number };
+
+type ActiveFilterChip =
+  | { key: "search"; label: string }
+  | { key: "price"; label: string }
+  | { key: "rating"; label: string }
+  | { key: "discount"; label: string }
+  | { key: "market"; value: string; label: string };
 
 const sortOptions: { value: CatalogSortKey; label: string }[] = [
   { value: "featured", label: "Featured" },
@@ -33,12 +42,42 @@ const sortOptions: { value: CatalogSortKey; label: string }[] = [
   { value: "rating-desc", label: "Top rated" },
 ];
 
+const PRICE_FILTER_EPSILON = 0.005;
+
 const isSortKey = (value: string | null): value is CatalogSortKey =>
   sortOptions.some((option) => option.value === value);
 
 const parseMoney = (price: string) => Number.parseFloat(price.replace(/[^\d.]/g, ""));
 const parseDiscount = (discount: string) => Math.abs(Number.parseFloat(discount.replace(/[^\d.-]/g, "")));
 const parseRating = (rating: string) => Number.parseFloat(rating);
+
+function uniqueCatalogItems(items: CatalogItem[]) {
+  const uniqueMap = new Map<string, CatalogItem>();
+
+  for (const item of items) {
+    const uniqueKey = `${item._cat}::${item.title}::${item.market}`;
+    if (!uniqueMap.has(uniqueKey)) {
+      uniqueMap.set(uniqueKey, item);
+    }
+  }
+
+  return [...uniqueMap.values()];
+}
+
+function getPriceBounds(items: CatalogItem[]): PriceBounds {
+  if (items.length === 0) return { min: 0, max: 0 };
+  let min = Number.POSITIVE_INFINITY;
+  let max = Number.NEGATIVE_INFINITY;
+  for (const item of items) {
+    const price = parseMoney(item.price);
+    if (price < min) min = price;
+    if (price > max) max = price;
+  }
+  return {
+    min: min === Number.POSITIVE_INFINITY ? 0 : min,
+    max: max === Number.NEGATIVE_INFINITY ? 0 : max,
+  };
+}
 
 function compareCatalogItems(
   left: CatalogItem,
@@ -106,9 +145,8 @@ function sortCatalogItems(items: CatalogItem[], sortBy: CatalogSortKey, categori
 /**
  * The primary hook driving the Catalog/Browsing experience.
  * Manages tabs (Products vs. Recipes), category filtering, pagination, and URL routing.
- * * @returns {Object} An object divided into `state` (readonly data/UI properties) and `actions` (event handlers).
+ * @returns {Object} An object divided into `state` (readonly data/UI properties) and `actions` (event handlers).
  */
-
 export function useCatalogFacade() {
   const router = useRouter();
   const pathname = usePathname();
@@ -132,6 +170,12 @@ export function useCatalogFacade() {
   const [sortBy, setSortBy] = useState<CatalogSortKey>(isSortKey(urlSort) ? urlSort : "featured");
   const [visibleCount, setVisibleCount] = useState(config.itemsPerLoad);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [minRating, setMinRating] = useState(0);
+  const [minDiscount, setMinDiscount] = useState(0);
+  const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
+
   useEffect(() => {
     setOpen(false);
   }, [pathname, setOpen]);
@@ -141,8 +185,8 @@ export function useCatalogFacade() {
     sessionStorage.setItem("lastCatalogUrl", `${pathname}${currentQuery}`);
   }, [pathname, activeTab, activeCategory, currentPage, sortBy]);
 
-  const allProducts = useMemo(() => strategies.products.getData(), []);
-  const allRecipes = useMemo(() => strategies.recipes.getData(), []);
+  const allProducts = useMemo(() => uniqueCatalogItems(strategies.products.getData() as CatalogItem[]), []);
+  const allRecipes = useMemo(() => uniqueCatalogItems(strategies.recipes.getData() as CatalogItem[]), []);
 
   const currentCats = activeTab === "products" ? strategies.products.categories : strategies.recipes.categories;
   const currentCatLabel = currentCats.find((c) => c.id === activeCategory)?.label || "Items";
@@ -155,10 +199,72 @@ export function useCatalogFacade() {
     return data;
   }, [activeTab, activeCategory, allProducts, allRecipes]);
 
+  const priceBounds = useMemo(() => getPriceBounds(activeData), [activeData]);
+
+  const availableMarkets = useMemo(() => {
+    const markets = new Set<string>();
+    for (const item of activeData) {
+      if (item.market) {
+        markets.add(item.market);
+      }
+    }
+    return Array.from(markets).sort();
+  }, [activeData]);
+
+  const filteredData = useMemo(() => {
+    return activeData.filter((item) => {
+      const matchesSearch = searchTerm ? item.title.toLowerCase().includes(searchTerm.toLowerCase()) : true;
+      const matchesMarket = selectedMarkets.length > 0 ? selectedMarkets.includes(item.market) : true;
+      const matchesRating = minRating > 0 ? parseRating(item.rating) >= minRating : true;
+      const matchesPrice = maxPrice <= 0 || parseMoney(item.price) <= maxPrice;
+      const matchesDiscount = parseDiscount(item.discount) >= minDiscount;
+
+      return matchesSearch && matchesMarket && matchesRating && matchesPrice && matchesDiscount;
+    });
+  }, [activeData, searchTerm, selectedMarkets, minRating, maxPrice, minDiscount]);
+
   const sortedActiveData = useMemo(
-    () => sortCatalogItems(activeData, sortBy, currentCats.map((cat) => cat.id)),
-    [activeData, sortBy, currentCats],
+    () => sortCatalogItems(filteredData, sortBy, currentCats.map((cat) => cat.id)),
+    [filteredData, sortBy, currentCats],
   );
+
+  const isPriceFilterActive =
+    priceBounds.max > 0 &&
+    maxPrice > 0 &&
+    maxPrice < priceBounds.max - PRICE_FILTER_EPSILON;
+
+  const activeFilterCount =
+    (searchTerm.trim() ? 1 : 0) +
+    (selectedMarkets.length > 0 ? 1 : 0) +
+    (minRating > 0 ? 1 : 0) +
+    (isPriceFilterActive ? 1 : 0) +
+    (minDiscount > 0 ? 1 : 0);
+
+  const activeFilterChips = useMemo<ActiveFilterChip[]>(() => {
+    const chips: ActiveFilterChip[] = [];
+
+    if (searchTerm.trim()) {
+      chips.push({ key: "search", label: `Search: ${searchTerm}` });
+    }
+
+    if (isPriceFilterActive) {
+      chips.push({ key: "price", label: `Up to $${maxPrice.toFixed(2)}` });
+    }
+
+    if (minRating > 0) {
+      chips.push({ key: "rating", label: `Rating ${minRating}+` });
+    }
+
+    if (minDiscount > 0) {
+      chips.push({ key: "discount", label: `Discount ${minDiscount}%+` });
+    }
+
+    for (const market of selectedMarkets) {
+      chips.push({ key: "market", value: market, label: market });
+    }
+
+    return chips;
+  }, [searchTerm, maxPrice, isPriceFilterActive, minRating, minDiscount, selectedMarkets]);
 
   const totalPages = Math.max(1, Math.ceil(sortedActiveData.length / config.itemsPerPage));
   const startIndex = (currentPage - 1) * config.itemsPerPage;
@@ -200,6 +306,73 @@ export function useCatalogFacade() {
     updateUrl(activeTab, activeCategory, 1, nextSort);
   };
 
+  const handleMaxPriceChange = (value: number) => {
+    setMaxPrice(value);
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
+  const handleMinRatingChange = (value: number) => {
+    setMinRating(value);
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
+  const handleMarketToggle = (market: string) => {
+    setSelectedMarkets((prev) =>
+      prev.includes(market)
+        ? prev.filter((m) => m !== market)
+        : [...prev, market]
+    );
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
+  const handleMinDiscountChange = (value: number) => {
+    setMinDiscount(value);
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setMaxPrice(priceBounds.max);
+    setMinRating(0);
+    setMinDiscount(0);
+    setSelectedMarkets([]);
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
+  const handleRemoveFilterChip = (chip: ActiveFilterChip) => {
+    switch (chip.key) {
+      case "search":
+        setSearchTerm("");
+        break;
+      case "price":
+        setMaxPrice(priceBounds.max);
+        break;
+      case "rating":
+        setMinRating(0);
+        break;
+      case "discount":
+        setMinDiscount(0);
+        break;
+      case "market":
+        setSelectedMarkets((current) => current.filter((market) => market !== chip.value));
+        break;
+    }
+
+    setCurrentPage(1);
+    setVisibleCount(config.itemsPerLoad);
+  };
+
   const handleLoadMore = () => {
     setVisibleCount((prev) => Math.min(prev + config.itemsPerLoad, itemsOnThisPage.length));
   };
@@ -223,6 +396,16 @@ export function useCatalogFacade() {
       totalItemsCount: sortedActiveData.length,
       hasMore,
       sortOptions,
+      searchTerm,
+      minRating,
+      selectedMarkets,
+      maxPrice,
+      minDiscount,
+      priceBounds,
+      activeFilterCount,
+      activeFilterChips,
+      isPriceFilterActive,
+      availableMarkets,
     },
     actions: {
       handleTabChange,
@@ -231,6 +414,13 @@ export function useCatalogFacade() {
       handleLoadMore,
       handleBackToBrowsing,
       handleSortChange,
+      handleSearchChange,
+      handleMinRatingChange,
+      handleMarketToggle,
+      handleMaxPriceChange,
+      handleMinDiscountChange,
+      handleResetFilters,
+      handleRemoveFilterChip,
     }
   };
 }
