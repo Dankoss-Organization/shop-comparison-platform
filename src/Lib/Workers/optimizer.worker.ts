@@ -1,78 +1,108 @@
-interface StoreOffer {
-  store_id: string;
-  store_name: string;
-  is_in_stock: boolean;
-  pricing: {
-    current_price: number;
-  };
-}
+/**
+ * @file optimizer.worker.ts
+ * @description Web Worker script responsible for calculating the lowest possible cost for a chunk of store combinations.
+ */
 
-interface ProductItem {
-  product_id: string;
-  canonical_name: string;
-  offers: StoreOffer[];
-}
+import type { OptimizerInput, Combination, CartProduct } from "@/Types/optimization";
 
-type Combination = Record<string, string>; 
+/**
+ * Flat delivery fee applied per unique store present in a combination.
+ */
+const DELIVERY_FEE_PER_STORE = 5; 
 
-interface OptimizerPayload {
-  cartItems: ProductItem[];
-  chunk: Combination[]; 
-}
-
-function calculateCombinationCost(cartItems: ProductItem[], combination: Combination): number {
-  let totalCost = 0;
+/**
+ * Calculates the total cost of a specific combination of items across various stores.
+ * * This cost includes the base price of the items at the selected stores, multiplied 
+ * by their required quantities, plus a flat delivery fee for every unique store involved.
+ *
+ * @param cartItems - The list of products in the user's cart, containing pricing and offer details.
+ * @param combination - A specific mapping of `product_id` to `store_id` to evaluate.
+ * @returns An object containing the combined `totalCost`, the raw `itemsCost`, and the `deliveryCost`. 
+ * If an offer is invalid or out of stock, it returns `Infinity` for all values.
+ */
+function calculateCombinationCost(cartItems: CartProduct[], combination: Combination) {
+  let itemsCost = 0;
 
   for (const item of cartItems) {
     const selectedStoreId = combination[item.product_id];
-    
-    const offer = item.offers.find(o => o.store_id === selectedStoreId && o.is_in_stock);
-    
+    const offer = (item.offers || []).find(o => o.store_id === selectedStoreId && o.is_in_stock);
+
     if (!offer) {
-      return Infinity; 
+      return { totalCost: Infinity, itemsCost: Infinity, deliveryCost: Infinity };
     }
 
-    totalCost += offer.pricing.current_price;
+    itemsCost += offer.pricing.current_price * (item.quantity || 1);
   }
-  const uniqueStores = new Set(Object.values(combination)).size;
-  totalCost += uniqueStores * 50;
 
-  return totalCost;
+  const uniqueStores = new Set(Object.values(combination)).size;
+  const deliveryCost = uniqueStores * DELIVERY_FEE_PER_STORE;
+
+  return {
+    totalCost: itemsCost + deliveryCost,
+    itemsCost,
+    deliveryCost
+  };
 }
 
+/**
+ * Main message event listener for the Web Worker.
+ * * Listens for the "START_OPTIMIZATION" event, processes the provided chunk of combinations 
+ * to find the absolute lowest cost, and posts the result back to the main thread.
+ *
+ * @param event - The message event containing the `OptimizerInput` payload.
+ */
 self.onmessage = (event: MessageEvent) => {
-  if (event.data.type !== "START_OPTIMIZATION") return;
+  try {
+    if (event.data.type !== "START_OPTIMIZATION") return;
 
-  const { cartItems, chunk } = event.data.payload as OptimizerPayload;
-  
-  if (!chunk || chunk.length === 0) {
-    self.postMessage({ status: "idle", message: "Очікую масив комбінацій для розрахунку." });
-    return;
-  }
+    const { cartItems, combinationsChunk } = event.data.payload as OptimizerInput;
 
-  console.log(`⚙️ [Worker]: Started processing chunk with ${chunk.length} combinations...`);
-  const startTime = performance.now();
-
-  let minCost = Infinity;
-  let bestCombination: Combination | null = null;
-
-  for (const currentCombo of chunk) {
-    const currentCost = calculateCombinationCost(cartItems, currentCombo);
-
-    if (currentCost < minCost) {
-      minCost = currentCost;
-      bestCombination = currentCombo;
+    if (!combinationsChunk || combinationsChunk.length === 0) {
+      self.postMessage({
+        status: "idle",
+        message: "Awaiting combinations chunk.",
+        totalCost: Infinity,
+        storeAllocation: null,
+        executionTimeMs: 0,
+      });
+      return;
     }
+
+    const startTime = performance.now();
+
+    let minCost = Infinity;
+    let bestItemsCost = 0;
+    let bestDeliveryCost = 0;
+    let bestCombination: Combination | null = null;
+
+    for (const currentCombo of combinationsChunk) {
+      const costs = calculateCombinationCost(cartItems, currentCombo);
+
+      if (costs.totalCost < minCost) {
+        minCost = costs.totalCost;
+        bestItemsCost = costs.itemsCost;
+        bestDeliveryCost = costs.deliveryCost;
+        bestCombination = currentCombo;
+      }
+    }
+
+    const endTime = performance.now();
+
+    self.postMessage({
+      status: "success",
+      totalCost: minCost,
+      itemsCost: bestItemsCost,
+      deliveryCost: bestDeliveryCost,
+      storeAllocation: bestCombination,
+      executionTimeMs: Number((endTime - startTime).toFixed(2)),
+    });
+  } catch (error) {
+    self.postMessage({
+      status: "error",
+      message: error instanceof Error ? error.message : "Unknown error",
+      totalCost: Infinity,
+      storeAllocation: null,
+      executionTimeMs: 0,
+    });
   }
-
-  const endTime = performance.now();
-
-  self.postMessage({
-    status: "success",
-    cheapestTotal: minCost,
-    storeSplit: bestCombination,
-    executionTimeMs: Number((endTime - startTime).toFixed(2))
-  });
 };
-
-export {};

@@ -1,10 +1,9 @@
 /**
  * @file ProductModal.tsx
  * @description A complex modal component implemented using the Compound Components pattern.
- * @pattern Builder: Provides a "Lego-like" API to construct the modal step-by-step (Header, Content, Actions).
- * @pattern Composite: Treats UI sub-components as independent parts of a tree structure, 
- * allowing them to be composed into a complex whole.
+ * @pattern Builder: Provides a "Lego-like" API to construct the modal step-by-step.
  */
+
 "use client";
 
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
@@ -27,11 +26,11 @@ function useProductModal() {
   if (!context) throw new Error("ProductModal components must be used within <ProductModal>");
   return context;
 }
-/**
- * Main ProductModal component.
- * Serves as the context provider (Subject in Observer pattern) for its sub-components.
- */
 
+/**
+ * 1. Main ProductModal Component (The Context Provider)
+ * Strictly manages context and side-effects.
+ */
 export function ProductModal({ item, onClose, children }: { item: DealCard; onClose: () => void; children: ReactNode }) {
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
@@ -46,16 +45,15 @@ export function ProductModal({ item, onClose, children }: { item: DealCard; onCl
 
   return (
     <ProductModalContext.Provider value={{ item, onClose }}>
-      <div 
-        className="fixed inset-0 z-[120] flex items-start justify-center bg-[#120f12]/85 p-4 pt-14 pb-12 backdrop-blur-md overflow-y-auto transition-opacity" 
-        onClick={onClose}
-      >
-        {children}
-      </div>
+      {children}
     </ProductModalContext.Provider>
   );
 }
 
+/**
+ * 2. The Window Wrapper Sub-component
+ * Now handles the visual backdrop and the modal container layout.
+ */
 ProductModal.Window = function Window({ children }: { children: ReactNode }) {
   const { item, onClose } = useProductModal();
   const router = useRouter();
@@ -66,18 +64,25 @@ ProductModal.Window = function Window({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div
-      className="relative mb-12 min-h-[500px] w-[90vw] max-w-[1240px] overflow-hidden rounded-[2.5rem] border border-[#ffffff10] bg-[#2D282D] text-[#FFDEBA] shadow-[0_36px_90px_#000000] lg:h-[86vh] animate-in zoom-in-95 fade-in duration-300"
-      onClick={(e) => e.stopPropagation()}
+    <div 
+      className="fixed inset-0 z-[120] flex items-start justify-center bg-[#120f12]/85 p-4 pt-14 pb-12 backdrop-blur-md overflow-y-auto transition-opacity" 
+      onClick={onClose}
+      aria-label="Close modal"
     >
-      <div className="absolute right-6 top-6 z-30 rounded-full border border-[#ffffff10] bg-[#8B87901F] px-3 py-2.5 shadow-[0_12px_24px_#00000026] backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <ActionIconButton label="Open in separate page" onClick={handleFullView} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} />
-          <ActionIconButton label="Close" onClick={onClose} icon={<span className="text-xl leading-none">×</span>} />
+      {/* Modal Container */}
+      <div
+        className="relative mb-12 min-h-[500px] w-[90vw] max-w-[1240px] overflow-hidden rounded-[2.5rem] border border-[#ffffff10] bg-[#2D282D] text-[#FFDEBA] shadow-[0_36px_90px_#000000] lg:h-[86vh] animate-in zoom-in-95 fade-in duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="absolute right-6 top-6 z-30 rounded-full border border-[#ffffff10] bg-[#8B87901F] px-3 py-2.5 shadow-[0_12px_24px_#00000026] backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <ActionIconButton label="Open in separate page" onClick={handleFullView} icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>} />
+            <ActionIconButton label="Close" onClick={onClose} icon={<span className="text-xl leading-none">×</span>} />
+          </div>
         </div>
-      </div>
-      <div className="grid h-full overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
-        {children}
+        <div className="grid h-full overflow-hidden lg:grid-cols-[0.92fr_1.08fr]">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -154,10 +159,7 @@ ProductModal.Reviews = function Reviews() {
     </>
   );
 };
-/**
- * Sub-component for rendering the modal header.
- * Part of the Builder interface for the ProductModal.
- */
+
 ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
   const { item } = useProductModal();
   return (
@@ -172,10 +174,7 @@ ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string
     </div>
   );
 };
-/**
- * Sub-component for modal action buttons (e.g., Add to Cart).
- * Encapsulates specific interactive logic within the Composite structure.
- */
+
 ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: string }) {
   const { item } = useProductModal();
   const addItem = useCartStore((state) => state.addItem);
@@ -298,7 +297,9 @@ function OptionBlock({ label, content }: { label: string; content: ReactNode }) 
     </div>
   );
 }
+
 function SoftTag({ children }: { children: ReactNode }) { return <span className="rounded-full border border-[#ffffff12] bg-[#2a242a] px-3 py-1.5 text-sm font-semibold text-[#FFDEBA]">{children}</span>; }
+
 function AccordionBlock({ label, open, onToggle, children }: { label: string; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
     <div className="overflow-hidden rounded-[1.25rem] border border-[#ffffff10] bg-[#1f1a1f] shadow-[0_10px_18px_#00000014]">
@@ -312,6 +313,7 @@ function AccordionBlock({ label, open, onToggle, children }: { label: string; op
     </div>
   );
 }
+
 function QuickFact({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[1rem] bg-[#2a242a] px-4 py-3">
@@ -320,6 +322,7 @@ function QuickFact({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
 function NutrientStat({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <div className="rounded-[1rem] border border-[#ffffff10] bg-[#262126] p-4">
@@ -331,6 +334,7 @@ function NutrientStat({ label, value, accent }: { label: string; value: string; 
     </div>
   );
 }
+
 function DetailLine({ title, values }: { title: string; values: string[] }) {
   return (
     <div>
@@ -341,6 +345,7 @@ function DetailLine({ title, values }: { title: string; values: string[] }) {
     </div>
   );
 }
+
 function ReviewCard({ author, stars, text }: { author: string; stars: number; text: string }) {
   return (
     <div className="rounded-[1rem] border border-[#ffffff10] bg-[#262126] p-4">
@@ -357,6 +362,7 @@ function ReviewCard({ author, stars, text }: { author: string; stars: number; te
     </div>
   );
 }
+
 function ActionIconButton({ label, onClick, icon }: { label: string; onClick: () => void; icon: ReactNode }) {
   return (
     <button type="button" aria-label={label} onClick={onClick} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#ffffff10] bg-[#8B87901A] text-[#FFDEBA] transition hover:border-[#EC5800] hover:bg-[#8B879024] hover:text-[#EC5800]">
@@ -364,6 +370,7 @@ function ActionIconButton({ label, onClick, icon }: { label: string; onClick: ()
     </button>
   );
 }
+
 function HeartBadge({ filled }: { filled: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg">
