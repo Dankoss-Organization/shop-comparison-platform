@@ -1,7 +1,8 @@
 /**
  * @file ProductModal.tsx
  * @description A complex modal component implemented using the Compound Components pattern.
- * @pattern Builder: Provides a "Lego-like" API to construct the modal step-by-step.
+ * @pattern Builder: Provides a "Lego-like" API to construct the modal step-by-step (Header, Content, Actions).
+ * @pattern Composite: Treats UI sub-components as independent parts of a tree structure.
  */
 
 "use client";
@@ -12,7 +13,7 @@ import type { DealCard } from "@/Data/home_data";
 import SmartImage from "./smart_image";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useCartStore } from "@/Store/use_cart_store";
-import { cn, parseQuantity } from "@/Lib/utils";
+import { cn } from "@/Lib/utils";
 
 interface ProductModalContextType {
   item: DealCard;
@@ -25,6 +26,11 @@ function useProductModal() {
   const context = useContext(ProductModalContext);
   if (!context) throw new Error("ProductModal components must be used within <ProductModal>");
   return context;
+}
+
+function getBestOffer(item: DealCard) {
+  if (!item.offers || item.offers.length === 0) return null;
+  return [...item.offers].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
 }
 
 /**
@@ -104,12 +110,20 @@ ProductModal.ImageGallery = function ImageGallery() {
   
   useEffect(() => setIsMounted(true), []);
   const favourite = isMounted ? isFavoriteGlobal : false;
+  
+  const bestOffer = getBestOffer(item);
 
   return (
     <div className="relative overflow-hidden rounded-[1.7rem] border border-[#ffffff0f] bg-[linear-gradient(180deg,#3a343a_0%,#241f24_100%)] p-5 shadow-[0_20px_36px_#00000022]">
       <div className="absolute left-5 top-5 z-10 flex items-center gap-2">
-        <span className="rounded-full bg-[#171316E6] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA]">{item.market || "MARKET"}</span>
-        <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">{item.discount || "SALE"}</span>
+        <span className="rounded-full bg-[#171316E6] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA]">
+          {bestOffer ? bestOffer.store_name : "MARKET"}
+        </span>
+        {bestOffer && bestOffer.pricing.discount_percent > 0 && (
+          <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
+            -{bestOffer.pricing.discount_percent}%
+          </span>
+        )}
       </div>
       <button
         type="button"
@@ -131,10 +145,14 @@ ProductModal.ImageGallery = function ImageGallery() {
 ProductModal.Reviews = function Reviews() {
   const { item } = useProductModal();
   const [open, setOpen] = useState(true);
+  
+  const bestOffer = getBestOffer(item);
+  const discountText = bestOffer && bestOffer.pricing.discount_percent > 0 ? `-${bestOffer.pricing.discount_percent}% discount` : "price";
+
   const reviewCards = useMemo(() => [
-    { author: "Anna M.", stars: 5, text: `Looks premium and the ${item.discount || "price"} really feels worth it. Great pick for a quick basket.` },
+    { author: "Anna M.", stars: 5, text: `Looks premium and the ${discountText} really feels worth it. Great pick for a quick basket.` },
     { author: "Maks K.", stars: 4, text: `Very solid choice. I like the nutrition block and the pack size makes sense for repeat orders.` },
-  ], [item.discount]);
+  ], [discountText]);
 
   return (
     <>
@@ -162,13 +180,17 @@ ProductModal.Reviews = function Reviews() {
 
 ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
   const { item } = useProductModal();
+  const bestOffer = getBestOffer(item);
+
   return (
     <div>
       <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
       <h1 className="mt-3 text-[2rem] font-black leading-[1.02] text-[#FFDEBA]">{item.title}</h1>
       <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2">
-        <p className="text-[2rem] font-black text-[#FFDEBA]">{item.price}</p>
-        {item.oldPrice && <span className="text-base text-[#FFDEBA66] line-through">{item.oldPrice}</span>}
+        <p className="text-[2rem] font-black text-[#FFDEBA]">${bestOffer ? bestOffer.pricing.current_price.toFixed(2) : "N/A"}</p>
+        {bestOffer && bestOffer.pricing.regular_price > bestOffer.pricing.current_price && (
+          <span className="text-base text-[#FFDEBA66] line-through">${bestOffer.pricing.regular_price.toFixed(2)}</span>
+        )}
       </div>
       <p className="mt-4 text-sm leading-6 text-[#FFDEBAA6]">{item.description}</p>
     </div>
@@ -179,6 +201,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
   const { item } = useProductModal();
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
+  const bestOffer = getBestOffer(item);
   
   const parsedQuantity = useMemo(() => {
     try {
@@ -198,7 +221,7 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
   const handleAddToCart = () => {
     const qtyToAdd = parsedQuantity.isWeight ? Math.max(1, Math.floor(amount / 100)) : Math.max(1, amount);
     for (let i = 0; i < qtyToAdd; i++) {
-      addItem(item);
+      addItem({ ...item, selectedStoreId: bestOffer?.store_id } as any);
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000); 
@@ -253,6 +276,8 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
   const { item } = useProductModal();
   const [expanded, setExpanded] = useState({ description: true, nutrition: true, details: false });
   const toggle = (key: keyof typeof expanded) => setExpanded(p => ({ ...p, [key]: !p[key] }));
+  
+  const bestOffer = getBestOffer(item);
 
   return (
     <div className="mt-8 space-y-3">
@@ -262,8 +287,8 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
           <div className="grid gap-3 sm:grid-cols-2">
             <QuickFact label="Category" value={categoryTitle} />
             <QuickFact label="Pack" value={item.quantity || "N/A"} />
-            <QuickFact label="Price" value={item.price} />
-            <QuickFact label="Previous" value={item.oldPrice || "-"} />
+            <QuickFact label="Price" value={`$${bestOffer ? bestOffer.pricing.current_price.toFixed(2) : "N/A"}`} />
+            <QuickFact label="Previous" value={bestOffer && bestOffer.pricing.regular_price > bestOffer.pricing.current_price ? `$${bestOffer.pricing.regular_price.toFixed(2)}` : "-"} />
           </div>
         </div>
       </AccordionBlock>
@@ -289,92 +314,12 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
   );
 };
 
-function OptionBlock({ label, content }: { label: string; content: ReactNode }) {
-  return (
-    <div className="rounded-[1.2rem] border border-[#ffffff10] bg-[#1f1a1f] p-4 shadow-[0_10px_20px_#00000014] h-full">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p>
-      <div className="mt-3">{content}</div>
-    </div>
-  );
-}
-
+function OptionBlock({ label, content }: { label: string; content: ReactNode }) { return <div className="rounded-[1.2rem] border border-[#ffffff10] bg-[#1f1a1f] p-4 shadow-[0_10px_20px_#00000014] h-full"><p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p><div className="mt-3">{content}</div></div>; }
 function SoftTag({ children }: { children: ReactNode }) { return <span className="rounded-full border border-[#ffffff12] bg-[#2a242a] px-3 py-1.5 text-sm font-semibold text-[#FFDEBA]">{children}</span>; }
-
-function AccordionBlock({ label, open, onToggle, children }: { label: string; open: boolean; onToggle: () => void; children: ReactNode }) {
-  return (
-    <div className="overflow-hidden rounded-[1.25rem] border border-[#ffffff10] bg-[#1f1a1f] shadow-[0_10px_18px_#00000014]">
-      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-5 py-4 text-left">
-        <span className="text-base font-semibold text-[#FFDEBA]">{label}</span>
-        <span className={cn("text-[#FFDEBA] transition duration-300", open ? "rotate-180 text-[#EC5800]" : "")}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </span>
-      </button>
-      {open && <div className="border-t border-[#ffffff0c] px-5 py-4">{children}</div>}
-    </div>
-  );
-}
-
-function QuickFact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[1rem] bg-[#2a242a] px-4 py-3">
-      <p className="text-[10px] uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p>
-      <p className="mt-2 font-semibold text-[#FFDEBA]">{value}</p>
-    </div>
-  );
-}
-
-function NutrientStat({ label, value, accent }: { label: string; value: string; accent: string }) {
-  return (
-    <div className="rounded-[1rem] border border-[#ffffff10] bg-[#262126] p-4">
-      <div className="flex items-center justify-between">
-        <p className="text-[10px] uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p>
-        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent }} />
-      </div>
-      <p className="mt-3 text-xl font-black text-[#FFDEBA]">{value}</p>
-    </div>
-  );
-}
-
-function DetailLine({ title, values }: { title: string; values: string[] }) {
-  return (
-    <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA80]">{title}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {values.map((value) => <span key={`${title}-${value}`} className="rounded-full border border-[#EC580022] bg-[#EC580014] px-3 py-1.5 text-xs font-semibold text-[#FFDEBA]">{value}</span>)}
-      </div>
-    </div>
-  );
-}
-
-function ReviewCard({ author, stars, text }: { author: string; stars: number; text: string }) {
-  return (
-    <div className="rounded-[1rem] border border-[#ffffff10] bg-[#262126] p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="font-semibold text-[#FFDEBA]">{author}</p>
-          <div className="mt-1 flex items-center gap-1 text-[#EC5800]">
-            {Array.from({ length: 5 }).map((_, i) => <span key={`${author}-${i}`}>{i < stars ? "★" : "☆"}</span>)}
-          </div>
-        </div>
-        <span className="rounded-full bg-[#EC580014] px-3 py-1 text-xs font-semibold text-[#EC5800]">Verified</span>
-      </div>
-      <p className="mt-3 text-sm leading-6 text-[#FFDEBAA6]">{text}</p>
-    </div>
-  );
-}
-
-function ActionIconButton({ label, onClick, icon }: { label: string; onClick: () => void; icon: ReactNode }) {
-  return (
-    <button type="button" aria-label={label} onClick={onClick} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#ffffff10] bg-[#8B87901A] text-[#FFDEBA] transition hover:border-[#EC5800] hover:bg-[#8B879024] hover:text-[#EC5800]">
-      {icon}
-    </button>
-  );
-}
-
-function HeartBadge({ filled }: { filled: boolean }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-    </svg>
-  );
-}
+function AccordionBlock({ label, open, onToggle, children }: { label: string; open: boolean; onToggle: () => void; children: ReactNode }) { return <div className="overflow-hidden rounded-[1.25rem] border border-[#ffffff10] bg-[#1f1a1f] shadow-[0_10px_18px_#00000014]"><button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-5 py-4 text-left"><span className="text-base font-semibold text-[#FFDEBA]">{label}</span><span className={cn("text-[#FFDEBA] transition duration-300", open ? "rotate-180 text-[#EC5800]" : "")}><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>{open && <div className="border-t border-[#ffffff0c] px-5 py-4">{children}</div>}</div>; }
+function QuickFact({ label, value }: { label: string; value: string }) { return <div className="rounded-[1rem] bg-[#2a242a] px-4 py-3"><p className="text-[10px] uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p><p className="mt-2 font-semibold text-[#FFDEBA]">{value}</p></div>; }
+function NutrientStat({ label, value, accent }: { label: string; value: string; accent: string }) { return <div className="rounded-[1rem] border border-[#ffffff10] bg-[#262126] p-4"><div className="flex items-center justify-between"><p className="text-[10px] uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent }} /></div><p className="mt-3 text-xl font-black text-[#FFDEBA]">{value}</p></div>; }
+function DetailLine({ title, values }: { title: string; values: string[] }) { return <div><p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA80]">{title}</p><div className="mt-2 flex flex-wrap gap-2">{values.map((value) => <span key={`${title}-${value}`} className="rounded-full border border-[#EC580022] bg-[#EC580014] px-3 py-1.5 text-xs font-semibold text-[#FFDEBA]">{value}</span>)}</div></div>; }
+function ReviewCard({ author, stars, text }: { author: string; stars: number; text: string }) { return <div className="rounded-[1rem] border border-[#ffffff10] bg-[#262126] p-4"><div className="flex items-center justify-between gap-3"><div><p className="font-semibold text-[#FFDEBA]">{author}</p><div className="mt-1 flex items-center gap-1 text-[#EC5800]">{Array.from({ length: 5 }).map((_, i) => <span key={`${author}-${i}`}>{i < stars ? "★" : "☆"}</span>)}</div></div><span className="rounded-full bg-[#EC580014] px-3 py-1 text-xs font-semibold text-[#EC5800]">Verified</span></div><p className="mt-3 text-sm leading-6 text-[#FFDEBAA6]">{text}</p></div>; }
+function ActionIconButton({ label, onClick, icon }: { label: string; onClick: () => void; icon: ReactNode }) { return <button type="button" aria-label={label} onClick={onClick} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#ffffff10] bg-[#8B87901A] text-[#FFDEBA] transition hover:border-[#EC5800] hover:bg-[#8B879024] hover:text-[#EC5800]">{icon}</button>; }
+function HeartBadge({ filled }: { filled: boolean }) { return <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg"><path d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>; }

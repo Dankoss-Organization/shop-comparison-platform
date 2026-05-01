@@ -29,19 +29,33 @@ export default function HistoryPage() {
     const historicalBasket = baskets.find(b => b.id === id);
     
     if (historicalBasket && historicalBasket.items.length > 0) {
-      historicalBasket.items.forEach(item => {
-        addItem({
-          title: item.name,
-          price: `$${item.price.toFixed(2)}`, 
-          image: item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=900&auto=format&fit=crop", // Використовуємо збережену картинку
-          market: "DANKOSS",
-          oldPrice: `$${item.price.toFixed(2)}`,
-          discount: "0%",
-          rating: "5.0",
-          description: "Reordered from history.",
-          quantity: "1 pc",
-          nutrition: { calories: "0 kcal", carbs: "0 g", fats: "0 g", protein: "0 g", fiber: "0 g", sugar: "0 g" }
-        });
+      historicalBasket.items.forEach((item: any) => {
+        
+        const reorderedItem = {
+          id: item.id || `reorder_${Date.now()}_${Math.random()}`, 
+          title: item.title || item.name,
+          image: item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=900&auto=format&fit=crop",
+          rating: item.rating || "5.0",
+          description: item.description || "Reordered from history.",
+          quantity: item.quantity || "1 pc",
+          nutrition: item.nutrition || { calories: "0 kcal", carbs: "0 g", fats: "0 g", protein: "0 g", fiber: "0 g", sugar: "0 g" },
+          
+          offers: item.offers && item.offers.length > 0 ? item.offers : [
+            {
+              store_id: item.selectedStoreId || "historical_store",
+              store_name: "Historical Price",
+              is_in_stock: true,
+              pricing: {
+                current_price: item.price || 0,
+                regular_price: item.price || 0,
+                discount_percent: 0
+              }
+            }
+          ],
+          selectedStoreId: item.selectedStoreId || "historical_store"
+        };
+
+        addItem(reorderedItem as any);
       });
       
       setOpen(true);

@@ -9,27 +9,23 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DealCard as DealCardType } from '@/Data/home_data';
 
-interface CartItem extends DealCardType {
+export interface CartItem extends DealCardType {
   cartQuantity: number;
+  selectedStoreId?: string;
 }
 
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
   setOpen: (open: boolean) => void;
-  addItem: (product: DealCardType) => void;
-  removeItem: (title: string) => void;
-  updateQuantity: (title: string, delta: number) => void;
+  addItem: (product: DealCardType | CartItem) => void;
+  removeItem: (id: string) => void; // Змінили title на id
+  updateQuantity: (id: string, delta: number) => void; // Змінили title на id
   clearCart: () => void;
   getTotalPrice: () => number;
-getTotalItems: () => number;
+  getTotalItems: () => number;
 }
 
-
-/**
- * Hook for managing the shopping cart state.
- * Encapsulates logic for adding, removing, and updating product quantities.
- */
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
@@ -37,50 +33,48 @@ export const useCartStore = create<CartState>()(
       isOpen: false,
       setOpen: (isOpen) => set({ isOpen }),
 
-      /**
-       * Adds a product to the cart or increments quantity if it exists.
-       * @param {DealCard} product - The product object to add.
-       */
       addItem: (product) => {
         const { items } = get();
-        const existingItem = items.find((i) => i.title === product.title);
+        const existingItem = items.find((i) => i.id === product.id);
 
         if (existingItem) {
           set({
             items: items.map((i) =>
-              i.title === product.title ? { ...i, cartQuantity: i.cartQuantity + 1 } : i
+              i.id === product.id ? { ...i, cartQuantity: i.cartQuantity + 1 } : i
             ),
           });
         } else {
-          set({ items: [...items, { ...product, cartQuantity: 1 }] });
+          set({ items: [...items, { ...product, cartQuantity: 1 } as CartItem] });
         }
       },
 
-      removeItem: (title) => set({
-        items: get().items.filter((i) => i.title !== title)
+      removeItem: (id) => set({
+        items: get().items.filter((i) => i.id !== id)
       }),
 
-      updateQuantity: (title, delta) => set({
+      updateQuantity: (id, delta) => set({
         items: get().items.map((i) =>
-          i.title === title ? { ...i, cartQuantity: Math.max(1, i.cartQuantity + delta) } : i
+          i.id === id ? { ...i, cartQuantity: Math.max(1, i.cartQuantity + delta) } : i
         )
       }),
 
       clearCart: () => set({ items: [] }),
 
-      /**
-       * Calculates the total price of all items in the cart.
-       * @returns {number} The formatted total price.
-       */
       getTotalPrice: () => {
-        return get().items.reduce((acc, item) => {
-          const price = parseFloat(item.price.replace('$', ''));
-          return acc + price * item.cartQuantity;
+        return get().items.reduce((acc, item: any) => {
+          const activeOffer = item.selectedStoreId 
+            ? item.offers?.find((o: any) => o.store_id === item.selectedStoreId) 
+            : item.offers?.sort((a: any, b: any) => a.pricing.current_price - b.pricing.current_price)[0];
+            
+          const price = activeOffer ? activeOffer.pricing.current_price : 0;
+          
+          return acc + (price * item.cartQuantity);
         }, 0);
       },
+      
       getTotalItems: () => {
         return get().items.reduce((acc, item) => acc + item.cartQuantity, 0);
-        },
+      },
     }),
     { name: 'dankoss-cart-storage' },
   )

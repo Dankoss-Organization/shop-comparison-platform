@@ -1,5 +1,5 @@
 /**
- * @file product_modal_blocks.tsx
+ * @file product_view.tsx
  * @description A collection of modular UI components used to construct the Product Modal. These components handle specific domains like imagery, reviews, cart actions, and nutritional details.
  * @pattern Modular Design: Breaks down a complex modal into single-responsibility building blocks, making the code easier to test, read, and rearrange.
  */
@@ -11,16 +11,20 @@ import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useCartStore } from "@/Store/use_cart_store";
 import SmartImage from "./smart_image";
 import { cn } from "@/Lib/utils";
-import type { DealCard } from "@/Data/home_data";
+import type { DealCard, StoreOffer } from "@/Data/home_data";
+
+function getBestOffer(offers: StoreOffer[] | undefined): StoreOffer | null {
+  if (!offers || offers.length === 0) return null;
+  return [...offers].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
+}
 
 /**
  * Renders the product image gallery alongside promotional badges and the favorite toggle button.
  * Interacts directly with the global `useFavoritesStore`.
- * * @param {Object} props - Component props.
+ * @param {Object} props - Component props.
  * @param {DealCard} props.item - The product data object.
  * @returns {JSX.Element} The image gallery component.
  */
-
 export function ImageGallery({ item }: { item: DealCard }) {
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.title));
@@ -29,15 +33,19 @@ export function ImageGallery({ item }: { item: DealCard }) {
   useEffect(() => setIsMounted(true), []);
   const favourite = isMounted ? isFavoriteGlobal : false;
 
+  const bestOffer = getBestOffer(item.offers);
+
   return (
     <div className="relative flex-1 overflow-hidden rounded-[1.5rem] border border-[#ffffff0f] bg-[linear-gradient(180deg,#3a343a_0%,#241f24_100%)] p-4 shadow-[0_15px_30px_rgba(0,0,0,0.4)]">
       <div className="absolute left-5 top-5 z-10 flex items-center gap-2">
         <span className="rounded-full bg-[#171316E6] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FFDEBA]">
-          {item.market || "MARKET"}
+          {bestOffer ? bestOffer.store_name : "MARKET"}
         </span>
-        <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-          {item.discount || "SALE"}
-        </span>
+        {bestOffer && bestOffer.pricing.discount_percent > 0 && (
+          <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+            -{bestOffer.pricing.discount_percent}%
+          </span>
+        )}
       </div>
       
       <button
@@ -67,17 +75,20 @@ export function ImageGallery({ item }: { item: DealCard }) {
 
 /**
  * Displays the aggregate product rating, star indicators, and a collapsible list of user reviews.
- * * @param {Object} props - Component props.
+ * @param {Object} props - Component props.
  * @param {DealCard} props.item - The product data object.
  * @returns {JSX.Element} The reviews section.
  */
-
 export function Reviews({ item }: { item: DealCard }) {
   const [open, setOpen] = useState(true);
+  
+  const bestOffer = getBestOffer(item.offers);
+  const discountText = bestOffer && bestOffer.pricing.discount_percent > 0 ? `-${bestOffer.pricing.discount_percent}% discount` : "price";
+
   const reviewCards = useMemo(() => [
-    { author: "Anna M.", stars: 5, text: `Looks premium and the ${item.discount || "price"} really feels worth it. Great pick for a quick basket.` },
+    { author: "Anna M.", stars: 5, text: `Looks premium and the ${discountText} really feels worth it. Great pick for a quick basket.` },
     { author: "Maks K.", stars: 4, text: `Very solid choice. I like the nutrition block and the pack size makes sense for repeat orders.` },
-  ], [item.discount]);
+  ], [discountText]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -107,23 +118,31 @@ export function Reviews({ item }: { item: DealCard }) {
     </div>
   );
 }
+
 /**
  * Renders the primary typography of the product including category, title, current price, and original price.
- * * @param {Object} props - Component props.
+ * @param {Object} props - Component props.
  * @param {DealCard} props.item - The product data object.
  * @param {string} props.categoryTitle - The name of the category the product belongs to.
  * @returns {JSX.Element} The header component.
  */
-
 export function ProductHeader({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
+  const bestOffer = getBestOffer(item.offers);
+
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
       <h1 className="mt-2 text-3xl font-black leading-tight text-white lg:text-4xl">{item.title}</h1>
       
       <div className="mt-4 flex flex-wrap items-end gap-x-4 gap-y-2">
-        <p className="text-4xl font-black text-[#EC5800]">{item.price}</p>
-        {item.oldPrice && <span className="mb-1.5 text-lg text-white/40 line-through">{item.oldPrice}</span>}
+        <p className="text-4xl font-black text-[#EC5800]">
+          ${bestOffer ? bestOffer.pricing.current_price.toFixed(2) : "0.00"}
+        </p>
+        {bestOffer && bestOffer.pricing.regular_price > bestOffer.pricing.current_price && (
+          <span className="mb-1.5 text-lg text-white/40 line-through">
+            ${bestOffer.pricing.regular_price.toFixed(2)}
+          </span>
+        )}
       </div>
       <p className="mt-4 text-[14px] leading-relaxed text-[#FFDEBAA6]">{item.description}</p>
     </div>
@@ -133,15 +152,15 @@ export function ProductHeader({ item, categoryTitle }: { item: DealCard, categor
 /**
  * Handles the "Add to Cart" interactions. Parses product quantities (weights vs. pieces) 
  * to provide accurate increment/decrement controls and dispatches actions to the global cart store.
- * * @param {Object} props - Component props.
+ * @param {Object} props - Component props.
  * @param {DealCard} props.item - The product data object to add to the cart.
  * @param {string} props.categoryTitle - The category context for display tags.
  * @returns {JSX.Element} The actions component (quantity selectors and add button).
  */
-
 export function ProductActions({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
+  const bestOffer = getBestOffer(item.offers);
   
   const parsedQuantity = useMemo(() => {
     const q = (item.quantity || "1 pc").toLowerCase();
@@ -155,7 +174,10 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
   const handleIncrease = () => setAmount((a) => parsedQuantity.isWeight ? a + 100 : a + 1);
 
   const handleAddToCart = () => {
-    addItem(item);
+    const qtyToAdd = parsedQuantity.isWeight ? Math.max(1, Math.floor(amount / 100)) : Math.max(1, amount);
+    for (let i = 0; i < qtyToAdd; i++) {
+      addItem({ ...item, selectedStoreId: bestOffer?.store_id } as any);
+    }
     
     setAdded(true);
     setTimeout(() => setAdded(false), 2000); 
@@ -212,15 +234,16 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
 /**
  * Displays detailed, collapsible information blocks including full descriptions, 
  * nutrition facts (calories, macros), and allergen notes.
- * * @param {Object} props - Component props.
+ * @param {Object} props - Component props.
  * @param {DealCard} props.item - The product data containing nutrition and allergen info.
  * @param {string} props.categoryTitle - Display name for the category quick fact.
  * @returns {JSX.Element} The detailed accordions section.
  */
-
 export function ProductDetails({ item, categoryTitle }: { item: DealCard, categoryTitle: string }) {
   const [expanded, setExpanded] = useState({ description: true, nutrition: true, details: false });
   const toggle = (key: keyof typeof expanded) => setExpanded(p => ({ ...p, [key]: !p[key] }));
+
+  const bestOffer = getBestOffer(item.offers);
 
   return (
     <div className="flex flex-col gap-3">
@@ -230,8 +253,8 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard, catego
           <div className="grid gap-2 sm:grid-cols-2">
             <QuickFact label="Category" value={categoryTitle} />
             <QuickFact label="Pack" value={item.quantity || "N/A"} />
-            <QuickFact label="Price" value={item.price} />
-            <QuickFact label="Previous" value={item.oldPrice || "-"} />
+            <QuickFact label="Price" value={`$${bestOffer ? bestOffer.pricing.current_price.toFixed(2) : "0.00"}`} />
+            <QuickFact label="Previous" value={bestOffer && bestOffer.pricing.regular_price > bestOffer.pricing.current_price ? `$${bestOffer.pricing.regular_price.toFixed(2)}` : "-"} />
           </div>
         </div>
       </AccordionBlock>
@@ -256,7 +279,6 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard, catego
     </div>
   );
 }
-
 
 function OptionBlock({ label, content }: { label: string; content: ReactNode }) {
   return (

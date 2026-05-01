@@ -5,16 +5,6 @@
  * @pattern Factory Function: Uses a helper (`makeNutrition`) to reliably construct nested data objects, reducing boilerplate.
  */
 
-/**
- * Represents the nutritional profile of a product or recipe.
- * @property {string} calories - Energy value, typically in kcal.
- * @property {string} carbs - Carbohydrate content (e.g., "75 g").
- * @property {string} fats - Fat content (e.g., "13 g").
- * @property {string} protein - Protein content (e.g., "20 g").
- * @property {string} fiber - Dietary fiber content (e.g., "3 g").
- * @property {string} sugar - Sugar content (e.g., "3 g").
- */
-
 export type NutritionFacts = {
   calories: string;
   carbs: string;
@@ -25,47 +15,36 @@ export type NutritionFacts = {
 };
 
 /**
- * Defines the core data structure for a product deal or recipe card.
- * @property {string} title - The name of the product or recipe.
- * @property {string} image - URL to the product/recipe image.
- * @property {string} market - The store offering the deal (or source of the recipe ingredients).
- * @property {string} price - Current discounted price.
- * @property {string} oldPrice - Original price before discount.
- * @property {string} discount - Percentage or amount saved (e.g., "-32%").
- * @property {string} rating - User rating out of 5.0.
- * @property {string} description - Short promotional or descriptive text.
- * @property {string} quantity - Pack size, weight, or servings (e.g., "500 g", "2 portions").
- * @property {NutritionFacts} nutrition - Detailed nutritional breakdown.
- * @property {string[]} [allergens] - Optional list of potential allergens.
- * @property {string[]} [notes] - Optional storage, cooking, or usage tips.
+ * Represents a single offer from a specific store.
+ * Matches the data contract expected by the optimization Web Worker.
  */
+export type StoreOffer = {
+  store_id: string;
+  store_name: string;
+  is_in_stock: boolean;
+  pricing: {
+    current_price: number;
+    regular_price: number;
+    discount_percent: number;
+  };
+};
 
+/**
+ * Defines the core data structure for a product deal or recipe card.
+ * Refactored to support multi-store pricing for the WorkerPool optimization.
+ */
 export type DealCard = {
+  id: string;
   title: string;
   image: string;
-  market: string;
-  price: string;
-  oldPrice: string;
-  discount: string;
   rating: string;
   description: string;
   quantity: string;
   nutrition: NutritionFacts;
   allergens?: string[];
   notes?: string[];
+  offers: StoreOffer[]; 
 };
-
-/**
- * Helper function to quickly instantiate a `NutritionFacts` object.
- * Reduces boilerplate when creating large arrays of mock data.
- * * @param {string} calories - Calories value.
- * @param {string} carbs - Carbohydrates value.
- * @param {string} fats - Fats value.
- * @param {string} protein - Protein value.
- * @param {string} fiber - Fiber value.
- * @param {string} sugar - Sugar value.
- * @returns {NutritionFacts} A formatted nutrition object.
- */
 
 export function makeNutrition(
   calories: string,
@@ -80,409 +59,441 @@ export function makeNutrition(
 
 export const weekDiscounts: DealCard[] = [
   {
+    id: "prod_salmon_01",
     title: "Salmon Steak",
     image: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$8.49",
-    oldPrice: "$12.50",
-    discount: "-32%",
     rating: "4.8",
     description: "Fresh chilled salmon with a strong weekly drop and premium dinner value.",
     quantity: "2 pcs",
     nutrition: makeNutrition("208 kcal", "0 g", "13 g", "20 g", "0 g", "0 g"),
     allergens: ["Fish"],
     notes: ["Keep refrigerated", "Best for pan-searing"],
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 8.49, regular_price: 12.50, discount_percent: 32 } },
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 9.20, regular_price: 12.50, discount_percent: 26 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: false, pricing: { current_price: 8.99, regular_price: 12.00, discount_percent: 25 } }
+    ]
   },
   {
+    id: "prod_pasta_02",
     title: "Barilla Pasta",
     image: "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$1.79",
-    oldPrice: "$2.19",
-    discount: "-18%",
     rating: "4.7",
     description: "A pantry staple that works well for budget recipes and quick weekday meals.",
     quantity: "500 g",
     nutrition: makeNutrition("371 kcal", "75 g", "1.5 g", "13 g", "3 g", "3 g"),
     allergens: ["Gluten"],
     notes: ["Dry storage", "Works with creamy sauces"],
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 1.79, regular_price: 2.19, discount_percent: 18 } },
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 1.65, regular_price: 2.10, discount_percent: 21 } }
+    ]
   },
   {
+    id: "prod_cheese_03",
     title: "Cream Cheese",
     image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=80",
-    market: "Fora",
-    price: "$2.95",
-    oldPrice: "$3.74",
-    discount: "-21%",
     rating: "4.6",
     description: "Smooth breakfast spread with a visible discount and high shopper save rate.",
     quantity: "2 pcs",
     nutrition: makeNutrition("342 kcal", "6 g", "34 g", "6 g", "0 g", "4 g"),
     allergens: ["Milk"],
     notes: ["Spreadable texture", "Good for breakfast snacks"],
+    offers: [
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 2.95, regular_price: 3.74, discount_percent: 21 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 3.10, regular_price: 3.80, discount_percent: 18 } }
+    ]
   },
   {
+    id: "prod_coffee_04",
     title: "Nescafe Gold",
     image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80",
-    market: "ATB",
-    price: "$4.20",
-    oldPrice: "$5.60",
-    discount: "-25%",
     rating: "4.9",
     description: "Popular instant coffee deal with dependable savings and high return demand.",
     quantity: "190 g",
     nutrition: makeNutrition("352 kcal", "74 g", "0.2 g", "7 g", "0 g", "2 g"),
     allergens: [],
     notes: ["Long shelf life", "High repeat purchase"],
+    offers: [
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 4.20, regular_price: 5.60, discount_percent: 25 } },
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 4.50, regular_price: 5.60, discount_percent: 20 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 4.45, regular_price: 5.80, discount_percent: 23 } }
+    ]
   },
   {
+    id: "prod_drink_05",
     title: "Isotonic Sports Drink",
     image: "https://images.unsplash.com/photo-1622543925917-763c34d1a86e?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$1.50",
-    oldPrice: "$2.00",
-    discount: "-25%",
     rating: "4.7",
     description: "Replenish electrolytes fast. Perfect for intense court sessions or gym workouts.",
     quantity: "500 ml",
     nutrition: makeNutrition("120 kcal", "30 g", "0 g", "0 g", "0 g", "21 g"),
     allergens: [],
     notes: ["Best served chilled", "High electrolytes"],
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 1.50, regular_price: 2.00, discount_percent: 25 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 1.65, regular_price: 2.00, discount_percent: 17 } }
+    ]
   },
   {
+    id: "prod_banana_06",
     title: "Ecuador Bananas",
     image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$1.10",
-    oldPrice: "$1.45",
-    discount: "-24%",
     rating: "4.9",
     description: "The ultimate natural energy boost. Great for smoothies or a quick pre-game snack.",
     quantity: "1 kg",
     nutrition: makeNutrition("89 kcal", "23 g", "0.3 g", "1.1 g", "2.6 g", "12 g"),
     allergens: [],
     notes: ["Store at room temp", "Fast energy"],
-  },
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 1.10, regular_price: 1.45, discount_percent: 24 } },
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 1.05, regular_price: 1.45, discount_percent: 27 } },
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 1.15, regular_price: 1.50, discount_percent: 23 } }
+    ]
+  }
 ];
 
 export const dailyDiscounts: DealCard[] = [
   {
+    id: "prod_yogurt_07",
     title: "Greek Yogurt",
     image: "https://images.unsplash.com/photo-1488477304112-4944851de03d?auto=format&fit=crop&w=900&q=80",
-    market: "Varus",
-    price: "$2.10",
-    oldPrice: "$2.65",
-    discount: "-21%",
     rating: "4.5",
     description: "Protein-rich yogurt that is practical for breakfasts, bowls, and sauces.",
     quantity: "850 g",
     nutrition: makeNutrition("97 kcal", "4 g", "5 g", "9 g", "0 g", "4 g"),
     allergens: ["Milk"],
     notes: ["High protein", "Breakfast staple"],
+    offers: [
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 2.10, regular_price: 2.65, discount_percent: 21 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 2.30, regular_price: 2.70, discount_percent: 15 } }
+    ]
   },
   {
+    id: "prod_tomato_08",
     title: "Cherry Tomatoes",
     image: "https://images.unsplash.com/photo-1561136594-7f68413baa99?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$1.35",
-    oldPrice: "$1.80",
-    discount: "-25%",
     rating: "4.4",
     description: "Sweet and bright tomatoes that push recipe conversions when they go on sale.",
     quantity: "500 g",
     nutrition: makeNutrition("18 kcal", "3.9 g", "0.2 g", "0.9 g", "1.2 g", "2.6 g"),
     allergens: [],
     notes: ["Best fresh", "Good for salads"],
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 1.35, regular_price: 1.80, discount_percent: 25 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 1.45, regular_price: 1.80, discount_percent: 19 } }
+    ]
   },
   {
+    id: "prod_oil_09",
     title: "Olive Oil",
     image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$6.50",
-    oldPrice: "$8.10",
-    discount: "-20%",
     rating: "4.7",
     description: "Premium kitchen item with enough savings to shift users toward a better brand.",
     quantity: "1 bottle",
     nutrition: makeNutrition("119 kcal", "0 g", "13.5 g", "0 g", "0 g", "0 g"),
     allergens: [],
     notes: ["Cold use and roasting", "Pantry essential"],
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 6.50, regular_price: 8.10, discount_percent: 20 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 6.90, regular_price: 8.20, discount_percent: 16 } },
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 6.60, regular_price: 8.10, discount_percent: 18 } }
+    ]
   },
   {
+    id: "prod_chicken_10",
     title: "Chicken Fillet",
     image: "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=900&q=80",
-    market: "ATB",
-    price: "$4.80",
-    oldPrice: "$6.00",
-    discount: "-20%",
     rating: "4.6",
     description: "Reliable protein offer that supports quick dinner planning and bulk shopping.",
     quantity: "1 kg",
     nutrition: makeNutrition("120 kcal", "0 g", "2.6 g", "22.5 g", "0 g", "0 g"),
     allergens: [],
     notes: ["Cook thoroughly", "Meal prep friendly"],
+    offers: [
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 4.80, regular_price: 6.00, discount_percent: 20 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 5.10, regular_price: 6.20, discount_percent: 18 } }
+    ]
   },
   {
+    id: "prod_bar_11",
     title: "Pro Protein Bar",
     image: "https://images.unsplash.com/photo-1621057621391-7ed446a24b41?q=80&w=1114&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    market: "ATB",
-    price: "$2.20",
-    oldPrice: "$2.90",
-    discount: "-24%",
     rating: "4.8",
     description: "Crunchy peanut butter texture with maximum protein delivery for recovery.",
     quantity: "60 g",
     nutrition: makeNutrition("210 kcal", "15 g", "8 g", "20 g", "4 g", "2 g"),
     allergens: ["Peanuts", "Milk", "Soy"],
     notes: ["Post-workout", "Low sugar"],
+    offers: [
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 2.20, regular_price: 2.90, discount_percent: 24 } },
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 2.40, regular_price: 2.90, discount_percent: 17 } }
+    ]
   },
   {
+    id: "prod_pb_12",
     title: "Peanut Butter",
     image: "https://images.unsplash.com/photo-1564988208558-9270de7c5848?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    market: "Fora",
-    price: "$4.50",
-    oldPrice: "$5.80",
-    discount: "-22%",
     rating: "4.9",
     description: "100% natural roasted peanuts. Thick, creamy, and packed with healthy fats.",
     quantity: "400 g",
     nutrition: makeNutrition("588 kcal", "13 g", "50 g", "25 g", "6 g", "4 g"),
     allergens: ["Peanuts"],
     notes: ["Oil separation is natural", "Stir before use"],
-  },
+    offers: [
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 4.50, regular_price: 5.80, discount_percent: 22 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 4.80, regular_price: 5.90, discount_percent: 19 } }
+    ]
+  }
 ];
 
 export const expiringDiscounts: DealCard[] = [
   {
+    id: "prod_avocado_13",
     title: "Avocado Duo",
     image: "https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?auto=format&fit=crop&w=900&q=80",
-    market: "Fora",
-    price: "$2.60",
-    oldPrice: "$3.20",
-    discount: "-19%",
     rating: "4.5",
     description: "Fresh produce offer ending soon and perfect for salads, bowls, and toast.",
     quantity: "2 pcs",
     nutrition: makeNutrition("160 kcal", "8.5 g", "14.7 g", "2 g", "6.7 g", "0.7 g"),
     allergens: [],
     notes: ["Ripens after purchase", "Good for toast and bowls"],
+    offers: [
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 2.60, regular_price: 3.20, discount_percent: 19 } },
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 2.80, regular_price: 3.30, discount_percent: 15 } }
+    ]
   },
   {
+    id: "prod_juice_14",
     title: "Orange Juice",
     image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=900&q=80",
-    market: "Varus",
-    price: "$1.95",
-    oldPrice: "$2.45",
-    discount: "-20%",
     rating: "4.3",
     description: "A quick-moving family drink discount with only a short promo window left.",
     quantity: "1 L",
     nutrition: makeNutrition("45 kcal", "10.4 g", "0.2 g", "0.7 g", "0.2 g", "8.4 g"),
     allergens: [],
     notes: ["Serve chilled", "Family pack size"],
+    offers: [
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 1.95, regular_price: 2.45, discount_percent: 20 } },
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 2.05, regular_price: 2.45, discount_percent: 16 } }
+    ]
   },
   {
+    id: "prod_darkchoco_15",
     title: "Dark Chocolate",
     image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$1.40",
-    oldPrice: "$1.90",
-    discount: "-26%",
     rating: "4.8",
     description: "Popular snack discount with strong rating and a very visible price cut.",
     quantity: "100 g",
     nutrition: makeNutrition("546 kcal", "61 g", "31 g", "4.9 g", "7 g", "48 g"),
     allergens: ["Soy", "Milk", "May contain nuts"],
     notes: ["Snack format", "Ends soon"],
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 1.40, regular_price: 1.90, discount_percent: 26 } },
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 1.55, regular_price: 1.95, discount_percent: 20 } }
+    ]
   },
   {
+    id: "prod_rice_16",
     title: "Rice Pack",
     image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$1.25",
-    oldPrice: "$1.59",
-    discount: "-21%",
     rating: "4.4",
     description: "Last-day staple discount that pairs naturally with many weekly recipes.",
     quantity: "800 g",
     nutrition: makeNutrition("360 kcal", "79 g", "0.6 g", "6.7 g", "1.3 g", "0.1 g"),
     allergens: [],
     notes: ["Long shelf life", "Base ingredient"],
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 1.25, regular_price: 1.59, discount_percent: 21 } },
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 1.30, regular_price: 1.60, discount_percent: 19 } }
+    ]
   },
   {
+    id: "prod_trailmix_17",
     title: "Energy Trail Mix",
     image: "https://images.unsplash.com/photo-1671981200629-014c03829abb?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    market: "Varus",
-    price: "$3.15",
-    oldPrice: "$4.50",
-    discount: "-30%",
     rating: "4.6",
     description: "A calorie-dense mix of almonds, cashews, and dark chocolate drops. Last day on sale!",
     quantity: "250 g",
     nutrition: makeNutrition("460 kcal", "30 g", "35 g", "12 g", "6 g", "15 g"),
     allergens: ["Almonds", "Cashews", "Milk"],
     notes: ["High calorie", "Great for hikes"],
+    offers: [
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 3.15, regular_price: 4.50, discount_percent: 30 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 3.50, regular_price: 4.50, discount_percent: 22 } }
+    ]
   },
   {
+    id: "prod_blueberries_18",
     title: "Fresh Blueberries",
     image: "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$2.80",
-    oldPrice: "$3.90",
-    discount: "-28%",
     rating: "4.5",
     description: "Antioxidant-rich berries perfect for topping your morning yogurt or oats.",
     quantity: "200 g",
     nutrition: makeNutrition("57 kcal", "14 g", "0.3 g", "0.7 g", "2.4 g", "10 g"),
     allergens: [],
     notes: ["Wash before use", "Highly perishable"],
-  },
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 2.80, regular_price: 3.90, discount_percent: 28 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 3.10, regular_price: 3.90, discount_percent: 20 } }
+    ]
+  }
 ];
 
 export const seasonalRecipes: DealCard[] = [
   {
+    id: "rec_citrusbowl_19",
     title: "Spring Citrus Bowl",
     image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$7.20",
-    oldPrice: "$9.10",
-    discount: "-21%",
     rating: "4.9",
     description: "A light seasonal bowl assembled around discounted greens, oranges, and soft cheese.",
     quantity: "2 servings",
     nutrition: makeNutrition("290 kcal", "24 g", "15 g", "14 g", "6 g", "10 g"),
     allergens: ["Milk"],
     notes: ["Fresh seasonal recipe", "Serve chilled"],
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 7.20, regular_price: 9.10, discount_percent: 21 } },
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 7.50, regular_price: 9.10, discount_percent: 17 } }
+    ]
   },
   {
+    id: "rec_roast_20",
     title: "Roasted Market Tray",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
-    market: "Fora",
-    price: "$6.50",
-    oldPrice: "$8.00",
-    discount: "-19%",
     rating: "4.7",
     description: "An easy oven tray recipe based on seasonal vegetables with current discounts.",
     quantity: "3 servings",
     nutrition: makeNutrition("245 kcal", "28 g", "10 g", "8 g", "7 g", "9 g"),
     allergens: [],
     notes: ["Family-friendly", "Oven-ready"],
+    offers: [
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 6.50, regular_price: 8.00, discount_percent: 19 } },
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 6.80, regular_price: 8.20, discount_percent: 17 } }
+    ]
   },
   {
+    id: "rec_pasta_21",
     title: "Creamy Pasta Night",
     image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$5.90",
-    oldPrice: "$7.40",
-    discount: "-20%",
     rating: "4.8",
     description: "Comfort pasta using discounted pantry goods and crowd-approved flavor balance.",
     quantity: "4 servings",
     nutrition: makeNutrition("410 kcal", "52 g", "14 g", "16 g", "4 g", "6 g"),
     allergens: ["Gluten", "Milk"],
     notes: ["Dinner favorite", "Creamy texture"],
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 5.90, regular_price: 7.40, discount_percent: 20 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 6.10, regular_price: 7.50, discount_percent: 18 } }
+    ]
   },
   {
+    id: "rec_nachos_22",
     title: "Game Day Loaded Nachos",
     image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$8.50",
-    oldPrice: "$10.20",
-    discount: "-16%",
     rating: "4.9",
     description: "The ultimate sharing platter for watching the match. Built with discounted cheese, jalapeños, and ground beef.",
     quantity: "4 servings",
     nutrition: makeNutrition("520 kcal", "45 g", "28 g", "22 g", "8 g", "4 g"),
     allergens: ["Milk", "Gluten"],
     notes: ["Best served hot", "Spicy"],
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 8.50, regular_price: 10.20, discount_percent: 16 } },
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 8.90, regular_price: 10.50, discount_percent: 15 } }
+    ]
   },
   {
+    id: "rec_smoothie_23",
     title: "Power Berry Smoothie",
     image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=900&q=80",
-    market: "ATB",
-    price: "$4.10",
-    oldPrice: "$5.50",
-    discount: "-25%",
     rating: "4.7",
     description: "A quick, cold blended drink using today's discounts on frozen berries and greek yogurt.",
     quantity: "2 portions",
     nutrition: makeNutrition("210 kcal", "32 g", "4 g", "12 g", "5 g", "18 g"),
     allergens: ["Milk"],
     notes: ["Blend with ice", "High antioxidants"],
-  },
+    offers: [
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 4.10, regular_price: 5.50, discount_percent: 25 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 4.30, regular_price: 5.50, discount_percent: 21 } }
+    ]
+  }
 ];
 
 export const peopleLiked: DealCard[] = [
   {
+    id: "rec_wrap_24",
     title: "Honey Chicken Wrap",
     image: "https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=900&q=80",
-    market: "ATB",
-    price: "$5.10",
-    oldPrice: "$6.45",
-    discount: "-21%",
     rating: "4.9",
     description: "A fan-favorite recipe that turns a chicken promo into a practical lunch option.",
     quantity: "2 wraps",
     nutrition: makeNutrition("360 kcal", "31 g", "12 g", "28 g", "4 g", "7 g"),
     allergens: ["Gluten"],
     notes: ["Lunch-friendly", "Portable meal"],
+    offers: [
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 5.10, regular_price: 6.45, discount_percent: 21 } },
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 5.40, regular_price: 6.50, discount_percent: 16 } }
+    ]
   },
   {
+    id: "rec_toast_25",
     title: "Mushroom Toast Stack",
     image: "https://images.unsplash.com/photo-1529563021893-cc83c992d75d?auto=format&fit=crop&w=900&q=80",
-    market: "Silpo",
-    price: "$4.20",
-    oldPrice: "$5.20",
-    discount: "-19%",
     rating: "4.8",
     description: "A highly saved comfort dish built from bread, mushrooms, herbs, and soft cheese.",
     quantity: "2 portions",
     nutrition: makeNutrition("275 kcal", "22 g", "14 g", "13 g", "3 g", "4 g"),
     allergens: ["Gluten", "Milk"],
     notes: ["Comfort dish", "Pairs well with salad"],
+    offers: [
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 4.20, regular_price: 5.20, discount_percent: 19 } },
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 4.50, regular_price: 5.30, discount_percent: 15 } }
+    ]
   },
   {
+    id: "rec_salmonplate_26",
     title: "Salmon Rice Plate",
     image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=80",
-    market: "Varus",
-    price: "$9.40",
-    oldPrice: "$12.20",
-    discount: "-23%",
     rating: "5.0",
     description: "A premium-feeling dinner recipe users revisit when salmon and rice deals line up.",
     quantity: "2 servings",
     nutrition: makeNutrition("430 kcal", "34 g", "17 g", "32 g", "2 g", "5 g"),
     allergens: ["Fish", "Soy"],
     notes: ["Dinner centerpiece", "High protein"],
+    offers: [
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 9.40, regular_price: 12.20, discount_percent: 23 } },
+      { store_id: "s_silpo", store_name: "Silpo", is_in_stock: true, pricing: { current_price: 9.80, regular_price: 12.50, discount_percent: 21 } }
+    ]
   },
   {
+    id: "rec_meatballs_27",
     title: "Lean Turkey Meatballs",
     image: "https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=900&q=80",
-    market: "Novus",
-    price: "$6.80",
-    oldPrice: "$8.50",
-    discount: "-20%",
     rating: "4.8",
     description: "A heavily bookmarked recipe. Lean protein paired with a rich tomato basil sauce.",
     quantity: "3 servings",
     nutrition: makeNutrition("320 kcal", "12 g", "14 g", "35 g", "3 g", "4 g"),
     allergens: ["Eggs", "Gluten"],
     notes: ["Freezer friendly", "Great for meal prep"],
+    offers: [
+      { store_id: "s_novus", store_name: "Novus", is_in_stock: true, pricing: { current_price: 6.80, regular_price: 8.50, discount_percent: 20 } },
+      { store_id: "s_atb", store_name: "ATB", is_in_stock: true, pricing: { current_price: 7.10, regular_price: 8.50, discount_percent: 16 } }
+    ]
   },
   {
+    id: "rec_oatbites_28",
     title: "Energy Oat Bites",
     image: "https://images.unsplash.com/photo-1605092683936-cecb8c7512bc?auto=format&fit=crop&w=900&q=80",
-    market: "Fora",
-    price: "$3.50",
-    oldPrice: "$4.40",
-    discount: "-20%",
     rating: "4.9",
     description: "No-bake treats that users love keeping in the fridge for a quick bite before running out.",
     quantity: "12 bites",
     nutrition: makeNutrition("140 kcal", "18 g", "7 g", "4 g", "2 g", "8 g"),
     allergens: ["Peanuts", "Gluten"],
     notes: ["No-bake", "Keep refrigerated"],
-  },
+    offers: [
+      { store_id: "s_fora", store_name: "Fora", is_in_stock: true, pricing: { current_price: 3.50, regular_price: 4.40, discount_percent: 20 } },
+      { store_id: "s_varus", store_name: "Varus", is_in_stock: true, pricing: { current_price: 3.70, regular_price: 4.50, discount_percent: 17 } }
+    ]
+  }
 ];
 
 export const recentItems = [
