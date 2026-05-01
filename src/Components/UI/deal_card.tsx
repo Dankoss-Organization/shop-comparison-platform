@@ -7,7 +7,7 @@
 "use client";
 
 import { MouseEvent, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion"; // Додали імпорт анімацій!
+import { motion, AnimatePresence } from "framer-motion"; 
 import type { DealCard as DealCardType, StoreOffer } from "@/Data/home_data";
 import { cardSizes } from "@/Components/UI/card_config";
 import SmartImage from "@/Components/UI/smart_image";
@@ -15,9 +15,6 @@ import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useCartStore } from "@/Store/use_cart_store";
 import { cn } from "@/Lib/utils";
 
-/**
- * Defines the layout areas where a card might be used, automatically dictating its default size.
- */
 export type DealCardContext = "carousel" | "grid" | "sidebar";
 
 export type DealCardFactoryProps = {
@@ -58,17 +55,11 @@ export default function DealCardFactory({
   return <BaseDealCard item={item} size={sizeConfig} compact={activeVariant === "compact"} onClick={onClick} className={className} />;
 }
 
-/**
- * Helper function to find the best (cheapest) offer from the offers array.
- */
 function getBestOffer(offers: StoreOffer[]): StoreOffer | null {
   if (!offers || offers.length === 0) return null;
   return [...offers].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
 }
 
-/**
- * The internal presentational component that renders the actual card UI.
- */
 export function BaseDealCard({ item, onClick, compact, className = "", size }: { item: DealCardType; onClick?: () => void; compact?: boolean; className?: string; size: any }) {
   const toggleFavorite = useFavoritesStore((state: FavoritesState) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state: FavoritesState) => state.isFavorite(item.title));
@@ -106,19 +97,28 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
   return (
     <article 
       onClick={onClick} 
-      onMouseLeave={() => setIsOffersOpen(false)} 
-      className={cn("group relative isolate border border-[#ffffff14] bg-[#342e34] shadow-sm rounded-2xl !overflow-visible", size.wrapper, clickable ? "cursor-pointer transform-gpu transition duration-300 hover:-translate-y-1" : "", className)}
+      onMouseLeave={() => setIsOffersOpen(false)}
+      className={cn("group relative isolate border border-[#ffffff14] bg-[#342e34] shadow-sm rounded-2xl !overflow-visible z-10 hover:z-30", size.wrapper, clickable ? "cursor-pointer transform-gpu transition duration-300 hover:-translate-y-1" : "", className)}
     >
-      <div className={cn("relative overflow-hidden rounded-t-[inherit]", size.image)}>
-        <SmartImage src={item.image} alt={item.title} />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#342e34] to-transparent pointer-events-none" />
+      <div className={cn("relative rounded-t-[inherit]", size.image)}>
         
-        <div className={compact ? "absolute left-3 right-3 top-3 flex items-start justify-between" : "absolute left-4 right-4 top-4 flex items-start justify-between"}>
+        <div className="absolute inset-0 overflow-hidden rounded-t-[inherit]">
+          <SmartImage src={item.image} alt={item.title} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#342e34] to-transparent pointer-events-none" />
+        </div>
+        
+        <div className={compact ? "absolute left-3 right-3 top-3 flex items-start justify-between z-50" : "absolute left-4 right-4 top-4 flex items-start justify-between z-50"}>
           
-          <div className="relative z-50">
+          <div className="relative">
             <button 
               onClick={handleBadgeClick}
-              className={cn("flex items-center gap-1.5 rounded-full border border-[#ffffff12] bg-[#171316CC] font-semibold uppercase tracking-[0.18em] text-[#FFDEBA] transition-colors hover:bg-[#171316]", size.badge)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full border font-semibold uppercase tracking-[0.18em] transition-all duration-300", 
+                size.badge,
+                isOffersOpen 
+                  ? "bg-[rgba(35,30,35,0.65)] backdrop-blur-[24px] border-[#ffffff20] text-white shadow-[0_4px_12px_rgba(0,0,0,0.3)]" 
+                  : "bg-[#171316CC] border-[#ffffff12] text-[#FFDEBA] hover:bg-[#171316]"
+              )}
             >
               {currentOffer ? currentOffer.store_name : "N/A"}
               <svg 
@@ -132,51 +132,67 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
             <AnimatePresence>
               {isOffersOpen && item.offers.length > 1 && (
                 <motion.div
-                  initial={{ opacity: 0, scaleY: 0.85, y: -5 }}
-                  animate={{ opacity: 1, scaleY: 1, y: 0 }}
-                  exit={{ opacity: 0, scaleY: 0.85, y: -5 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  style={{ transformOrigin: "top left" }}
-                  className="absolute left-0 top-[110%] mt-1 flex w-max min-w-[140px] max-w-[200px] flex-col overflow-hidden rounded-[16px] bg-[rgba(45,40,45,0.95)] backdrop-blur-[35px] border border-[#FFDEBA]/10 shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
+                  key="store-dropdown"
+                  initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25, duration: 0.2 }}
+                  className="absolute top-[calc(100%+6px)] left-0 z-50 flex w-[125px] flex-col overflow-hidden rounded-[16px] bg-[rgba(35,30,35,0.65)] backdrop-blur-[24px] shadow-[0_25px_50px_rgba(0,0,0,0.6)] border border-[#ffffff15]"
                 >
-                  <div className="px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#FFDEBA]/40 border-b border-[#FFDEBA]/5">
+                  <div className="px-2 py-2 text-[8px] font-bold uppercase tracking-[0.2em] text-[#FFDEBA]/80 border-b border-[#ffffff10] text-center w-full">
                     Available at
                   </div>
-                  <div className="flex flex-col py-1">
+                  
+                  <div 
+                    className="flex max-h-[115px] w-full flex-col overflow-y-auto pb-1.5 pt-1 [&::-webkit-scrollbar]:hidden"
+                    style={{ 
+                      scrollbarWidth: "none", 
+                      WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)", 
+                      maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)" 
+                    }}
+                  >
                     {[...item.offers]
                       .sort((a, b) => a.pricing.current_price - b.pricing.current_price)
-                      .map((offer) => (
-                      <button 
-                        key={offer.store_id} 
-                        onClick={(e) => handleSelectOffer(e, offer.store_id)}
-                        className="group flex items-center justify-between gap-4 px-3 py-2 transition-all duration-300 hover:bg-[#FFDEBA]/5"
-                      >
-                        <span className={cn(
-                          "text-[12px] font-medium transition-colors",
-                          currentOffer.store_id === offer.store_id ? "text-[#EC5800]" : "text-[#FFDEBA]/80 group-hover:text-[#FFDEBA]"
-                        )}>
-                          {offer.store_name}
-                        </span>
-                        <div className="flex flex-col items-end">
-                          <span className="text-[13px] font-black text-[#EC5800]">${offer.pricing.current_price.toFixed(2)}</span>
-                          {offer.pricing.discount_percent > 0 && (
-                            <span className="text-[9px] text-[#FFDEBA]/30 line-through">${offer.pricing.regular_price.toFixed(2)}</span>
-                          )}
-                        </div>
-                      </button>
-                    ))}
+                      .map((offer, index) => {
+                        const isCheapest = index === 0;
+                        const isSelected = currentOffer.store_id === offer.store_id;
+
+                        return (
+                          <button 
+                            key={offer.store_id} 
+                            onClick={(e) => handleSelectOffer(e, offer.store_id)}
+                            className={cn(
+                              "group flex w-full items-center justify-between gap-2 px-3 py-2 outline-none transition-all duration-300",
+                              isCheapest ? "bg-[#EC5800]/[0.08]" : "hover:bg-[#ffffff0a]"
+                            )}
+                          >
+                            <span className={cn(
+                              "text-[11px] font-bold tracking-wider transition-colors duration-300",
+                              isSelected ? "text-[#FFDEBA]" : "text-[#FFDEBA]/70 group-hover:text-[#FFDEBA]"
+                            )}>
+                              {offer.store_name}
+                            </span>
+                            <div className="flex flex-col items-end">
+                              <span className="text-[12px] font-black text-[#EC5800]">${offer.pricing.current_price.toFixed(2)}</span>
+                              {offer.pricing.discount_percent > 0 && (
+                                <span className="text-[8px] text-[#FFDEBA]/40 line-through leading-none">${offer.pricing.regular_price.toFixed(2)}</span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <button type="button" onClick={handleFavourite} className={cn("flex items-center justify-center rounded-full transition-all duration-300 z-10", size.icon, isFavourite ? "bg-[#EC5800] text-white" : "bg-black/30 text-white/90")}>
+          <button type="button" onClick={handleFavourite} className={cn("flex items-center justify-center rounded-full transition-all duration-300 z-10", size.icon, isFavourite ? "bg-[#EC5800] text-white shadow-[0_0_10px_#EC5800]" : "bg-black/40 backdrop-blur-sm text-white/90 border border-white/10")}>
             <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}><HeartIcon filled={isFavourite} size={size.iconSize || 20} /></div>
           </button>
         </div>
 
-        <div className={compact ? "absolute bottom-3 left-3 flex items-center gap-1.5" : "absolute bottom-4 left-4 flex items-center gap-2"}>
+        <div className={cn("z-20 pointer-events-none", compact ? "absolute bottom-3 left-3 flex items-center gap-1.5" : "absolute bottom-4 left-4 flex items-center gap-2")}>
           {currentOffer && currentOffer.pricing.discount_percent > 0 && (
             <span className={cn("rounded-full bg-[#EC5800] font-semibold text-white shadow-[0_8px_16px_#5e1f0033]", size.badge)}>
               -{currentOffer.pricing.discount_percent}%

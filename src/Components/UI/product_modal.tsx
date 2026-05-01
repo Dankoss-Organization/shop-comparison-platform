@@ -210,7 +210,6 @@ ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle: stri
   const handleAddToCart = () => {
     const qtyToAdd = parsedQuantity.isWeight ? Math.max(1, Math.floor(amount / 100)) : Math.max(1, amount);
     for (let i = 0; i < qtyToAdd; i++) {
-      // Додаємо з selectedStoreId, щоб кошик знав ціну!
       addItem({ ...item, selectedStoreId: bestOffer?.store_id } as any);
     }
     setAdded(true);
