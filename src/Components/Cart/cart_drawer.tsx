@@ -4,6 +4,7 @@
  * Acts as an Observer to the `useCartStore`, automatically re-rendering when the global 
  * cart state changes. Orchestrates interactions between individual cart items and the checkout FSM.
  */
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,6 +15,9 @@ import { CheckoutButton } from "./checkout_button";
 import { ProductModal } from "../UI/product_modal";
 import { type DealCard as DealCardType } from "@/Data/home_data";
 import { cn } from "@/Lib/utils";
+import { generateCombinations, splitIntoChunks } from "@/Lib/Workers/optimizer.utils";
+import type { CartProduct } from "@/Types/optimization";
+
 
 /**
  * @description Renders the sliding drawer for the shopping cart.
@@ -25,7 +29,6 @@ export function CartDrawer() {
   const { items, isOpen, setOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [isMounted, setIsMounted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DealCardType | null>(null);
-  
   const [isOptimizing, setIsOptimizing] = useState(false);
 
   useEffect(() => setIsMounted(true), []);
@@ -33,18 +36,67 @@ export function CartDrawer() {
   const handleOptimize = () => {
     setIsOptimizing(true);
 
+    const cartProducts: CartProduct[] = items.map((item) => {
+      const basePrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+      return {
+        product_id: item.title,
+        canonical_name: item.title,
+        brand: "Generic",
+        category: "General",
+        country: "UA",
+        media: { raw_main_image: item.image, raw_gallery: [], main_image: item.image, gallery: [] },
+        measurements: { value: 1, unit: "pc" },
+        pricing_logic: { sales_unit: "piece", unit_step: 1 },
+        specific_attributes: {},
+        quantity: item.cartQuantity,
+        offers: [
+          {
+            store_id: "store_A", store_name: "Сільпо", url: "", is_in_stock: true, sku: "", scraped_at: "",
+            store_rating: { rating: 5, reviews_count: 10 },
+            pricing: { regular_price: basePrice, current_price: basePrice * 0.9, discount_percent: 10, is_online_only: false, promo_end_date: null, bulk_discounts: [] },
+            price_history: []
+          },
+          {
+            store_id: "store_B", store_name: "Фора", url: "", is_in_stock: true, sku: "", scraped_at: "",
+            store_rating: { rating: 4, reviews_count: 5 },
+            pricing: { regular_price: basePrice, current_price: basePrice * 0.95, discount_percent: 5, is_online_only: false, promo_end_date: null, bulk_discounts: [] },
+            price_history: []
+          }
+        ]
+      };
+    });
+
+    const combinations = generateCombinations(cartProducts);
+    const chunks = splitIntoChunks(combinations, 10000);
+
+    if (chunks.length === 0) {
+      alert("No valid combinations found.");
+      setIsOptimizing(false);
+      return;
+    }
+
     const worker = new Worker(new URL("../../Lib/Workers/optimizer.worker.ts", import.meta.url));
 
     worker.onmessage = (event) => {
-      console.log("[UI Thread]: workers answer:", event.data);
-      alert(event.data.message);
-      
+      const { status, totalCost, itemsCost, deliveryCost } = event.data;
+      if (status === "success") {
+        alert(
+          `Optimization complete\n\n` +
+          `Best Items Price: $${itemsCost.toFixed(2)}\n` +
+          `Delivery Cost: $${deliveryCost.toFixed(2)}\n` +
+          `\n` +
+          `Total Lowest Cost: $${totalCost.toFixed(2)}`
+        );
+      } else {
+        alert(event.data.message || "Optimization failed.");
+      }
       setIsOptimizing(false);
       worker.terminate(); 
     };
+
     worker.postMessage({ 
       type: "START_OPTIMIZATION", 
-      payload: { cartItems: items } 
+      payload: { cartItems: cartProducts, combinationsChunk: chunks[0] } 
     });
   };
 
@@ -84,7 +136,6 @@ export function CartDrawer() {
             {items.length === 0 ? (
               
             <div className="flex h-full flex-col items-center justify-center px-6 text-center animate-in fade-in duration-700">
-              
               <div className="relative mb-8 flex h-36 w-36 items-center justify-center rounded-full border border-white/5 bg-[#1f1a1f] shadow-inner">
                 <Image 
                   src="/basket.svg" 
@@ -97,12 +148,10 @@ export function CartDrawer() {
                   0
                 </span>
               </div>
-
               <h3 className="mb-3 text-2xl font-black tracking-tight text-[#FFDEBA]">The court is empty</h3>
               <p className="mb-10 text-sm leading-relaxed text-[#FFDEBA66] max-w-[280px]">
                 You haven't added any hits to your basket yet. Let's find some solid deals to score.
               </p>
-
               <button 
                 onClick={() => setOpen(false)}
                 className="group relative flex h-[48px] w-full max-w-[260px] items-center justify-center overflow-hidden rounded-[24px] border border-transparent text-[13px] font-black tracking-[0.2em] text-[#FFDEBA] shadow-[2px_2px_1px_#EC5800] transition-all duration-300 hover:-translate-y-[2px] hover:border-[#EC5800]/50 hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] hover:text-white focus:border-[#EC5800] focus:outline-none active:scale-95"
@@ -116,13 +165,11 @@ export function CartDrawer() {
                   BROWSE HITS
                   <svg className="transition-transform duration-300 group-hover:translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
                 </span>
-                
                 <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover:left-[150%]">
                   <div className="h-full w-[40px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-[rgba(255,222,186,0.25)] to-transparent" />
                 </div>
               </button>
             </div>
-
             ) : (
               items.map((item) => (
               <CartItemUI 
