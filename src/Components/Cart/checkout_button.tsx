@@ -36,17 +36,20 @@ export function CheckoutButton() {
     const formattedDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     const orderNumber = Math.floor(1000 + Math.random() * 9000);
 
-    const historicalItems = items.map((item, index) => {
-  const numericPrice = parseFloat(item.price.replace('$', '')) || 0;
-  
-  return {
-    id: index, 
-    name: item.title,
-    price: numericPrice,
-    image: item.image, 
-    emoji: "🛍️",       
-  };
-});
+    const historicalItems = items.map((item: any) => {
+      const activeOffer = item.selectedStoreId 
+        ? item.offers?.find((o: any) => o.store_id === item.selectedStoreId) 
+        : item.offers?.sort((a: any, b: any) => a.pricing.current_price - b.pricing.current_price)[0];
+        
+      const numericPrice = activeOffer ? activeOffer.pricing.current_price : 0;
+      
+      return {
+        ...item,
+        name: item.title,
+        price: numericPrice,
+        emoji: "🛍️",       
+      };
+    });
 
     addBasket({
       id: Date.now(),
@@ -57,7 +60,6 @@ export function CheckoutButton() {
       stores: ["DANKOSS Checkout"],
       color: COLORS[Math.floor(Math.random() * COLORS.length)]
     });
-
 
     setStatus("SUCCESS");
     

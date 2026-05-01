@@ -124,14 +124,13 @@ export function CartDrawer() {
             </div>
 
             ) : (
-              
               items.map((item) => (
               <CartItemUI 
-                key={item.title} 
-                item={item}
-                onIncrease={() => updateQuantity(item.title, 1)}
-                onDecrease={() => updateQuantity(item.title, -1)}
-                onRemove={() => removeItem(item.title)}
+                key={item.id || item.title}
+                item={item as any}
+                onIncrease={() => updateQuantity(item.id, 1)}
+                onDecrease={() => updateQuantity(item.id, -1)}
+                onRemove={() => removeItem(item.id)}
                 onClick={() => setSelectedItem(item as DealCardType)} 
               />
             )))}

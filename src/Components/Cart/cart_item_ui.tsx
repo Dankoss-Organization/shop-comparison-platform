@@ -3,17 +3,13 @@
  * @description Presentation component for an individual cart item, handling its display and emitting quantity/removal actions.
  */
 import Image from "next/image";
+import type { DealCard as DealCardType } from "@/Data/home_data";
 
-/**
- * @description Displays a single item within the cart drawer, rendering its thumbnail, title, price, and quantity controls.
- * * @param {Object} props - The component props.
- * @param {any} props.item - The data object representing the item in the cart.
- * @param {() => void} props.onIncrease - Callback triggered when the increment button is clicked.
- * @param {() => void} props.onDecrease - Callback triggered when the decrement button is clicked.
- * @param {() => void} props.onRemove - Callback triggered when the removal (X) button is clicked.
- * @param {() => void} props.onClick - Callback triggered when the item's main area is clicked (e.g., to view details).
- * * @returns {JSX.Element} The rendered list item UI.
- */
+export interface CartItemType extends DealCardType {
+  cartQuantity: number;
+  selectedStoreId?: string; 
+}
+
 export function CartItemUI({ 
   item, 
   onIncrease, 
@@ -21,13 +17,17 @@ export function CartItemUI({
   onRemove,
   onClick
 }: { 
-  item: any; 
+  item: CartItemType; 
   onIncrease: () => void; 
   onDecrease: () => void; 
   onRemove: () => void;
   onClick: () => void;
-  
 }) {
+  
+  const activeOffer = item.selectedStoreId 
+    ? item.offers?.find(o => o.store_id === item.selectedStoreId) 
+    : [...(item.offers || [])].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
+
   return (
     <div className="flex gap-4 border-b border-white/5 py-5 last:border-0">
       <div 
@@ -41,7 +41,9 @@ export function CartItemUI({
         <div className="flex justify-between items-start">
           <div className="cursor-pointer group" onClick={onClick}>
             <h4 className="font-bold text-[#FFDEBA] leading-tight transition-colors group-hover:text-[#EC5800]">{item.title}</h4>
-            <p className="text-[10px] uppercase tracking-wider text-[#FFDEBA66] mt-1">{item.market}</p>
+            <p className="text-[10px] uppercase tracking-wider text-[#FFDEBA66] mt-1">
+              {activeOffer ? activeOffer.store_name : "Unknown Store"}
+            </p>
           </div>
           <button onClick={onRemove} className="text-[#FFDEBA33 hover:text-[#EC5800] transition-colors">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -49,7 +51,9 @@ export function CartItemUI({
         </div>
         
         <div className="flex items-center justify-between mt-2">
-          <p className="font-black text-[#EC5800] text-lg">{item.price}</p>
+          <p className="font-black text-[#EC5800] text-lg">
+            ${activeOffer ? activeOffer.pricing.current_price.toFixed(2) : "0.00"}
+          </p>
           <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 p-1">
             <button onClick={onDecrease} className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1f1a1f] text-[#FFDEBA66] hover:text-[#FFDEBA] transition">-</button>
             <span className="w-6 text-center text-xs font-black text-[#FFDEBA]">{item.cartQuantity}</span>
