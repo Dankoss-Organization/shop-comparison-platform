@@ -10,7 +10,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { strategies } from "./use_catalog_strategy";
 import type { CatalogCategory } from "./use_catalog_strategy";
-import type { DealCard } from "@/Data/home_data";
+import type { DealCard, StoreOffer } from "@/Data/home_data";
 
 export type CatalogSortKey =
   | "featured"
@@ -24,6 +24,8 @@ export type CatalogItem = DealCard & {
   _uniqueId?: string;
   market?: string;
   discount?: number | string;
+  price?: string | number | null;
+  rating?: string | number | null;
 };
 
 type PriceBounds = { min: number; max: number };
@@ -37,9 +39,10 @@ export type ActiveFilterChip =
 
 const ITEMS_PER_PAGE = 12;
 
-const parsePrice = (priceStr: string | number): number => {
+const parsePrice = (priceStr?: string | number | null): number => {
+  if (priceStr === undefined || priceStr === null) return 0;
   if (typeof priceStr === "number") return priceStr;
-  const match = priceStr.match(/[\d.]+/);
+  const match = String(priceStr).match(/[\d.]+/);
   return match ? parseFloat(match[0]) : 0;
 };
 
@@ -48,6 +51,34 @@ const parseDiscount = (discount: string | number | undefined): number => {
   if (typeof discount === "number") return discount;
   const match = String(discount).match(/[\d.]+/);
   return match ? parseFloat(match[0]) : 0;
+};
+
+const getBestOffer = (offers?: StoreOffer[]): StoreOffer | null => {
+  if (!offers || offers.length === 0) return null;
+  return [...offers].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
+};
+
+const getItemPrice = (item: CatalogItem): number => {
+  const directPrice = parsePrice(item.price);
+  if (directPrice > 0) return directPrice;
+
+  const bestOffer = getBestOffer(item.offers);
+  return bestOffer ? bestOffer.pricing.current_price : 0;
+};
+
+const getItemDiscount = (item: CatalogItem): number => {
+  const directDiscount = parseDiscount(item.discount);
+  if (directDiscount > 0) return directDiscount;
+
+  const bestOffer = getBestOffer(item.offers);
+  return bestOffer ? bestOffer.pricing.discount_percent : 0;
+};
+
+const getItemMarket = (item: CatalogItem): string => {
+  if (item.market) return item.market;
+
+  const bestOffer = getBestOffer(item.offers);
+  return bestOffer?.store_name ?? "Unknown";
 };
 
 export const sortOptions = [
@@ -91,14 +122,28 @@ export function useCatalogFacade() {
     [strategy],
   );
 
+  const uniqueData = useMemo(() => {
+    const byKey = new Map<string, CatalogItem>();
+
+    rawData.forEach((item) => {
+      const key = `${item._cat ?? "all"}::${item.title}`;
+      if (!byKey.has(key)) {
+        byKey.set(key, item);
+      }
+    });
+
+    return Array.from(byKey.values());
+  }, [rawData]);
+
   const categoryData = useMemo(() => {
-    if (activeCategory === "all") return rawData;
-    return rawData.filter((item) => item._cat === activeCategory);
-  }, [rawData, activeCategory]);
+    if (activeCategory === "all") return uniqueData;
+    return uniqueData.filter((item) => item._cat === activeCategory);
+  }, [uniqueData, activeCategory]);
 
   const priceBounds = useMemo<PriceBounds>(() => {
     if (!categoryData.length) return { min: 0, max: 1000 };
-    const prices = categoryData.map((item) => parsePrice(item.price));
+    const prices = categoryData.map(getItemPrice).filter((price) => price > 0);
+    if (!prices.length) return { min: 0, max: 1000 };
     return {
       min: Math.floor(Math.min(...prices)),
       max: Math.ceil(Math.max(...prices)),
@@ -133,10 +178,10 @@ export function useCatalogFacade() {
 
   const filteredAndSortedData = useMemo(() => {
     const filtered = categoryData.filter((item) => {
-      const itemPrice = parsePrice(item.price);
+      const itemPrice = getItemPrice(item);
       const itemRating = Number(item.rating || 0);
-      const itemDiscount = parseDiscount(item.discount);
-      const itemMarket = item.market || "Unknown";
+      const itemDiscount = getItemDiscount(item);
+      const itemMarket = getItemMarket(item);
 
       const matchesSearch =
         !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -152,13 +197,13 @@ export function useCatalogFacade() {
     return [...filtered].sort((a, b) => {
       switch (sortBy) {
         case "price-asc":
-          return parsePrice(a.price) - parsePrice(b.price);
+          return getItemPrice(a) - getItemPrice(b);
         case "price-desc":
-          return parsePrice(b.price) - parsePrice(a.price);
+          return getItemPrice(b) - getItemPrice(a);
         case "rating-desc":
           return Number(b.rating || 0) - Number(a.rating || 0);
         case "discount-desc":
-          return parseDiscount(b.discount) - parseDiscount(a.discount);
+          return getItemDiscount(b) - getItemDiscount(a);
         default:
           return 0;
       }
@@ -185,9 +230,12 @@ export function useCatalogFacade() {
 
   const availableMarkets = useMemo(() => {
     const markets = new Set<string>();
-    rawData.forEach((item) => { if (item.market) markets.add(item.market); });
+    uniqueData.forEach((item) => {
+      const market = getItemMarket(item);
+      if (market && market !== "Unknown") markets.add(market);
+    });
     return Array.from(markets);
-  }, [rawData]);
+  }, [uniqueData]);
 
   const currentCats: CatalogCategory[] = useMemo(
     () => strategy.categories ?? [{ id: "all", label: "All", slug: "" }],

@@ -21,17 +21,25 @@ import Image from "next/image";
 export function ChainIcon({
   children,
   onClick,
+  className = "",
+  stableContent = false,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
+  className?: string;
+  stableContent?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
       type="button"
-      className="group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5A505A]/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-[#EC5800] hover:shadow-[0_8px_20px_rgba(236,88,0,0.4)] active:scale-90 active:translate-y-0"
+      className={`group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5A505A]/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-[#EC5800] hover:shadow-[0_8px_20px_rgba(236,88,0,0.4)] active:scale-90 active:translate-y-0 ${className}`}
     >
-      <span className="transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
+      <span
+        className={`flex items-center justify-center transition-transform duration-300 ${
+          stableContent ? "" : "group-hover:scale-110"
+        }`}
+      >
         {children}
       </span>
     </button>

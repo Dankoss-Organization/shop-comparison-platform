@@ -5,7 +5,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter, usePathname } from "next/navigation";
+import { useParams, useRouter, usePathname, useSearchParams } from "next/navigation";
 import Header from "@/Components/Layout/header";
 import Footer from "@/Components/Layout/footer";
 import ProductCarousel from "@/Components/Sections/product_carousel";
@@ -54,11 +54,13 @@ export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   
   const setOpen = useCartStore((state: CartState) => state.setOpen);
   
   const rawId = Array.isArray(params?.id) ? params.id[0] : params?.id;
   const decodedId = rawId ? decodeURIComponent(rawId) : "";
+  const fromSource = searchParams.get("from");
 
   const [item, setItem] = useState<DealCard | null>(null);
   const [similarItems, setSimilarItems] = useState<DealCard[]>([]);
@@ -128,6 +130,11 @@ export default function ProductPage() {
 
   const handleBackToBrowsing = () => {
     sessionStorage.removeItem("productHistoryTrail");
+
+    if (fromSource === "favorites") {
+      router.push("/favorites");
+      return;
+    }
     
     const lastCatalogUrl = sessionStorage.getItem("lastCatalogUrl");
     if (lastCatalogUrl) {
