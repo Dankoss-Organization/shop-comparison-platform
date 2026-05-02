@@ -91,7 +91,7 @@ function CatalogContent() {
               </h1>
             </div>
 
-            <div className="relative grid grid-cols-2 gap-2 rounded-2xl border border-white/5 bg-[#1F1A1F] p-1.5 shadow-[inset_0_1px_0_#FFFFFF08,0_14px_28px_#00000020]">
+            <div data-testid="tab-switcher" className="relative grid grid-cols-2 gap-2 rounded-2xl border border-white/5 bg-[#1F1A1F] p-1.5 shadow-[inset_0_1px_0_#FFFFFF08,0_14px_28px_#00000020]">
               <div
                 className={cn(
                   "pointer-events-none absolute bottom-1.5 top-1.5 z-0 rounded-[0.95rem] bg-[#EC5800] shadow-[0_12px_24px_#5E1F0035] transition-all duration-300 ease-out",

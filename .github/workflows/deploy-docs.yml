@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
@@ -22,14 +26,24 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Generate Documentation
         run: npm run docs
 
+      - name: Set deploy directory
+        id: deploy_dir
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "dir=pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "dir=." >> $GITHUB_OUTPUT
+          fi
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           publish_branch: gh-pages
+          destination_dir: ${{ steps.deploy_dir.outputs.dir }}
