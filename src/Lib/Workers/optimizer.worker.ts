@@ -16,7 +16,7 @@ const DELIVERY_FEE_PER_STORE = 5;
  * by their required quantities, plus a flat delivery fee for every unique store involved.
  *
  * @param cartItems - The list of products in the user's cart, containing pricing and offer details.
- * @param combination - A specific mapping of `product_id` to `store_id` to evaluate.
+ * @param combination - A specific mapping of `id` to `store_id` to evaluate.
  * @returns An object containing the combined `totalCost`, the raw `itemsCost`, and the `deliveryCost`. 
  * If an offer is invalid or out of stock, it returns `Infinity` for all values.
  */
@@ -24,14 +24,14 @@ function calculateCombinationCost(cartItems: CartProduct[], combination: Combina
   let itemsCost = 0;
 
   for (const item of cartItems) {
-    const selectedStoreId = combination[item.product_id];
+    const selectedStoreId = combination[item.id];
     const offer = (item.offers || []).find(o => o.store_id === selectedStoreId && o.is_in_stock);
 
     if (!offer) {
       return { totalCost: Infinity, itemsCost: Infinity, deliveryCost: Infinity };
     }
 
-    itemsCost += offer.pricing.current_price * (item.quantity || 1);
+    itemsCost += offer.pricing.current_price * (item.cartQuantity || 1);
   }
 
   const uniqueStores = new Set(Object.values(combination)).size;

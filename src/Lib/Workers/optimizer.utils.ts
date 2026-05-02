@@ -12,7 +12,7 @@ import type { CartProduct, Combination } from "@/Types/optimization";
  * at 100,000 combinations.
  *
  * @param cartItems - An array of products currently in the cart, including their store offers.
- * @returns An array of combinations, where each combination is a record mapping a `product_id` to a `store_id`.
+ * @returns An array of combinations, where each combination is a record mapping an `id` to a `store_id`.
  */
 export function generateCombinations(cartItems: CartProduct[]): Combination[] {
   if (!cartItems || cartItems.length === 0) return [];
@@ -31,7 +31,7 @@ export function generateCombinations(cartItems: CartProduct[]): Combination[] {
       for (const offer of availableOffers) {
         newCombinations.push({
           ...combo,
-          [item.product_id]: offer.store_id,
+          [item.id]: offer.store_id,
         });
 
         if (newCombinations.length > 100000) {

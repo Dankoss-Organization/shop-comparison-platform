@@ -19,8 +19,8 @@ interface CartState {
   isOpen: boolean;
   setOpen: (open: boolean) => void;
   addItem: (product: DealCardType | CartItem) => void;
-  removeItem: (id: string) => void; // Змінили title на id
-  updateQuantity: (id: string, delta: number) => void; // Змінили title на id
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, delta: number) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
@@ -35,6 +35,7 @@ export const useCartStore = create<CartState>()(
 
       addItem: (product) => {
         const { items } = get();
+        // Assuming your DealCardType natively uses `id`
         const existingItem = items.find((i) => i.id === product.id);
 
         if (existingItem) {
