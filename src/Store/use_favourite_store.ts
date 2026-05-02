@@ -6,14 +6,14 @@
  * @pattern Observer: Components using this hook automatically re-render when the favorite list changes.
  */
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface FavoritesState {
   favoriteIds: string[];
-  toggleFavorite: (productId: string) => void;
-  isFavorite: (productId: string) => boolean;
-  getTotal: () => number;
+  toggleFavorite: (id: string) => void;
+  isFavorite: (id: string) => boolean;
+  clearFavorites: () => void;
 }
 
 /**
@@ -26,37 +26,25 @@ export const useFavoritesStore = create<FavoritesState>()(
     (set, get) => ({
       favoriteIds: [],
 
+      isFavorite: (id) => get().favoriteIds.includes(id),
+      
       /**
        * Toggles the favorite status of a product.
        * Acts as a Facade for the underlying array filtering/pushing logic.
        * @param {string} id - The unique identifier of the product.
        */
 
-      toggleFavorite: (productId) => {
-        const { favoriteIds } = get();
-        const isFav = favoriteIds.includes(productId);
-        
-        if (isFav) {
-          set({ favoriteIds: favoriteIds.filter((id) => id !== productId) });
-        } else {
-          set({ favoriteIds: [...favoriteIds, productId] });
-        }
-      },
+      toggleFavorite: (id) =>
+        set((state) => ({
+          favoriteIds: state.favoriteIds.includes(id)
+            ? state.favoriteIds.filter((favId) => favId !== id)
+            : [...state.favoriteIds, id],
+        })),
 
-      /**
-       * Checks if a product is in the favorites list.
-       * @param {string} id - Product ID to check.
-       * @returns {boolean}
-       */
-
-      isFavorite: (productId) => {
-        return get().favoriteIds.includes(productId);
-      },
-
-      getTotal: () => get().favoriteIds.length,
+      clearFavorites: () => set({ favoriteIds: [] }),
     }),
     {
-      name: 'dankoss-favorites-storage', 
+      name: "dankoss-favorites-storage",
     }
   )
 );

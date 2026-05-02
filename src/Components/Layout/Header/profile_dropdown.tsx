@@ -1,3 +1,8 @@
+/**
+ * @file profile_dropdown.tsx
+ * @description A dropdown component that displays user profile settings when authenticated, or login prompts when accessed by a guest.
+ */
+
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,15 +11,33 @@ import { useState } from "react";
 import { useUserStore } from "@/Store/user_store";
 import { useRouter } from "next/navigation";
 
+/**
+ * @interface ProfileDropdownProps
+ * @description Defines the properties accepted by the ProfileDropdown component.
+ * * @property {boolean} isOpen - Controls the visibility of the dropdown.
+ * @property {() => void} onClose - Callback triggered to close the dropdown.
+ * @property {boolean} [isAuthenticated] - Determines if the authenticated or guest view is shown.
+ * @property {() => void} [onLogout] - Optional callback executed when the user logs out.
+ * @property {() => void} [onLogin] - Optional callback executed when the user initiates login.
+ * @property {boolean} [highlightLogin] - Triggers a visual animation on the login button if true.
+ */
 interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   isAuthenticated?: boolean; 
   onLogout?: () => void;
   onLogin?: () => void; 
+  highlightLogin?: boolean;
 }
 
-export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false, onLogout, onLogin }: ProfileDropdownProps) {
+/**
+ * @function ProfileDropdown
+ * @description Main component for the profile dropdown menu. It dynamically renders 
+ * either user-specific links (e.g., account, basket history) or guest actions based on authentication state.
+ * * @param {ProfileDropdownProps} props - The properties passed to the component.
+ * @returns {JSX.Element} The animated profile dropdown component.
+ */
+export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = false, onLogout, onLogin, highlightLogin = false }: ProfileDropdownProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const router = useRouter();
   const { displayName, email, avatarUrl, logout } = useUserStore();
@@ -140,16 +163,28 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
         </div>
         <span className="text-[15px] font-bold text-[#FFDEBA] leading-tight mt-1">Welcome to DANKOSS</span>
         <div className="flex w-full flex-col gap-2 mt-2">
-          <button 
+          <motion.button 
             onClick={(e) => {
               e.preventDefault();
               onClose();
               setTimeout(() => { if (onLogin) onLogin(); }, 300);
             }} 
-            className="flex h-[38px] w-full items-center justify-center rounded-xl bg-[#EC5800] text-[13px] font-bold text-white shadow-[0_0_15px_rgba(236,88,0,0.4)] transition-all hover:bg-[#ff6a0d] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95"
+            animate={highlightLogin ? { 
+              y: [0, -8, 0, -6, 0],
+              scale: [1, 1.03, 1, 1.02, 1],
+              boxShadow: [
+                "0 0 15px rgba(236,88,0,0.4)", 
+                "0 0 30px rgba(236,88,0,0.95)", 
+                "0 0 15px rgba(236,88,0,0.4)"
+              ] 
+            } : {}}
+            transition={{ duration: 0.95, ease: "easeInOut" }}
+            className={`flex h-[38px] w-full items-center justify-center rounded-xl bg-[#EC5800] text-[13px] font-bold text-white shadow-[0_0_15px_rgba(236,88,0,0.4)] transition-all hover:bg-[#ff6a0d] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95 ${
+              highlightLogin ? 'ring-[3px] ring-[#FFDEBA]/45 ring-offset-2 ring-offset-[#463b46]' : ''
+            }`}
           >
             Sign In / Register
-          </button>
+          </motion.button>
         </div>
       </div>
 
