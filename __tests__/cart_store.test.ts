@@ -1,15 +1,13 @@
 import { expect, test, describe, beforeEach } from 'vitest';
 import { useCartStore } from '../src/Store/use_cart_store';
 import type { DealCard } from '../src/Data/home_data';
+
 const testItem: DealCard = { 
+  id: "milk-001",
   title: "Milk", 
-  price: "$2.50", 
-  discount: "", 
   rating: "5.0", 
-  market: "ATB", 
   image: "/placeholder.png", 
   quantity: "1 L", 
-  oldPrice: "",
   description: "Fresh whole milk, perfect for your morning coffee or cereal.",
   nutrition: {
     calories: "60 kcal",
@@ -18,7 +16,19 @@ const testItem: DealCard = {
     protein: "3.3 g",
     fiber: "0 g",
     sugar: "4.8 g"
-  }
+  },
+  offers: [
+    {
+      store_id: "atb-store",
+      store_name: "ATB",
+      is_in_stock: true,
+      pricing: {
+        current_price: 2.50,
+        regular_price: 2.50,
+        discount_percent: 0
+      }
+    }
+  ]
 };
 
 describe('Cart Store Business Logic', () => {
@@ -32,7 +42,7 @@ describe('Cart Store Business Logic', () => {
     store.addItem(testItem);
     expect(useCartStore.getState().getTotalPrice()).toBe(2.50);
     
-    useCartStore.getState().updateQuantity("Milk", 1); 
+    useCartStore.getState().updateQuantity("milk-001", 1); 
     
     expect(useCartStore.getState().getTotalPrice()).toBe(5.00);
   });
@@ -43,7 +53,7 @@ describe('Cart Store Business Logic', () => {
     store.addItem(testItem);
     expect(useCartStore.getState().items.length).toBe(1);
 
-    store.removeItem("Milk");
+    store.removeItem("milk-001");
     expect(useCartStore.getState().items.length).toBe(0);
   });
 
@@ -53,19 +63,19 @@ describe('Cart Store Business Logic', () => {
     store.addItem(testItem);
     expect(useCartStore.getState().getTotalItems()).toBe(1);
     
-    useCartStore.getState().updateQuantity("Milk", 3);
+    useCartStore.getState().updateQuantity("milk-001", 3);
     expect(useCartStore.getState().getTotalItems()).toBe(4);
 
-    useCartStore.getState().updateQuantity("Milk", -1);
+    useCartStore.getState().updateQuantity("milk-001", -1);
     expect(useCartStore.getState().getTotalItems()).toBe(3);
   });
 
   test('should not allow item quantity to drop below 1 via updateQuantity', () => {
     const store = useCartStore.getState();
     store.addItem(testItem); 
-    useCartStore.getState().updateQuantity("Milk", -5);
+    useCartStore.getState().updateQuantity("milk-001", -5);
     
-    const milkInCart = useCartStore.getState().items.find(i => i.title === "Milk");
+    const milkInCart = useCartStore.getState().items.find(i => i.id === "milk-001");
     
     expect(milkInCart?.cartQuantity).toBeGreaterThanOrEqual(1);
   });

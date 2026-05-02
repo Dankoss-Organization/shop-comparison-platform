@@ -36,8 +36,13 @@ export function CartDrawer() {
   const handleOptimize = () => {
     setIsOptimizing(true);
 
-    const cartProducts: CartProduct[] = items.map((item) => {
-      const basePrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+    const cartProducts: CartProduct[] = items.map((item: any) => {
+      const activeOffer = item.selectedStoreId 
+        ? item.offers?.find((o: any) => o.store_id === item.selectedStoreId) 
+        : item.offers ? [...item.offers].sort((a: any, b: any) => a.pricing.current_price - b.pricing.current_price)[0] : null;
+
+      const basePrice = activeOffer ? activeOffer.pricing.current_price : 0;
+
       return {
         product_id: item.title,
         canonical_name: item.title,

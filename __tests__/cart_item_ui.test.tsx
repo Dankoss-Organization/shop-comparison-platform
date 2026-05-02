@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { expect, test, describe, vi } from 'vitest';
-import { CartItemUI } from '../src/Components/Cart/cart_item_ui';
+import { CartItemUI, CartItemType } from '../src/Components/Cart/cart_item_ui';
 import '@testing-library/jest-dom';
 
 vi.mock('next/image', () => ({
@@ -8,11 +8,34 @@ vi.mock('next/image', () => ({
 }));
 
 describe('CartItemUI Interactions', () => {
-  const mockItem = {
+  const mockItem: CartItemType = {
+    id: 'mock_avocado_01',
     title: 'Avocado',
-    price: '$2.00',
     image: '/avocado.jpg',
-    quantity: 1
+    rating: '4.8',
+    description: 'Fresh avocado perfect for toast.',
+    quantity: '1 pc',
+    nutrition: {
+      calories: '160 kcal',
+      carbs: '8.5 g',
+      fats: '14.7 g',
+      protein: '2 g',
+      fiber: '6.7 g',
+      sugar: '0.7 g'
+    },
+    offers: [
+      {
+        store_id: 's_test',
+        store_name: 'Test Store',
+        is_in_stock: true,
+        pricing: {
+          current_price: 2.00,
+          regular_price: 2.50,
+          discount_percent: 20
+        }
+      }
+    ],
+    cartQuantity: 1
   };
 
   test('calls onIncrease, onDecrease, and onRemove when buttons are clicked', () => {
