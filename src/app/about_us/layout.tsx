@@ -12,9 +12,9 @@ export default function AboutLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-[#1A171A] to-[#100E10]">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-[#1A171A] via-[#151215] to-[#100E10]">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 bg-transparent">
         {children}
       </main>
       <Footer />
