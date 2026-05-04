@@ -6,10 +6,21 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link"; 
 import { ChainIcon, Connection } from "@/Components/UI/icon_ui";
 
-const companyLinks = ["About Us", "How it works", "Partners"];
-const supportLinks = ["FAQ", "Privacy Policy", "Cookie Policy"];
+const companyLinks = [
+  { label: "About Us", href: "/about_us" },
+  { label: "How it works", href: "#" },
+  { label: "Partners", href: "/partnership" }
+];
+
+const supportLinks = [
+  { label: "FAQ", href: "/faq" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Cookie Policy", href: "/cookies" }
+];
+
 const contacts = [
   {
     icon: "/phone.svg",
@@ -227,23 +238,23 @@ export function FooterInput({ type, placeholder }: { type: string; placeholder: 
  * @description Renders a column grouping of text links for the footer layout.
  * @param {Object} props - The component props.
  * @param {string} props.title - The heading text to display above the list of links.
- * @param {string[]} props.links - An array of link label strings.
+ * @param {Array} props.links - An array of link objects containing label and href.
  * @returns {JSX.Element} A stylized unordered list acting as a footer column.
  */
-export function FooterLinkColumn({ title, links }: { title: string; links: string[] }) {
+export function FooterLinkColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
     <div>
       <h3 className="mb-5 text-[28px] font-bold leading-[34px] tracking-[2px] text-[#EC5800]">{title}</h3>
       <ul className="m-0 list-none p-0">
         {links.map((item) => (
-          <li key={item} className="mb-[10px] flex items-center gap-[10px]">
+          <li key={item.label} className="mb-[10px] flex items-center gap-[10px]">
             <span className="text-[22px] leading-none text-[#FFDEBA]">•</span>
-            <a
-              href="#"
+            <Link
+              href={item.href}
               className="text-[20px] font-medium leading-[30px] tracking-[-1px] text-[#FFDEBA] transition-colors duration-200 hover:text-[#EC5800]"
             >
-              {item}
-            </a>
+              {item.label}
+            </Link>
           </li>
         ))}
       </ul>
