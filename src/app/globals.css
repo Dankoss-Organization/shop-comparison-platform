@@ -1,14 +1,34 @@
 /**
  * @file globals.css
  * @description Global Tailwind CSS configuration, root theme variables, and custom scrollbar styling.
- * Establishes the application's dark color scheme natively and configures root typography and layout resets.
+ * Establishes the application's dynamic color scheme natively and configures root typography and layout resets.
  */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: dark;
+@layer base {
+  :root {
+    --background: 248 245 248;
+    --foreground: 45 40 45; 
+    
+    --brand-night: 230 225 230; 
+    --brand-orange: 236 88 0; 
+    --brand-orangeSoft: 255 140 71; 
+    
+    --glass-bg: 0 0 0; 
+  }
+
+  .dark {
+    --background: 45 40 45; 
+    --foreground: 255 255 255; 
+    
+    --brand-night: 45 40 45; 
+    --brand-orange: 236 88 0;
+    --brand-orangeSoft: 255 140 71; 
+    
+    --glass-bg: 255 255 255; 
+  }
 }
 
 html {
@@ -17,8 +37,8 @@ html {
 
 body {
   margin: 0;
-  background: #2d282d;
-  color: #ffffff;
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
@@ -39,10 +59,10 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(236, 88, 0, 0.4);
+  background: rgb(var(--brand-orange) / 0.4);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--glass-bg) / 0.08);
 }
