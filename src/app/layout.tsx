@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import { CartDrawer } from "@/Components/Cart/cart_drawer";
+import { ThemeProvider } from "@/Components/theme_provider";
 
 /**
  * @description Core SEO and descriptive metadata configuration exported for Next.js indexers.
@@ -21,16 +22,16 @@ export const metadata: Metadata = {
  * @param {React.ReactNode} props.children - The inner pages and components routed by Next.js.
  * @returns {JSX.Element} The foundational `<html>` and `<body>` tags.
  */
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <CartDrawer />
-        {children}</body>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <CartDrawer />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
