@@ -45,6 +45,7 @@ export function CartDrawer() {
 
       return {
         product_id: item.title,
+        id: item.id,
         canonical_name: item.title,
         brand: "Generic",
         category: "General",
@@ -54,6 +55,7 @@ export function CartDrawer() {
         pricing_logic: { sales_unit: "piece", unit_step: 1 },
         specific_attributes: {},
         quantity: item.cartQuantity,
+        cartQuantity: item.cartQuantity,
         offers: [
           {
             store_id: "store_A", store_name: "Сільпо", url: "", is_in_stock: true, sku: "", scraped_at: "",

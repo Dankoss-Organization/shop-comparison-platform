@@ -47,8 +47,12 @@ export interface ProductPricingLogic {
   unit_step: number;
 }
 
+/**
+ * Base parsed product representing a structured item from the database or scraper.
+ * Adapted to use `id` to maintain compatibility with `DealCardType`.
+ */
 export interface ParsedProduct {
-  product_id: string;
+  id: string; 
   canonical_name: string;
   brand: string;
   category: string;
@@ -57,13 +61,21 @@ export interface ParsedProduct {
   measurements: ProductMeasurements;
   pricing_logic: ProductPricingLogic;
   specific_attributes: Record<string, any>;
-  offers: StoreOffer[];
+  offers?: StoreOffer[];
 }
 
-export interface CartProduct extends ParsedProduct {
-  quantity: number;
-  selected_store_id?: string | null;
+/**
+ * Extended to match the `use_cart_store` structure perfectly.
+ * Uses `cartQuantity` and `selectedStoreId` instead of generic names.
+ */
+export interface CartProduct extends Partial<ParsedProduct> {
+  id: string;
   title?: string;
+  quantity: number;
+  cartQuantity: number;
+  selectedStoreId?: string | null;
+  offers?: StoreOffer[];
+  [key: string]: any; // Allows fallback properties from DealCardType without strict type errors
 }
 
 export type Combination = Record<string, string>;
