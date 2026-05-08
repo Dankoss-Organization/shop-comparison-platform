@@ -65,7 +65,7 @@ export default function AlertsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-[#FFDEBA] font-serif drop-shadow-md">
+            <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-primary font-serif drop-shadow-md">
               Alerts Feed
             </h2>
             {unreadCount > 0 && (
@@ -74,7 +74,7 @@ export default function AlertsPage() {
               </span>
             )}
           </div>
-          <p className="text-[15px] text-[#FFDEBA]/50">Stay updated on price drops, targets, and personal promos.</p>
+          <p className="text-[15px] text-text-primary/50">Stay updated on price drops, targets, and personal promos.</p>
         </div>
         
         {unreadCount > 0 && (
@@ -91,10 +91,10 @@ export default function AlertsPage() {
         <AnimatePresence>
           {alerts.length === 0 ? (
              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-20 gap-4">
-               <div className="h-16 w-16 rounded-full bg-[#FFDEBA]/5 flex items-center justify-center text-[#FFDEBA]/20">
+               <div className="h-16 w-16 rounded-full bg-[#FFDEBA]/5 flex items-center justify-center text-text-primary/20">
                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-8 h-8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                </div>
-               <span className="text-[15px] text-[#FFDEBA]/40">You have no new alerts.</span>
+               <span className="text-[15px] text-text-primary/40">You have no new alerts.</span>
              </motion.div>
           ) : (
             alerts.map((alert) => (
@@ -118,19 +118,19 @@ export default function AlertsPage() {
                   <div className="flex flex-col flex-1 gap-1.5 pt-1">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className={`text-[16px] font-bold ${alert.unread ? 'text-white' : 'text-[#FFDEBA]'}`}>
+                        <span className={`text-[16px] font-bold ${alert.unread ? 'text-white' : 'text-text-primary'}`}>
                           {alert.title}
                         </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFDEBA]/40 bg-[#FFDEBA]/5 px-2 py-0.5 rounded-md border border-[#FFDEBA]/10">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-text-primary/40 bg-[#FFDEBA]/5 px-2 py-0.5 rounded-md border border-[#FFDEBA]/10">
                           {alert.store}
                         </span>
                       </div>
-                      <span className="text-[12px] font-medium text-[#FFDEBA]/40 whitespace-nowrap">
+                      <span className="text-[12px] font-medium text-text-primary/40 whitespace-nowrap">
                         {alert.time}
                       </span>
                     </div>
                     
-                    <p className="text-[14px] text-[#FFDEBA]/60 leading-relaxed pr-8">
+                    <p className="text-[14px] text-text-primary/60 leading-relaxed pr-8">
                       {alert.message}
                     </p>
 
@@ -140,7 +140,7 @@ export default function AlertsPage() {
                       </button>
                       <button 
                         onClick={() => deleteAlert(alert.id)}
-                        className="text-[13px] font-medium text-[#FFDEBA]/30 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        className="text-[13px] font-medium text-text-primary/30 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                       >
                         Dismiss
                       </button>

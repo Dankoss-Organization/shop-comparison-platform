@@ -49,10 +49,10 @@ export default function AboutUsPage() {
       >
         <motion.div variants={itemVariants} className="mb-20 text-center">
           <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#EC5800]">Our Mission</span>
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-[#FFDEBA] md:text-6xl font-serif drop-shadow-md">
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-text-primary md:text-6xl font-serif drop-shadow-md">
             Redefining Smart Shopping.
           </h1>
-          <div className="mx-auto mt-6 flex max-w-[600px] flex-col gap-3 text-[15px] leading-relaxed text-[#FFDEBA]/60">
+          <div className="mx-auto mt-6 flex max-w-[600px] flex-col gap-3 text-[15px] leading-relaxed text-text-primary/60">
             <p>DANKOSS isn't just another grocery store. We are an intelligent aggregator built to scan, compare, and optimize your entire basket across multiple retailers in milliseconds.</p>
             <p>Our goal is to eliminate the guesswork and ensure you always pay the lowest possible total price.</p>
           </div>
@@ -84,8 +84,8 @@ export default function AboutUsPage() {
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#EC5800]/10 text-[#EC5800] border border-[#EC5800]/20 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#EC5800]/20 group-hover:shadow-[0_0_20px_rgba(236,88,0,0.2)]">
                 {feature.icon}
               </div>
-              <h3 className="mb-3 text-xl font-bold text-[#FFDEBA]">{feature.title}</h3>
-              <p className="text-[13px] leading-relaxed text-[#FFDEBA]/60">{feature.text}</p>
+              <h3 className="mb-3 text-xl font-bold text-text-primary">{feature.title}</h3>
+              <p className="text-[13px] leading-relaxed text-text-primary/60">{feature.text}</p>
             </motion.div>
           ))}
         </div>
@@ -98,8 +98,8 @@ export default function AboutUsPage() {
         className="relative z-10 mx-auto mt-32 max-w-[1000px] px-6 md:px-10"
       >
         <motion.div variants={itemVariants} className="mb-12">
-          <h2 className="text-3xl font-black text-[#FFDEBA] md:text-4xl font-serif">Our Philosophy</h2>
-          <p className="mt-3 text-[14px] text-[#FFDEBA]/60">The principles that drive our code and our culture.</p>
+          <h2 className="text-3xl font-black text-text-primary md:text-4xl font-serif">Our Philosophy</h2>
+          <p className="mt-3 text-[14px] text-text-primary/60">The principles that drive our code and our culture.</p>
         </motion.div>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -123,8 +123,8 @@ export default function AboutUsPage() {
               className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-2xl"
             >
               <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#EC5800] to-transparent opacity-60" />
-              <h3 className="text-lg font-bold text-[#FFDEBA] mb-2">{val.title}</h3>
-              <p className="text-[13px] leading-relaxed text-[#FFDEBA]/50">{val.desc}</p>
+              <h3 className="text-lg font-bold text-text-primary mb-2">{val.title}</h3>
+              <p className="text-[13px] leading-relaxed text-text-primary/50">{val.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -137,8 +137,8 @@ export default function AboutUsPage() {
         className="relative z-10 mx-auto mt-32 max-w-[1100px] px-6 md:px-10"
       >
         <motion.div variants={itemVariants} className="mb-12 text-center">
-          <h2 className="text-3xl font-black text-[#FFDEBA] md:text-4xl font-serif">Meet the Brains</h2>
-          <p className="mt-3 text-[14px] text-[#FFDEBA]/60">The architects, engineers, and designers behind your savings.</p>
+          <h2 className="text-3xl font-black text-text-primary md:text-4xl font-serif">Meet the Brains</h2>
+          <p className="mt-3 text-[14px] text-text-primary/60">The architects, engineers, and designers behind your savings.</p>
         </motion.div>
 
         <div className="flex flex-wrap justify-center gap-6">
@@ -156,14 +156,14 @@ export default function AboutUsPage() {
               variants={itemVariants} 
               className="group relative flex w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] max-w-[260px] flex-col items-center rounded-[32px] border border-white/10 bg-white/[0.03] p-6 text-center backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] transition-all duration-300 hover:-translate-y-2 hover:bg-white/[0.06] hover:border-white/20 hover:shadow-[0_15px_50px_rgba(0,0,0,0.5)]"
             >
-              <div className="mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-white/10 bg-[#1a171a] p-1 transition-transform duration-300 group-hover:border-[#EC5800]/50 group-hover:scale-105">
-                <div className="flex h-full w-full items-center justify-center rounded-full bg-[rgba(255,222,186,0.1)] text-2xl text-[#FFDEBA]">
+              <div className="mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-white/10 bg-bg-deep p-1 transition-transform duration-300 group-hover:border-[#EC5800]/50 group-hover:scale-105">
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-[rgba(255,222,186,0.1)] text-2xl text-text-primary">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
               </div>
-              <h4 className="text-base font-bold text-[#FFDEBA]">{member.name}</h4>
+              <h4 className="text-base font-bold text-text-primary">{member.name}</h4>
               <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-[#EC5800]">{member.role}</p>
-              <p className="mt-2 text-[12px] text-[#FFDEBA]/40">{member.specialty}</p>
+              <p className="mt-2 text-[12px] text-text-primary/40">{member.specialty}</p>
             </motion.div>
           ))}
         </div>
@@ -183,12 +183,12 @@ export default function AboutUsPage() {
           <div className="pointer-events-none absolute bottom-0 left-1/2 z-0 h-[250px] w-[350px] -translate-x-1/2 translate-y-1/2 rounded-full bg-[#EC5800] opacity-[0.25] blur-[100px]" />
           
           <div className="relative z-10">
-            <h2 className="text-3xl font-black text-[#FFDEBA] md:text-5xl font-serif leading-tight">Stop searching. Start saving.</h2>
-            <p className="mx-auto mt-6 max-w-[550px] text-[15px] leading-relaxed text-[#FFDEBA]/70">Join thousands of smart shoppers who trust DANKOSS for their daily essentials.</p>
+            <h2 className="text-3xl font-black text-text-primary md:text-5xl font-serif leading-tight">Stop searching. Start saving.</h2>
+            <p className="mx-auto mt-6 max-w-[550px] text-[15px] leading-relaxed text-text-primary/70">Join thousands of smart shoppers who trust DANKOSS for their daily essentials.</p>
             
             <Link 
               href="/" 
-              className="group relative mt-10 mx-auto flex h-[56px] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-full bg-[#EC5800] text-[15px] font-black tracking-[0.12em] text-[#FFDEBA] shadow-[0_10px_25px_rgba(236,88,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(236,88,0,0.5)] active:scale-95"
+              className="group relative mt-10 mx-auto flex h-[56px] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-full bg-[#EC5800] text-[15px] font-black tracking-[0.12em] text-text-primary shadow-[0_10px_25px_rgba(236,88,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(236,88,0,0.5)] active:scale-95"
             >
               <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
                 Build Your Smart Basket

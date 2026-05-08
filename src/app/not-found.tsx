@@ -268,9 +268,9 @@ export default function NotFound() {
         transition={{ delay: 0.5 }}
         className="absolute left-1/2 top-6 z-30 flex whitespace-nowrap items-center justify-center gap-1 rounded-full border border-white/10 bg-white/5 px-6 py-3 backdrop-blur-xl"
       >
-        <span className="text-sm font-medium text-[#FFDEBA]/60">Caught: </span>
+        <span className="text-sm font-medium text-text-primary/60">Caught: </span>
         <span className="text-lg font-black text-[#EC5800]">{caughtCount}</span>
-        <span className="text-sm text-[#FFDEBA]/40"> / 7</span>
+        <span className="text-sm text-text-primary/40"> / 7</span>
       </motion.div>
 
       <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center pb-[15vh]">
@@ -283,13 +283,13 @@ export default function NotFound() {
                 animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
                 exit={{ opacity: 0, y: -10, scale: 0.95, x: "-50%" }}
                 transition={{ duration: 0.4 }}
-                className="absolute bottom-full mb-6 left-1/2 flex whitespace-nowrap flex-col items-center justify-center rounded-[24px] border border-[#EC5800]/30 bg-[#1A171A]/90 px-8 py-5 text-center shadow-[0_20px_50px_rgba(236,88,0,0.2)] backdrop-blur-xl"
+                className="absolute bottom-full mb-6 left-1/2 flex whitespace-nowrap flex-col items-center justify-center rounded-[24px] border border-[#EC5800]/30 bg-bg-deep/90 px-8 py-5 text-center shadow-[0_20px_50px_rgba(236,88,0,0.2)] backdrop-blur-xl"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="#EC5800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-2 h-8 w-8">
                   <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
                 <h3 className="text-xl font-black text-[#EC5800]">Nice catch!</h3>
-                <p className="mt-1 text-xs text-[#FFDEBA]/70">You've collected all the oranges.</p>
+                <p className="mt-1 text-xs text-text-primary/70">You've collected all the oranges.</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -301,13 +301,13 @@ export default function NotFound() {
             className="pointer-events-auto flex w-full flex-col items-center rounded-[32px] border border-white/10 bg-white/[0.03] p-6 text-center backdrop-blur-2xl shadow-[0_30px_70px_rgba(0,0,0,0.5)] md:p-10"
           >
             <h1 className="text-[60px] font-black leading-none tracking-tighter text-[#EC5800] md:text-[80px]">404</h1>
-            <h2 className="mt-2 font-serif text-xl font-bold text-[#FFDEBA] md:text-2xl">Oops, spilled the basket!</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[#FFDEBA]/60">
+            <h2 className="mt-2 font-serif text-xl font-bold text-text-primary md:text-2xl">Oops, spilled the basket!</h2>
+            <p className="mt-3 text-sm leading-relaxed text-text-primary/60">
               Drag the oranges into the basket below, or head back home.
             </p>
             <Link
               href="/"
-              className="group relative mt-8 flex h-[52px] w-full max-w-[200px] items-center justify-center overflow-hidden rounded-full bg-[#EC5800] text-sm font-black tracking-[0.1em] text-[#FFDEBA] shadow-[0_10px_25px_rgba(236,88,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(236,88,0,0.5)] active:scale-95"
+              className="group relative mt-8 flex h-[52px] w-full max-w-[200px] items-center justify-center overflow-hidden rounded-full bg-[#EC5800] text-sm font-black tracking-[0.1em] text-text-primary shadow-[0_10px_25px_rgba(236,88,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(236,88,0,0.5)] active:scale-95"
             >
               Return Home
             </Link>

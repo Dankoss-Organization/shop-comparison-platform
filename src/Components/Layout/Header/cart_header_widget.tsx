@@ -10,12 +10,6 @@ import Image from "next/image";
 import { useCartStore } from "@/Store/use_cart_store";
 import { cn } from "@/Lib/utils";
 
-/**
- * @description Renders the cart button with total price, item count, and an add-to-cart animation effect.
- * Retrieves cart state from the store. Triggers a visually appealing "shooting ball"
- * animation over the cart icon whenever a new item is added.
- * @returns {JSX.Element} The animated shopping cart widget.
- */
 export function CartHeaderWidget() {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const totalPrice = useCartStore((state) => state.getTotalPrice());
@@ -47,12 +41,12 @@ export function CartHeaderWidget() {
     <>
       <button 
         onClick={() => setOpen(true)}
-        className="group/basket relative ml-8 flex h-[42px] min-w-[100px] shrink-0 cursor-pointer items-center justify-between rounded-full bg-[#4D444D] pl-[6px] pr-0 shadow-inner border border-transparent transition-all duration-300 hover:border-[#EC5800]/40 hover:bg-[#3A323A] hover:shadow-[0_0_15px_rgba(236,88,0,0.2)] active:scale-95 xl:ml-[50px]"
+        className="group/basket relative ml-8 flex h-[42px] min-w-[100px] shrink-0 cursor-pointer items-center justify-between rounded-full bg-bg-highest pl-[6px] pr-0 shadow-inner border border-transparent transition-all duration-300 hover:border-brand-orange/40 hover:bg-bg-elevated hover:shadow-[0_0_15px_rgb(var(--brand-orange)_/_0.2)] active:scale-95 xl:ml-[50px]"
       >
         <div className="relative flex h-[30px] w-[45px] shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover/basket:scale-[1.15]">
           <span 
             className={cn(
-              "absolute font-black text-[#EC5800] transition-all duration-300 text-sm tracking-tight",
+              "absolute font-black text-brand-orange transition-all duration-300 text-sm tracking-tight",
               (!isEmpty && !isAnimating) ? "scale-100 opacity-100" : "scale-50 opacity-0"
             )}
           >
@@ -76,12 +70,12 @@ export function CartHeaderWidget() {
             height={44}
             className={cn(
               "relative top-[6px] object-contain transition-transform duration-300 group-hover/basket:-rotate-2",
-              isAnimating && "scale-110 drop-shadow-[0_0_10px_#EC5800]" 
+              isAnimating && "scale-110 drop-shadow-[0_0_10px_rgb(var(--brand-orange))]" 
             )}
           />
           
           {!isEmpty && !isAnimating && (
-            <span className="absolute left-1/2 top-[40%] z-10 -translate-x-[50%] -translate-y-[20%] animate-in zoom-in text-[12px] font-black leading-none text-[#FDE3C8] transition-all duration-300 group-hover/basket:text-white group-hover/basket:drop-shadow-[0_0_6px_#EC5800]">
+            <span className="absolute left-1/2 top-[40%] z-10 -translate-x-[50%] -translate-y-[20%] animate-in zoom-in text-[12px] font-black leading-none text-text-primary transition-all duration-300 group-hover/basket:text-text-main group-hover/basket:drop-shadow-[0_0_6px_rgb(var(--brand-orange))]">
               {safeTotalItems}
             </span>
           )}

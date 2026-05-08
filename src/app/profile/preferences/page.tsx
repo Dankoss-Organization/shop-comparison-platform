@@ -26,7 +26,7 @@ export default function PreferencesPage() {
       className={`relative overflow-hidden flex items-center justify-center rounded-[12px] border px-4 py-2 text-[13px] font-medium transition-all duration-300 hover:-translate-y-[2px] active:scale-95 ${
         isActive 
           ? "border-[#EC5800]/50 text-white shadow-[2px_2px_1px_#EC5800]" 
-          : "border-transparent text-[#FFDEBA]/60 hover:text-[#FFDEBA] hover:border-[#FFDEBA]/20 hover:shadow-[2px_2px_1px_rgba(255,222,186,0.2)]"
+          : "border-transparent text-text-primary/60 hover:text-text-primary hover:border-[#FFDEBA]/20 hover:shadow-[2px_2px_1px_rgba(255,222,186,0.2)]"
       }`}
       style={{
         background: "rgba(45, 40, 45, 0.4)",
@@ -55,8 +55,8 @@ const item: Variants = {
   return (
     <div className="flex flex-col gap-8 max-w-[1000px] mx-auto pb-10">
       <div className="flex flex-col gap-2">
-        <h1 className="text-[28px] font-bold text-[#FFDEBA] uppercase tracking-[1px]">Lifestyle Profile</h1>
-        <p className="text-[15px] font-medium tracking-[-0.5px] text-[#FFDEBA]/50">Shape your personal DANKOSS ecosystem.</p>
+        <h1 className="text-[28px] font-bold text-text-primary uppercase tracking-[1px]">Lifestyle Profile</h1>
+        <p className="text-[15px] font-medium tracking-[-0.5px] text-text-primary/50">Shape your personal DANKOSS ecosystem.</p>
       </div>
 
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -69,8 +69,8 @@ const item: Variants = {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
               <div>
-                <h2 className="text-[20px] font-bold tracking-[1px] text-[#FFDEBA] uppercase">Allergies & Intolerances</h2>
-                <p className="text-[13px] tracking-[-0.5px] text-[#FFDEBA]/50">Items with these ingredients get flagged.</p>
+                <h2 className="text-[20px] font-bold tracking-[1px] text-text-primary uppercase">Allergies & Intolerances</h2>
+                <p className="text-[13px] tracking-[-0.5px] text-text-text-primary/50">Items with these ingredients get flagged.</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-3 mt-2">
@@ -86,7 +86,7 @@ const item: Variants = {
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[rgba(45,40,45,0.6)] shadow-[2px_2px_1px_rgba(74,222,128,0.5)] text-[#4ADE80]">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
-              <h2 className="text-[18px] font-bold tracking-[1px] text-[#FFDEBA] uppercase leading-tight">Fitness Goals</h2>
+              <h2 className="text-[18px] font-bold tracking-[1px] text-text-primary uppercase leading-tight">Fitness Goals</h2>
             </div>
             <div className="flex flex-wrap gap-2.5 mt-auto">
               {dietList.map(d => <TogglePill key={d} label={d} isActive={preferences.diet === d} onClick={() => setDiet(preferences.diet === d ? null : d)} />)}
@@ -101,7 +101,7 @@ const item: Variants = {
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[rgba(45,40,45,0.6)] shadow-[2px_2px_1px_rgba(59,130,246,0.5)] text-[#3B82F6]">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
               </div>
-              <h2 className="text-[18px] font-bold tracking-[1px] text-[#FFDEBA] uppercase leading-tight">Medical</h2>
+              <h2 className="text-[18px] font-bold tracking-[1px] text-text-primary uppercase leading-tight">Medical</h2>
             </div>
             <div className="flex flex-wrap gap-2.5 mt-auto">
               {healthList.map(h => <TogglePill key={h} label={h} isActive={preferences.healthGoals.includes(h)} onClick={() => toggleHealthGoal(h)} />)}
@@ -117,8 +117,8 @@ const item: Variants = {
                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
               </div>
               <div>
-                <h2 className="text-[20px] font-bold tracking-[1px] text-[#FFDEBA] uppercase">Lifestyle & Ethics</h2>
-                <p className="text-[13px] tracking-[-0.5px] text-[#FFDEBA]/50">Support brands that align with your values.</p>
+                <h2 className="text-[20px] font-bold tracking-[1px] text-text-primary uppercase">Lifestyle & Ethics</h2>
+                <p className="text-[13px] tracking-[-0.5px] text-text-primary/50">Support brands that align with your values.</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-3 mt-2">

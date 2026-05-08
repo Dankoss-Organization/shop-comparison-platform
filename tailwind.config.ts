@@ -10,13 +10,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "rgb(var(--background) / <alpha-value>)",
-        foreground: "rgb(var(--foreground) / <alpha-value>)",
-        
+        bg: {
+          main: "rgb(var(--bg-main) / <alpha-value>)",
+          surface: "rgb(var(--bg-surface) / <alpha-value>)",
+          elevated: "rgb(var(--bg-elevated) / <alpha-value>)",
+          highest: "rgb(var(--bg-highest) / <alpha-value>)",
+          darker: "rgb(var(--bg-darker) / <alpha-value>)",
+          deep: "rgb(var(--bg-deep) / <alpha-value>)",
+          deepest: "rgb(var(--bg-deepest) / <alpha-value>)",
+        },
+        text: {
+          main: "rgb(var(--text-main) / <alpha-value>)",
+          primary: "rgb(var(--text-primary) / <alpha-value>)",
+        },
         brand: {
-          night: "rgb(var(--brand-night) / <alpha-value>)",
           orange: "rgb(var(--brand-orange) / <alpha-value>)",
-          orangeSoft: "rgb(var(--brand-orangeSoft) / <alpha-value>)",
+          orangeDark: "rgb(var(--brand-orange-dark) / <alpha-value>)",
         },
         glass: "rgb(var(--glass-bg) / <alpha-value>)",
       },

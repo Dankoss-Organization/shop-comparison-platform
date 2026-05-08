@@ -319,7 +319,7 @@ export default function SettingsPage() {
                       </span>
                     </div>
                   </div>
-                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${isDarkMode ? 'bg-[#EC5800]' : 'bg-[#3F363F]'}`}>
+                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${isDarkMode ? 'bg-[#EC5800]' : 'bg-bg-elevated'}`}>
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: isDarkMode ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
@@ -334,7 +334,7 @@ export default function SettingsPage() {
                       <span className="text-[12px] text-[#FFDEBA]/50">Get notified of 10%+ drops</span>
                     </div>
                   </div>
-                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${emailAlerts ? 'bg-[#EC5800]' : 'bg-[#3F363F]'}`}>
+                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${emailAlerts ? 'bg-[#EC5800]' : 'bg-bg-elevated'}`}>
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: emailAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>
@@ -349,7 +349,7 @@ export default function SettingsPage() {
                       <span className="text-[12px] text-[#FFDEBA]/50">Real-time browser alerts</span>
                     </div>
                   </div>
-                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${pushAlerts ? 'bg-[#EC5800]' : 'bg-[#3F363F]'}`}>
+                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${pushAlerts ? 'bg-[#EC5800]' : 'bg-bg-elevated'}`}>
                      <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: pushAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                   </button>
                 </div>

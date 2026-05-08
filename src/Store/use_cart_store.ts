@@ -35,7 +35,6 @@ export const useCartStore = create<CartState>()(
 
       addItem: (product) => {
         const { items } = get();
-        // Assuming your DealCardType natively uses `id`
         const existingItem = items.find((i) => i.id === product.id);
 
         if (existingItem) {

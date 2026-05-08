@@ -9,25 +9,51 @@
 
 @layer base {
   :root {
-    --background: 248 245 248;
-    --foreground: 45 40 45; 
+    /* --- СВІТЛА ТЕМА (DANKOSS Light) --- */
     
-    --brand-night: 230 225 230; 
-    --brand-orange: 236 88 0; 
-    --brand-orangeSoft: 255 140 71; 
+    /* Backgrounds (Поверхні) */
+    --bg-main: 248 245 248;        /* Базовий фон сторінки */
+    --bg-surface: 255 255 255;     /* Хедер, світлі картки (аналог #2B262C) */
+    --bg-elevated: 240 235 240;    /* Інпути, виділені елементи (аналог #3F363F) */
+    --bg-highest: 225 220 225;     /* Кнопка каталогу (аналог #5A505A) */
+    --bg-darker: 235 230 235;      /* Футер (аналог #1E1B1E) */
+    --bg-deep: 220 215 220;        /* Тултипи, темні бордери (аналог #1A181C) */
+    --bg-deepest: 210 205 210;     /* Найтемніші градієнти (аналог #100E10) */
+
+    /* Typography (Текст) */
+    --text-main: 45 40 45;         /* Основний текст замість білого */
+    --text-primary: 60 55 60;      /* Замінник для персикового #FFDEBA у світлій темі (щоб читалося) */
     
-    --glass-bg: 0 0 0; 
+    /* Brand Colors (Майже незмінні) */
+    --brand-orange: 236 88 0;      /* #EC5800 */
+    --brand-orange-dark: 211 66 5; /* #D34205 (для градієнтів) */
+    
+    /* Glassmorphism */
+    --glass-bg: 0 0 0;             /* Чорний для тіней/відблисків у світлій темі */
   }
 
   .dark {
-    --background: 45 40 45; 
-    --foreground: 255 255 255; 
+    /* --- ТЕМНА ТЕМА (Оригінальний DANKOSS) --- */
     
-    --brand-night: 45 40 45; 
-    --brand-orange: 236 88 0;
-    --brand-orangeSoft: 255 140 71; 
+    /* Backgrounds (Твої точні HEX-коди в RGB) */
+    --bg-main: 45 40 45;           /* #2D282D - Body */
+    --bg-surface: 43 38 44;        /* #2B262C - Header */
+    --bg-elevated: 63 54 63;       /* #3F363F - Search Input */
+    --bg-highest: 90 80 90;        /* #5A505A - Catalog Trigger */
+    --bg-darker: 30 27 30;         /* #1E1B1E - Footer */
+    --bg-deep: 26 24 28;           /* #1A181C - Tooltips / Dropdowns */
+    --bg-deepest: 16 14 16;        /* #100E10 - Gradients / Inner Shadows */
+
+    /* Typography (Текст) */
+    --text-main: 255 255 255;      /* #FFFFFF */
+    --text-primary: 255 222 186;   /* #FFDEBA - Твій фірмовий персиковий */
     
-    --glass-bg: 255 255 255; 
+    /* Brand Colors */
+    --brand-orange: 236 88 0;      /* #EC5800 */
+    --brand-orange-dark: 211 66 5; /* #D34205 */
+    
+    /* Glassmorphism */
+    --glass-bg: 255 255 255;       /* Білий для відблисків у темній темі */
   }
 }
 
@@ -37,7 +63,7 @@ html {
 
 body {
   margin: 0;
-  background-color: rgb(var(--background));
+  background-color: rgb(var(--bg-main));
   color: rgb(var(--foreground));
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }

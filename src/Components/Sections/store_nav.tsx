@@ -16,11 +16,6 @@ const initialShops = [
   { name: "Varus", src: "/varus_logo.svg", active: false },
 ];
 
-/**
- * @brief Main store navigation carousel.
- * Auto-scrolls periodically or allows manual navigation via arrow buttons.
- * @returns {JSX.Element} The rendered store navigation component.
- */
 export default function StoreNav() {
   const [shops, setShops] = useState(initialShops);
   const [isHovered, setIsHovered] = useState(false);
@@ -97,7 +92,7 @@ export default function StoreNav() {
   return (
     <>
       <div
-        className="relative z-10 overflow-hidden border-t border-[#3A343D] bg-[#1E1C20] px-[30px] py-[20px]"
+        className="relative z-10 overflow-hidden border-t border-glass/10 bg-bg-darker px-[30px] py-[20px]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -122,18 +117,11 @@ export default function StoreNav() {
         </div>
       </div>
 
-      <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-[#FF7A00] to-transparent blur-[1px]" />
+      <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-brand-orange to-transparent blur-[1px]" />
     </>
   );
 }
 
-/**
- * @brief Renders a directional arrow button for the carousel.
- * @param {Object} props Component props.
- * @param {Function} props.onClick Callback fired on button click.
- * @param {"left" | "right"} props.direction Direction of the arrow.
- * @returns {JSX.Element} The arrow button element.
- */
 export function ArrowSquare({
   onClick,
   direction,
@@ -147,7 +135,7 @@ export function ArrowSquare({
       type="button"
       className="group relative flex h-[68px] w-[42px] shrink-0 items-center justify-center transition-transform duration-150 active:scale-[0.85]"
     >
-      <div className="absolute inset-0 rounded-[20px] border border-white/5 bg-[#3A343D]/40 backdrop-blur-md transition-all duration-200 group-hover:border-[#FF7A00]/40 group-hover:bg-[#FF7A00]/20 group-hover:shadow-[0_0_20px_rgba(255,122,0,0.15)] group-active:border-[#FF7A00] group-active:bg-[#FF7A00]/40" />
+      <div className="absolute inset-0 rounded-[20px] border border-glass/5 bg-bg-elevated/40 backdrop-blur-md transition-all duration-200 group-hover:border-brand-orange/40 group-hover:bg-brand-orange/20 group-hover:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.15)] group-active:border-brand-orange group-active:bg-brand-orange/40" />
 
       <div
         className={`relative z-10 transition-transform duration-300 ${
@@ -163,7 +151,7 @@ export function ArrowSquare({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-[#F6D7B0]/60 transition-colors group-hover:text-[#FF7A00]"
+          className="text-text-primary/60 transition-colors group-hover:text-brand-orange"
         >
           {direction === "left" ? (
             <polyline points="15 18 9 12 15 6" />
@@ -176,20 +164,14 @@ export function ArrowSquare({
   );
 }
 
-/**
- * @brief Renders an individual shop card with hover effects.
- * @param {Object} props Component props.
- * @param {Object} props.shop Shop data including name, image source, and active state.
- * @returns {JSX.Element} The shop card element.
- */
 export function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
   return (
     <button
       type="button"
       className={`group relative flex h-[68px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[22px] px-[24px] transition-all duration-300 ease-in-out ${
         shop.active
-          ? "z-10 scale-100 border border-[#F6D7B0] bg-[#1A181C] shadow-[inset_0_0_15px_rgba(246,215,176,0.2)]"
-          : "bg-gradient-to-r from-[#2D2930] to-[#5A3A2A] shadow-xl hover:z-50 hover:scale-[1.05]"
+          ? "z-10 scale-100 border border-text-primary bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--text-primary)_/_0.2)]"
+          : "bg-gradient-to-r from-bg-elevated to-brand-orange-dark/20 shadow-xl hover:z-50 hover:scale-[1.05]"
       }`}
     >
       <div className="pointer-events-none relative flex h-[40px] w-full max-w-[110px] items-center justify-center">
@@ -198,6 +180,8 @@ export function ShopCard({ shop }: { shop: { name: string; src: string; active: 
           alt={shop.name}
           fill
           className="object-contain transition-opacity duration-300 group-hover:opacity-0"
+          // Додаємо фільтр інверсії для світлої теми, щоб логотипи було видно на світлому фоні
+          style={{ filter: "var(--logo-filter)" }} 
         />
 
         <Image

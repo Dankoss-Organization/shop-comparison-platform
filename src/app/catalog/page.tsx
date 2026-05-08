@@ -68,7 +68,7 @@ function CatalogContent() {
             <div>
               <button
                 onClick={actions.handleBackToBrowsing}
-                className="group mb-6 flex items-center gap-2 text-sm font-semibold text-[#FFDEBA]/60 transition-colors hover:text-[#EC5800]"
+                className="group mb-6 flex items-center gap-2 text-sm font-semibold text-text-primary/60 transition-colors hover:text-[#EC5800]"
               >
                 <svg
                   width="20"
@@ -106,7 +106,7 @@ function CatalogContent() {
                   "relative z-10 rounded-xl px-8 py-3.5 text-sm font-bold transition-all duration-300",
                   state.activeTab === "products"
                     ? "text-white"
-                    : "text-[#FFDEBA]/60 hover:bg-white/5 hover:text-white",
+                    : "text-text-primary/60 hover:bg-white/5 hover:text-white",
                 )}
               >
                 All Products
@@ -117,7 +117,7 @@ function CatalogContent() {
                   "relative z-10 rounded-xl px-8 py-3.5 text-sm font-bold transition-all duration-300",
                   state.activeTab === "recipes"
                     ? "text-white"
-                    : "text-[#FFDEBA]/60 hover:bg-white/5 hover:text-white",
+                    : "text-text-primary/60 hover:bg-white/5 hover:text-white",
                 )}
               >
                 All Recipes
@@ -134,7 +134,7 @@ function CatalogContent() {
                   "rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5",
                   state.activeCategory === cat.id
                     ? "border-white/20 bg-white/10 text-white shadow-[0_10px_18px_#00000018]"
-                    : "border-white/5 bg-transparent text-[#FFDEBA]/50 hover:bg-white/5 hover:text-white",
+                    : "border-white/5 bg-transparent text-text-primary/50 hover:bg-white/5 hover:text-white",
                 )}
               >
                 {cat.label}

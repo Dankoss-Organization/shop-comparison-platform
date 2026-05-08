@@ -33,7 +33,7 @@ export function ChainIcon({
     <button
       onClick={onClick}
       type="button"
-      className={`group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#5A505A]/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-[#EC5800] hover:shadow-[0_8px_20px_rgba(236,88,0,0.4)] active:scale-90 active:translate-y-0 ${className}`}
+      className={`group relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-bg-highest/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-brand-orange hover:shadow-[0_8px_20px_rgb(var(--brand-orange)_/_0.4)] active:scale-90 active:translate-y-0 ${className}`}
     >
       <span
         className={`flex items-center justify-center transition-transform duration-300 ${
@@ -70,7 +70,7 @@ export function Connection({ vertical = false }: { vertical?: boolean }) {
         width={30}
         height={20}
         className={vertical ? "rotate-90" : ""}
-        style={{ height: "auto" }}
+        style={{ height: "auto", filter: "var(--logo-filter)" }} // Додали фільтр для світлої теми!
       />
     </div>
   );
