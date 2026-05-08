@@ -171,7 +171,7 @@ export function ShopCard({ shop }: { shop: { name: string; src: string; active: 
       className={`group relative flex h-[68px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[22px] px-[24px] transition-all duration-300 ease-in-out ${
         shop.active
           ? "z-10 scale-100 border border-text-primary bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--text-primary)_/_0.2)]"
-          : "bg-gradient-to-r from-bg-elevated to-brand-orange-dark/20 shadow-xl hover:z-50 hover:scale-[1.05]"
+          : "bg-gradient-to-r from-bg-elevated to-brand-store/60 shadow-xl hover:z-50 hover:scale-[1.05] hover:to-brand-store"
       }`}
     >
       <div className="pointer-events-none relative flex h-[40px] w-full max-w-[110px] items-center justify-center">

@@ -186,8 +186,20 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
             </AnimatePresence>
           </div>
 
-          <button type="button" onClick={handleFavourite} className={cn("flex items-center justify-center rounded-full transition-all duration-300 z-10", size.icon, isFavourite ? "bg-brand-orange text-white shadow-[0_0_10px_rgb(var(--brand-orange))]" : "bg-bg-deepest/40 backdrop-blur-sm text-text-main/90 border border-glass/10")}>
-            <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}><HeartIcon filled={isFavourite} size={size.iconSize || 20} /></div>
+          <button 
+            type="button" 
+            onClick={handleFavourite} 
+            className={cn(
+              "flex items-center justify-center rounded-full transition-all duration-300 z-10 outline-none focus:outline-none", // Додали outline-none
+              size.icon, 
+              isFavourite 
+                ? "bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))] border-brand-orange" // Додали border того ж кольору, що й фон
+                : "bg-bg-deepest/40 backdrop-blur-sm text-text-main/90 border border-glass/10 hover:bg-bg-deepest/60"
+            )}
+          >
+            <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}>
+              <HeartIcon filled={isFavourite} size={size.iconSize || 20} />
+            </div>
           </button>
         </div>
 

@@ -86,9 +86,9 @@ export function RecentlyViewedPanel({
           <defs>
             <linearGradient id={gradientId} x1="30%" y1="0%" x2="100%" y2="100%">
               {/* Використовуємо CSS змінні для градієнту */}
-              <stop offset="55%" stopColor="rgb(var(--bg-elevated))" stopOpacity="1" />
-              <stop offset="82%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="1" />
-              <stop offset="96%" stopColor="rgb(var(--brand-orange))" stopOpacity="0.8" />
+              <stop offset="58%" stopColor="rgb(var(--bg-surface))" stopOpacity="1" />
+              <stop offset="92%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="1" />
+              <stop offset="96%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="0.6" />
               <stop offset="100%" stopColor="rgb(var(--brand-orange))" stopOpacity="1" />
             </linearGradient>
           </defs>

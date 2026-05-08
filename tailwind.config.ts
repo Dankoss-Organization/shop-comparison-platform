@@ -26,6 +26,7 @@ const config: Config = {
         brand: {
           orange: "rgb(var(--brand-orange) / <alpha-value>)",
           orangeDark: "rgb(var(--brand-orange-dark) / <alpha-value>)",
+          store: "rgb(var(--store-accent) / <alpha-value>)",
         },
         glass: "rgb(var(--glass-bg) / <alpha-value>)",
       },

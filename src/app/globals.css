@@ -26,19 +26,20 @@
     
     /* Brand Colors (Майже незмінні) */
     --brand-orange: 236 88 0;      /* #EC5800 */
-    --brand-orange-dark: 211 66 5; /* #D34205 (для градієнтів) */
+    --brand-orange-dark: 211 66 5; /* #D34205 for gradients*/
     
     /* Glassmorphism */
-    --glass-bg: 0 0 0;             /* Чорний для тіней/відблисків у світлій темі */
+    --glass-bg: 0 0 0;           
+
+    --store-accent: 242 227 219; /*Store nav gradient*/
   }
 
   .dark {
-    /* --- ТЕМНА ТЕМА (Оригінальний DANKOSS) --- */
     
-    /* Backgrounds (Твої точні HEX-коди в RGB) */
+    /* Backgrounds*/
     --bg-main: 45 40 45;           /* #2D282D - Body */
     --bg-surface: 43 38 44;        /* #2B262C - Header */
-    --bg-elevated: 63 54 63;       /* #3F363F - Search Input */
+    --bg-elevated: 54 46 54;       /* #3F363F - Search Input */
     --bg-highest: 90 80 90;        /* #5A505A - Catalog Trigger */
     --bg-darker: 30 27 30;         /* #1E1B1E - Footer */
     --bg-deep: 26 24 28;           /* #1A181C - Tooltips / Dropdowns */
@@ -46,14 +47,16 @@
 
     /* Typography (Текст) */
     --text-main: 255 255 255;      /* #FFFFFF */
-    --text-primary: 255 222 186;   /* #FFDEBA - Твій фірмовий персиковий */
+    --text-primary: 255 222 186;   /* #FFDEBA */
     
     /* Brand Colors */
     --brand-orange: 236 88 0;      /* #EC5800 */
     --brand-orange-dark: 211 66 5; /* #D34205 */
     
     /* Glassmorphism */
-    --glass-bg: 255 255 255;       /* Білий для відблисків у темній темі */
+    --glass-bg: 255 255 255; 
+
+    --store-accent: 115 73 52; /*Store nav gradient*/
   }
 }
 
