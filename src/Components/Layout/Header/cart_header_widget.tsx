@@ -63,19 +63,21 @@ export function CartHeaderWidget() {
           </div>
         </div>
         <div className="absolute right-[2px] top-[4px] z-20 flex h-[44px] w-[44px] shrink-0 items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/basket:-translate-y-[4px] group-hover/basket:scale-105">
-          <Image
-            src="/basket.svg"
-            alt="basket"
-            width={44}
-            height={44}
+          
+          {/* ЗАМІНИЛИ ЗОБРАЖЕННЯ НА ТРАФАРЕТ ДЛЯ КОШИКА */}
+          <div
             className={cn(
-              "relative top-[6px] object-contain transition-transform duration-300 group-hover/basket:-rotate-2",
-              isAnimating && "scale-110 drop-shadow-[0_0_10px_rgb(var(--brand-orange))]" 
+              "relative top-[6px] w-[44px] h-[44px] bg-text-primary opacity-70 transition-all duration-300 group-hover/basket:bg-brand-orange group-hover/basket:opacity-100 group-hover/basket:-rotate-2",
+              isAnimating && "scale-110 bg-brand-orange drop-shadow-[0_0_10px_rgb(var(--brand-orange))]" 
             )}
+            style={{ 
+              WebkitMaskImage: 'url(/basket.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
+              maskImage: 'url(/basket.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center'
+            }}
           />
           
           {!isEmpty && !isAnimating && (
-            <span className="absolute left-1/2 top-[40%] z-10 -translate-x-[50%] -translate-y-[20%] animate-in zoom-in text-[12px] font-black leading-none text-text-primary transition-all duration-300 group-hover/basket:text-text-main group-hover/basket:drop-shadow-[0_0_6px_rgb(var(--brand-orange))]">
+            <span className="absolute left-1/2 top-[40%] z-10 -translate-x-[50%] -translate-y-[20%] animate-in zoom-in text-[12px] font-black leading-none text-text-primary transition-all duration-300 group-hover/basket:text-brand-orange group-hover/basket:drop-shadow-[0_0_6px_rgb(var(--brand-orange)_/_0.5)]">
               {safeTotalItems}
             </span>
           )}

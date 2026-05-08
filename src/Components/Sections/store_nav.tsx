@@ -163,7 +163,6 @@ export function ArrowSquare({
     </button>
   );
 }
-
 export function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
   return (
     <button
@@ -175,23 +174,14 @@ export function ShopCard({ shop }: { shop: { name: string; src: string; active: 
       }`}
     >
       <div className="pointer-events-none relative flex h-[40px] w-full max-w-[110px] items-center justify-center">
-        <Image
-          src={shop.src}
-          alt={shop.name}
-          fill
-          className="object-contain transition-opacity duration-300 group-hover:opacity-0"
-          // Додаємо фільтр інверсії для світлої теми, щоб логотипи було видно на світлому фоні
-          style={{ filter: "var(--logo-filter)" }} 
-        />
-
-        <Image
-          src={shop.src}
-          alt={shop.name}
-          fill
-          className="object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        {/* ТУТ ПОВЕРНУЛИ bg-text-primary (кремовий колір) */}
+        <div
+          className={`w-full h-full transition-colors duration-300 ${
+            shop.active ? "bg-brand-orange" : "bg-text-primary group-hover:bg-brand-orange"
+          }`}
           style={{
-            filter:
-              "brightness(0) saturate(100%) invert(46%) sepia(92%) saturate(6536%) hue-rotate(11deg) brightness(103%) contrast(101%)",
+            WebkitMaskImage: `url(${shop.src})`, WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
+            maskImage: `url(${shop.src})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center'
           }}
         />
       </div>

@@ -61,16 +61,16 @@ export function Connection({ vertical = false }: { vertical?: boolean }) {
       className={`
         relative z-0 shrink-0 flex items-center justify-center
         ${vertical ? "h-[36px] w-[45px]" : "mx-[-4px]"}
-        transition-opacity duration-500 hover:opacity-70
+        opacity-50 
       `}
     >
       <Image
         src="/connection.svg"
-        alt=""
+        alt="connection link"
         width={30}
         height={20}
         className={vertical ? "rotate-90" : ""}
-        style={{ height: "auto", filter: "var(--logo-filter)" }} // Додали фільтр для світлої теми!
+        style={{ height: "auto", filter: "var(--logo-filter)" }} 
       />
     </div>
   );

@@ -18,7 +18,6 @@ import CatalogDropdown from "@/Components/Layout/Header/catalog_dropdown";
 import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
 import ProfileDropdown from "@/Components/Layout/Header/profile_dropdown";
 import { categories } from "@/Data/catalog_data";
-import ThemeToggle from "../UI/theme_toggle";
 
 export default function Header() {
   return (
@@ -81,7 +80,7 @@ export function HeaderContent() {
   };
 
   return (
-    <header className="sticky top-0 z-[90] w-full border-b border-bg-deep bg-bg-surface font-sans shadow-lg">
+    <header className="sticky top-0 z-[90] w-full border-b border-glass/10 bg-bg-surface font-sans shadow-sm dark:shadow-lg">
       <div className="relative flex w-full items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px]">
         
         <div className="flex items-center gap-8 xl:gap-[60px]">
@@ -93,10 +92,10 @@ export function HeaderContent() {
                 event.stopPropagation();
                 setIsCatalogOpen(!isCatalogOpen);
               }}
-              className="group relative z-[50] flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-bg-highest/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-brand-orange hover:shadow-[0_8px_20px_rgba(236,88,0,0.4)] active:scale-90 active:translate-y-0"
+              className="group relative z-[50] flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-glass/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-brand-orange hover:shadow-[0_8px_20px_rgb(var(--brand-orange)_/_0.4)] active:scale-90 active:translate-y-0"
               type="button"
             >
-              <div className="relative flex h-[24px] w-[24px] items-center justify-center text-text-primary transition-colors duration-300 group-hover:text-text-main">
+              <div className="relative flex h-[24px] w-[24px] items-center justify-center text-text-primary transition-colors duration-300 group-hover:text-white">
                 <AnimatedCatalogIcon isOpen={isCatalogOpen} />
               </div>
             </button>
@@ -123,7 +122,7 @@ export function HeaderContent() {
                     searchInputRef.current?.blur();
                   }
                 }}
-                className="peer h-[42px] w-[180px] xl:w-[220px] rounded-full bg-bg-elevated border border-transparent pl-[20px] pr-[46px] text-[14px] tracking-[0.1em] text-text-primary shadow-inner outline-none placeholder:text-text-primary/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-brand-orange/60 focus:bg-bg-surface focus:shadow-[0_0_20px_rgba(236,88,0,0.3)] focus:w-[260px] xl:focus:w-[320px] cursor-text"
+                className="peer h-[42px] w-[180px] xl:w-[220px] rounded-full bg-bg-elevated border border-transparent pl-[20px] pr-[46px] text-[14px] tracking-[0.1em] text-text-primary shadow-sm dark:shadow-inner outline-none placeholder:text-text-primary/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-brand-orange/60 focus:bg-bg-surface focus:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.15)] focus:w-[260px] xl:focus:w-[320px] cursor-text"
               />
               
               <div className="absolute right-0 top-0 z-20 flex h-[42px] items-center transition-transform duration-300 group-focus-within/search:scale-105">
@@ -142,7 +141,13 @@ export function HeaderContent() {
                   }}
                 >
                   <ChainIcon>
-                    <Image src="/search.svg" alt="search" width={18} height={18} />
+                    <div 
+                      className="w-[18px] h-[18px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100" 
+                      style={{ 
+                        maskImage: 'url(/search.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                        WebkitMaskImage: 'url(/search.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center'
+                      }} 
+                    />
                   </ChainIcon>
                 </div>
               </div>
@@ -153,15 +158,14 @@ export function HeaderContent() {
             <div className="relative">
               {isAuthenticated ? (
                 <Link href="/favorites" className="outline-none group/fav">
-                  <ChainIcon className={favoriteAuthHint?.type === "success" ? "shadow-[0_0_18px_rgba(236,88,0,0.35)]" : ""}>
+                  <ChainIcon className={favoriteAuthHint?.type === "success" ? "shadow-[0_0_18px_rgb(var(--brand-orange)_/_0.35)]" : ""}>
                     <div className="relative flex items-center justify-center transition-opacity hover:opacity-80">
-                      <Image 
-                        src="/favourites.svg" 
-                        alt="fav" 
-                        width={20} 
-                        height={20} 
-                        className={favoriteCount > 0 ? "opacity-100 text-brand-orange" : "opacity-80"} 
-                        style={favoriteCount > 0 ? { filter: 'drop-shadow(0 0 8px rgba(236,88,0,0.5))' } : {}}
+                      <div 
+                        className="w-[20px] h-[20px] bg-text-primary opacity-70 transition-all duration-300 group-hover:bg-white group-hover:opacity-100" 
+                        style={{ 
+                          maskImage: 'url(/favourites.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                          WebkitMaskImage: 'url(/favourites.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center'
+                        }} 
                       />
                       {isMounted && favoriteCount > 0 && (
                         <span 
@@ -182,13 +186,12 @@ export function HeaderContent() {
                 >
                   <ChainIcon>
                     <div className="relative flex h-[20px] w-[20px] items-center justify-center">
-                      <Image 
-                        src="/favourites.svg" 
-                        alt="fav" 
-                        width={20} 
-                        height={20} 
-                        className={`absolute transition-all duration-300 group-hover/fav:opacity-0 group-hover/fav:scale-50 ${favoriteCount > 0 ? "opacity-100 text-brand-orange" : "opacity-80"}`} 
-                        style={favoriteCount > 0 ? { filter: 'drop-shadow(0 0 8px rgba(236,88,0,0.5))' } : {}}
+                      <div 
+                        className="absolute w-[20px] h-[20px] bg-text-primary opacity-70 transition-all duration-300 group-hover/fav:scale-50 group-hover/fav:opacity-0" 
+                        style={{ 
+                          WebkitMaskImage: 'url(/favourites.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
+                          maskImage: 'url(/favourites.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center'
+                        }} 
                       />
                       <svg
                         viewBox="0 0 24 24"
@@ -197,7 +200,7 @@ export function HeaderContent() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="absolute inset-0 m-auto h-[20px] w-[20px] text-text-primary opacity-0 transition-opacity duration-300 group-hover/fav:opacity-100"
+                        className="absolute inset-0 m-auto h-[20px] w-[20px] text-white opacity-0 transition-opacity duration-300 group-hover/fav:opacity-100"
                       >
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -213,7 +216,7 @@ export function HeaderContent() {
                       )}
                     </div>
                   </ChainIcon>
-                  <div className={`absolute top-[45px] left-1/2 z-50 w-[160px] -translate-x-1/2 rounded-xl border border-brand-orange/30 bg-bg-deep/95 px-3 py-2 text-center text-[11px] font-semibold text-text-primary shadow-[0_10px_25px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 ${
+                  <div className={`absolute top-[45px] left-1/2 z-50 w-[160px] -translate-x-1/2 rounded-xl border border-glass/10 bg-bg-surface px-3 py-2 text-center text-[11px] font-semibold text-text-primary shadow-[0_10px_25px_rgba(0,0,0,0.15)] backdrop-blur-md transition-all duration-300 ${
                     isProfileOpen
                       ? "pointer-events-none opacity-0 translate-y-2"
                       : "pointer-events-none opacity-0 translate-y-2 group-hover/fav:translate-y-0 group-hover/fav:opacity-100 group-hover/fav:pointer-events-auto"
@@ -230,9 +233,9 @@ export function HeaderContent() {
                     animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
                     exit={{ opacity: 0, y: -8, scale: 0.98, x: "-50%" }}
                     transition={{ duration: 0.28, ease: "easeOut" }}
-                    className="absolute left-1/2 top-[46px] z-[80] w-[228px] rounded-2xl border border-brand-orange/20 bg-bg-deep/90 px-4 py-3 text-center shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+                    className="absolute left-1/2 top-[46px] z-[80] w-[228px] rounded-2xl border border-glass/10 bg-bg-surface px-4 py-3 text-center shadow-[0_18px_40px_rgba(0,0,0,0.15)] backdrop-blur-xl"
                   >
-                    <p className="text-[12px] font-bold tracking-[0.04em] text-[#B7F7C1]">
+                    <p className="text-[12px] font-bold tracking-[0.04em] text-green-500">
                       {favoriteAuthHint.title}
                     </p>
                     <p className="mt-1 text-[11px] leading-relaxed text-text-primary/60">
@@ -246,7 +249,13 @@ export function HeaderContent() {
             <Connection />
 
             <ChainIcon>
-              <Image src="/location.svg" alt="loc" width={22} height={22} />
+              <div 
+                  className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100" 
+                  style={{ 
+                    maskImage: 'url(/location.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                    WebkitMaskImage: 'url(/location.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center'
+                  }} 
+                />
             </ChainIcon>
 
             <Connection />
@@ -261,7 +270,7 @@ export function HeaderContent() {
 
               <div className="relative z-50 flex items-center justify-center">
                 <ChainIcon onClick={() => setIsLangOpen(!isLangOpen)}>
-                  <span className={`text-[16px] font-semibold transition-colors duration-300 ${isLangOpen ? "text-text-main" : "text-text-primary hover:text-text-main"}`}>
+                  <span className={`text-[16px] font-semibold transition-colors duration-300 group-hover:text-white ${isLangOpen ? "text-text-main" : "text-text-primary"}`}>
                     {currentLang}
                   </span>
                 </ChainIcon>
@@ -275,7 +284,7 @@ export function HeaderContent() {
                     animate={{ opacity: 1, scale: 1, y: 0, x: "-50%" }}
                     exit={{ opacity: 0, scale: 0.9, y: -15, x: "-50%" }}
                     transition={{ type: "spring", stiffness: 300, damping: 25, duration: 0.3 }}
-                    className="absolute top-[18px] left-1/2 z-40 flex w-[42px] h-[145px] flex-col items-center overflow-hidden rounded-b-[21px] bg-bg-deep/50 backdrop-blur-xl pt-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.7)] shadow-t-transparent"
+                    className="absolute top-[18px] left-1/2 z-40 flex w-[42px] h-[145px] flex-col items-center overflow-hidden rounded-b-[21px] border border-glass/10 bg-bg-surface/90 backdrop-blur-xl pt-[24px] shadow-lg shadow-t-transparent"
                   >
                     <div 
                       className="flex w-full flex-col items-center overflow-y-auto pb-[16px] [&::-webkit-scrollbar]:hidden"
@@ -294,7 +303,7 @@ export function HeaderContent() {
                               setCurrentLang(lang);
                               setIsLangOpen(false);
                             }}
-                            className="group flex h-[34px] w-full shrink-0 items-center justify-center text-[13px] font-medium text-text-primary/70 outline-none transition-all duration-300 hover:bg-brand-orange/20 hover:text-brand-orange"
+                            className="group flex h-[34px] w-full shrink-0 items-center justify-center text-[13px] font-medium text-text-primary/70 outline-none transition-all duration-300 hover:bg-brand-orange/10 hover:text-brand-orange"
                             type="button"
                           >
                             <span className="transition-transform duration-300 group-hover:scale-110">{lang}</span>
@@ -318,7 +327,13 @@ export function HeaderContent() {
                 className="cursor-pointer"
               >
                 <ChainIcon>
-                  <Image src="/user.svg" alt="user" width={20} height={20} />
+                  <div 
+                    className="w-[20px] h-[20px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100" 
+                    style={{ 
+                      maskImage: 'url(/user.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                      WebkitMaskImage: 'url(/user.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center'
+                    }} 
+                  />
                 </ChainIcon>
               </div>
 
@@ -369,8 +384,14 @@ function AnimatedCatalogIcon({ isOpen }: { isOpen: boolean }) {
 function BrandLogo() {
   return (
     <Link href="/" className="relative flex min-w-[220px] select-none items-center justify-center py-2 cursor-pointer group/logo">
-      <Image src="/dankoss_logo_bkg.svg" alt="logo background" fill priority className="z-0 scale-[1.2] object-contain transition-all duration-700 ease-out group-hover/logo:scale-[1.3] group-hover/logo:opacity-100 opacity-80" />
-      <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-text-primary transition-colors duration-500 group-hover/logo:text-text-main group-hover/logo:drop-shadow-[0_0_10px_rgba(236,88,0,0.3)]">
+      <div 
+        className="absolute inset-0 z-0 scale-[1.2] bg-bg-elevated shadow-sm dark:shadow-none transition-all duration-700 ease-out opacity-80 dark:opacity-60 group-hover/logo:scale-[1.3] group-hover/logo:opacity-100 dark:group-hover/logo:opacity-100"
+        style={{ 
+          WebkitMaskImage: 'url(/dankoss_logo_bkg.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
+          maskImage: 'url(/dankoss_logo_bkg.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center'
+        }} 
+      />
+      <span className="relative z-10 flex items-center text-[35px] font-bold tracking-[0.1em] text-text-primary transition-colors duration-500 group-hover/logo:text-text-main group-hover/logo:drop-shadow-[0_0_10px_rgb(var(--brand-orange)_/_0.3)]">
         DANK
         <span className="relative mx-[2px] flex h-[35px] w-[35px] items-center justify-center">
           <div className="absolute inset-0 m-auto w-[25px] h-[25px] rounded-full bg-brand-orange opacity-0 blur-[12px] transition-opacity duration-500 group-hover/logo:opacity-50" />

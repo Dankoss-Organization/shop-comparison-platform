@@ -8,31 +8,31 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* --- СВІТЛА ТЕМА (DANKOSS Light) --- */
-    
-    /* Backgrounds (Поверхні) */
-    --bg-main: 248 245 248;        /* Базовий фон сторінки */
-    --bg-surface: 255 255 255;     /* Хедер, світлі картки (аналог #2B262C) */
-    --bg-elevated: 240 235 240;    /* Інпути, виділені елементи (аналог #3F363F) */
-    --bg-highest: 225 220 225;     /* Кнопка каталогу (аналог #5A505A) */
-    --bg-darker: 235 230 235;      /* Футер (аналог #1E1B1E) */
-    --bg-deep: 220 215 220;        /* Тултипи, темні бордери (аналог #1A181C) */
-    --bg-deepest: 210 205 210;     /* Найтемніші градієнти (аналог #100E10) */
+  /* Light Theme - "DANKOSS Morning" */
+:root {
+    /* Backgrounds */
+    --bg-main: 242 239 242;        /* #F2EFF2 - A very light, muted Purplish-Grey (The "Floor") */
+    --bg-surface: 255 250 239;     /* #FFFAEF - Your signature Creamy shade (The "Cards") */
+    --bg-elevated: 235 230 235;    /* #EBE6EB - Slightly darker Purplish-Grey for Inputs */
+    --bg-highest: 215 205 215;     /* #D7CDD7 - For Catalog Triggers / Buttons */
+    --bg-darker: 247 245 247;      /* #F7F5F7 - Footer (Very subtle) */
+    --bg-deep: 255 255 255;        /* #FFFFFF - Tooltips (Keep pure white for crispness) */
+    --bg-deepest: 225 215 225;     /* #E1D7E1 - Inner Shadows */
 
-    /* Typography (Текст) */
-    --text-main: 45 40 45;         /* Основний текст замість білого */
-    --text-primary: 60 55 60;      /* Замінник для персикового #FFDEBA у світлій темі (щоб читалося) */
+    /* Typography */
+    --text-main: 45 40 45;         /* #2D282D - Using your DARK BG color as text! (Deep Purplish-Grey) */
+    --text-primary: 110 98 110;    /* #6E626E - Muted Purplish-Grey for secondary labels */
     
-    /* Brand Colors (Майже незмінні) */
-    --brand-orange: 236 88 0;      /* #EC5800 */
-    --brand-orange-dark: 211 66 5; /* #D34205 for gradients*/
+    /* Brand Colors */
+    --brand-orange: 236 88 0;      /* #EC5800 - Constant */
+    --brand-orange-dark: 211 66 5; /* #D34205 - Constant */
     
     /* Glassmorphism */
-    --glass-bg: 0 0 0;           
+    --glass-bg: 255 250 239;       /* Creamy glass instead of white glass */
 
-    --store-accent: 242 227 219; /*Store nav gradient*/
-  }
+    /* Store Accent */
+    --store-accent: 217 197 178;   /* #D9C5B2 - A lighter, desaturated Creamy-Brown */
+}
 
   .dark {
     
