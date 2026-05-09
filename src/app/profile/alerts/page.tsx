@@ -65,22 +65,22 @@ export default function AlertsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-primary font-serif drop-shadow-md">
+            <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif drop-shadow-sm">
               Alerts Feed
             </h2>
             {unreadCount > 0 && (
-              <span className="flex h-7 min-w-[28px] items-center justify-center rounded-full bg-[#EC5800] px-2 text-[13px] font-bold text-white shadow-[0_0_15px_rgba(236,88,0,0.5)]">
+              <span className="flex h-7 min-w-[28px] items-center justify-center rounded-full bg-brand-orange px-2 text-[13px] font-bold text-white shadow-lg shadow-brand-orange/20 animate-in zoom-in">
                 {unreadCount}
               </span>
             )}
           </div>
-          <p className="text-[15px] text-text-primary/50">Stay updated on price drops, targets, and personal promos.</p>
+          <p className="text-[15px] text-text-muted dark:text-text-primary/50">Stay updated on price drops, targets, and personal promos.</p>
         </div>
         
         {unreadCount > 0 && (
           <button 
             onClick={markAllAsRead}
-            className="text-[13px] font-bold text-[#EC5800] uppercase tracking-widest hover:text-white transition-colors"
+            className="text-[13px] font-bold text-brand-orange uppercase tracking-widest hover:brightness-110 transition-all"
           >
             Mark all as read ✓
           </button>
@@ -91,10 +91,10 @@ export default function AlertsPage() {
         <AnimatePresence>
           {alerts.length === 0 ? (
              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-20 gap-4">
-               <div className="h-16 w-16 rounded-full bg-[#FFDEBA]/5 flex items-center justify-center text-text-primary/20">
+               <div className="h-16 w-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-text-muted/20">
                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-8 h-8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                </div>
-               <span className="text-[15px] text-text-primary/40">You have no new alerts.</span>
+               <span className="text-[15px] text-text-muted">You have no new alerts.</span>
              </motion.div>
           ) : (
             alerts.map((alert) => (
@@ -104,43 +104,51 @@ export default function AlertsPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className={`group relative overflow-hidden rounded-[24px] transition-all duration-300 ${alert.unread ? 'bg-[linear-gradient(135deg,rgba(236,88,0,0.1),rgba(30,26,30,0.6))] border border-[#EC5800]/30 shadow-[0_10px_30px_rgba(236,88,0,0.1)]' : 'bg-[rgba(50,45,50,0.4)] border border-[#FFDEBA]/5 hover:bg-[rgba(70,59,70,0.4)]'}`}
+                className={`group relative overflow-hidden rounded-[28px] transition-all duration-300 border ${
+                  alert.unread 
+                    ? 'bg-brand-orange/[0.03] dark:bg-brand-orange/10 border-brand-orange/30 shadow-md shadow-brand-orange/5' 
+                    : 'bg-white/40 dark:bg-white/5 border-black/5 dark:border-white/10 hover:bg-white/60 dark:hover:bg-white/10'
+                }`}
               >
                 {alert.unread && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#EC5800] shadow-[0_0_10px_#EC5800]" />
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-orange shadow-[0_0_15px_rgba(236,88,0,0.5)]" />
                 )}
 
                 <div className="flex items-start gap-5 p-6 pl-8">
-                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[24px] shadow-inner border ${alert.unread ? 'bg-[#EC5800]/20 border-[#EC5800]/30' : 'bg-[rgba(30,26,30,0.6)] border-[#FFDEBA]/10'}`}>
+                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[24px] shadow-sm border transition-all ${
+                    alert.unread 
+                      ? 'bg-brand-orange/10 border-brand-orange/20 scale-105' 
+                      : 'bg-black/5 dark:bg-black/40 border-black/5 dark:border-white/10'
+                  }`}>
                     {alert.icon}
                   </div>
 
                   <div className="flex flex-col flex-1 gap-1.5 pt-1">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className={`text-[16px] font-bold ${alert.unread ? 'text-white' : 'text-text-primary'}`}>
+                        <span className={`text-[17px] font-bold font-serif ${alert.unread ? 'text-text-main dark:text-white' : 'text-text-main dark:text-text-primary'}`}>
                           {alert.title}
                         </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-text-primary/40 bg-[#FFDEBA]/5 px-2 py-0.5 rounded-md border border-[#FFDEBA]/10">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-text-muted bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-md border border-black/5 dark:border-white/10">
                           {alert.store}
                         </span>
                       </div>
-                      <span className="text-[12px] font-medium text-text-primary/40 whitespace-nowrap">
+                      <span className="text-[12px] font-medium text-text-muted whitespace-nowrap">
                         {alert.time}
                       </span>
                     </div>
                     
-                    <p className="text-[14px] text-text-primary/60 leading-relaxed pr-8">
+                    <p className={`text-[14px] leading-relaxed pr-8 ${alert.unread ? 'text-text-main dark:text-text-primary' : 'text-text-muted'}`}>
                       {alert.message}
                     </p>
 
-                    <div className="flex items-center gap-6 mt-2">
-                      <button className="text-[13px] font-bold text-[#EC5800] hover:text-white transition-colors">
+                    <div className="flex items-center gap-6 mt-3">
+                      <button className="text-[13px] font-black text-brand-orange uppercase tracking-wider hover:translate-x-1 transition-transform">
                         {alert.action} →
                       </button>
                       <button 
                         onClick={() => deleteAlert(alert.id)}
-                        className="text-[13px] font-medium text-text-primary/30 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        className="text-[13px] font-bold text-text-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                       >
                         Dismiss
                       </button>

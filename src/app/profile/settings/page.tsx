@@ -1,6 +1,6 @@
 /**
  * @file page.tsx
- * @brief Personal Info and Settings page with placeholder styling matching the Footer design.
+ * @brief Personal Info and Settings page with adaptive light/dark glassmorphism.
  */
 
 "use client";
@@ -63,11 +63,9 @@ export default function SettingsPage() {
     setTimeout(() => {
       setIsSaving(false);
       setIsSaved(true);
-      
       setDisplayName(localName);
       setEmail(localEmail);
       setPrimaryCity(localCity);
-
       setTimeout(() => setIsSaved(false), 3000);
     }, 1000);
   };
@@ -78,59 +76,53 @@ export default function SettingsPage() {
 
   return (
     <div className="relative flex flex-col gap-10 w-full pb-10 z-10">
-      
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[40px] opacity-[0.02]" 
-           style={{ backgroundImage: 'radial-gradient(#FFDEBA 1px, transparent 1px)', backgroundSize: '30px 30px' }} 
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[40px] opacity-[0.03] dark:opacity-[0.02] text-text-main dark:text-text-primary" 
+           style={{ backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)', backgroundSize: '30px 30px' }} 
       />
 
       <div className="flex flex-col gap-2 relative">
-        <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-[#FFDEBA] leading-none font-serif cursor-default select-none drop-shadow-md">
+        <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary leading-none font-serif drop-shadow-sm">
           Personal Info
         </h2>
-        <p className="text-[15px] text-[#FFDEBA]/50 tracking-wide cursor-default select-none">
+        <p className="text-[15px] text-text-muted dark:text-text-primary/50 tracking-wide">
           Manage your account details, connected loyalty cards, and notification preferences.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
         
-        <div className="flex flex-col gap-4">
-          <h3 className="text-[18px] font-bold tracking-[1px] text-[#FFDEBA]/90 pl-1 font-serif cursor-default select-none drop-shadow-md">
+        <div className="flex flex-col gap-5">
+          <h3 className="text-[20px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif pl-1">
             Account Details
           </h3>
           
-          <div className="relative rounded-[36px] p-[1px] bg-gradient-to-br from-[#EC5800] via-[#FFDEBA]/10 to-transparent shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-            <div className="flex flex-col rounded-[36px] bg-[linear-gradient(135deg,rgba(50,45,50,0.5),rgba(30,26,30,0.4))] backdrop-blur-[20px] p-8 h-full">
-              <form onSubmit={handleSave} className="flex flex-col gap-6">
+          <div className="relative rounded-[36px] p-[1px] bg-gradient-to-br from-brand-orange via-black/5 dark:via-white/10 to-transparent shadow-xl dark:shadow-2xl">
+            <div className="flex flex-col rounded-[36px] bg-white/40 dark:bg-white/5 backdrop-blur-[20px] p-8 h-full border border-white/20 dark:border-transparent">
+              <form onSubmit={handleSave} className="flex flex-col gap-7">
                 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2 cursor-default select-none">Display Name</label>
+                  <label className="text-[13px] font-black text-text-muted uppercase tracking-wider pl-2">Display Name</label>
                   <input 
                     type="text" 
                     value={localName}
                     onChange={(e) => setLocalName(e.target.value)}
                     placeholder="Enter your display name..."
-                    className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/50 focus:ring-2 focus:ring-[#EC5800]/50"
-                    style={{
-                      background: "rgba(45, 40, 45, 0.4)",
-                      boxShadow: "2px 2px 1px #EC5800",
-                      backdropFilter: "blur(5px)",
-                      WebkitBackdropFilter: "blur(5px)",
-                    }}
+                    className="w-full rounded-[18px] border-none px-6 py-4 text-[15px] text-text-main dark:text-text-primary outline-none transition-all placeholder:text-text-muted/30 focus:ring-2 focus:ring-brand-orange/50"
+                    style={{ background: "rgba(0, 0, 0, 0.03)", boxShadow: "2px 2px 0px #EC5800", backdropFilter: "blur(5px)" }}
                   />
                 </div>
                 
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-end pl-2">
-                    <label className="text-[13px] font-medium text-[#FFDEBA]/60 cursor-default select-none">Email Address</label>
+                    <label className="text-[13px] font-black text-text-muted uppercase tracking-wider">Email Address</label>
                     <AnimatePresence mode="wait">
                       {isEmailVerified ? (
-                        <motion.span key="verified" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[1px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20">
+                        <motion.span key="verified" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-green-600 bg-green-500/10 px-2.5 py-1 rounded-md border border-green-500/20">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3 h-3"><path d="M20 6 9 17l-5-5"/></svg>
                           Verified
                         </motion.span>
                       ) : (
-                        <motion.span key="unverified" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[1px] text-[#FFDEBA]/50 bg-[#FFDEBA]/5 px-2 py-0.5 rounded-md border border-[#FFDEBA]/10">
+                        <motion.span key="unverified" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-text-muted bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded-md border border-black/5 dark:border-white/10">
                           Pending Verification
                         </motion.span>
                       )}
@@ -141,18 +133,13 @@ export default function SettingsPage() {
                     value={localEmail} 
                     onChange={(e) => setLocalEmail(e.target.value)}
                     placeholder="Enter your email address..."
-                    className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/50 focus:ring-2 focus:ring-[#EC5800]/50"
-                    style={{
-                      background: "rgba(45, 40, 45, 0.4)",
-                      boxShadow: "2px 2px 1px #EC5800",
-                      backdropFilter: "blur(5px)",
-                      WebkitBackdropFilter: "blur(5px)",
-                    }}
+                    className="w-full rounded-[18px] border-none px-6 py-4 text-[15px] text-text-main dark:text-text-primary outline-none transition-all placeholder:text-text-muted/30 focus:ring-2 focus:ring-brand-orange/50"
+                    style={{ background: "rgba(0, 0, 0, 0.03)", boxShadow: "2px 2px 0px #EC5800", backdropFilter: "blur(5px)" }}
                   />
                 </div>
 
                 <div className="flex flex-col gap-2 relative" ref={cityRef}>
-                  <label className="text-[13px] font-medium text-[#FFDEBA]/60 pl-2 cursor-default select-none">Primary City</label>
+                  <label className="text-[13px] font-black text-text-muted uppercase tracking-wider pl-2">Primary City</label>
                   <div className="relative">
                     <input 
                       type="text"
@@ -163,16 +150,11 @@ export default function SettingsPage() {
                       }}
                       onFocus={() => setIsCityDropdownOpen(true)}
                       placeholder="Enter your primary city..."
-                      className="w-full rounded-[16px] border-none px-5 py-3.5 text-[15px] text-[#FFDEBA] outline-none transition-all placeholder:text-[#FFDEBA]/50 focus:ring-2 focus:ring-[#EC5800]/50"
-                      style={{
-                        background: "rgba(45, 40, 45, 0.4)",
-                        boxShadow: "2px 2px 1px #EC5800",
-                        backdropFilter: "blur(5px)",
-                        WebkitBackdropFilter: "blur(5px)",
-                      }}
+                      className="w-full rounded-[18px] border-none px-6 py-4 text-[15px] text-text-main dark:text-text-primary outline-none transition-all placeholder:text-text-muted/30 focus:ring-2 focus:ring-brand-orange/50"
+                      style={{ background: "rgba(0, 0, 0, 0.03)", boxShadow: "2px 2px 0px #EC5800", backdropFilter: "blur(5px)" }}
                     />
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#FFDEBA]/30">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted/40">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     </div>
                   </div>
 
@@ -180,7 +162,7 @@ export default function SettingsPage() {
                     {isCityDropdownOpen && filteredCities.length > 0 && (
                       <motion.div 
                         initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-                        className="absolute top-[65px] left-0 w-full bg-[rgba(45,40,45,0.95)] backdrop-blur-xl border border-[#FFDEBA]/10 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden z-50 max-h-[200px] overflow-y-auto custom-scrollbar"
+                        className="absolute top-[70px] left-0 w-full bg-white/95 dark:bg-bg-surface/95 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[200px] overflow-y-auto custom-scrollbar"
                       >
                         {filteredCities.map((city) => (
                           <div 
@@ -189,7 +171,7 @@ export default function SettingsPage() {
                               setLocalCity(city);
                               setIsCityDropdownOpen(false);
                             }}
-                            className="px-5 py-3 text-[14px] text-[#FFDEBA]/80 hover:bg-[#EC5800]/20 hover:text-[#EC5800] cursor-pointer transition-colors"
+                            className="px-6 py-3.5 text-[14px] text-text-main dark:text-text-primary hover:bg-brand-orange/10 hover:text-brand-orange cursor-pointer transition-colors border-b border-black/[0.03] dark:border-white/[0.03] last:border-none"
                           >
                             {city}
                           </div>
@@ -199,32 +181,23 @@ export default function SettingsPage() {
                   </AnimatePresence>
                 </div>
 
-                <div className="mt-4 flex justify-end pt-5 border-t border-[#FFDEBA]/5">
+                <div className="mt-2 flex justify-end pt-6 border-t border-black/5 dark:border-white/5">
                   <button 
                     type="submit" 
                     disabled={isSaving || isSaved}
-                    className={`relative overflow-hidden flex items-center justify-center rounded-[16px] w-[160px] h-[48px] text-[14px] font-bold text-white transition-all duration-300 ${
+                    className={`relative overflow-hidden flex items-center justify-center rounded-[18px] w-full md:w-[180px] h-[52px] text-[14px] font-black uppercase tracking-widest text-white transition-all duration-300 ${
                       isSaved 
-                        ? 'bg-green-500 shadow-[0_0_20px_rgba(34,197,94,0.4)] border-green-400' 
-                        : 'bg-[#EC5800] shadow-[2px_2px_1px_rgba(30,26,30,0.8)] hover:-translate-y-[2px] hover:shadow-[0_0_20px_rgba(236,88,0,0.6)] active:scale-95'
+                        ? 'bg-green-500 shadow-lg' 
+                        : 'bg-brand-orange shadow-md hover:-translate-y-1 hover:shadow-xl active:scale-95 shadow-brand-orange/20'
                     }`}
                   >
                     <AnimatePresence mode="wait">
                       {isSaving ? (
-                        <motion.div key="saving" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-1.5 absolute">
-                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
-                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                        </motion.div>
+                        <motion.div key="saving" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2"><span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" /><span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} /><span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} /></motion.div>
                       ) : isSaved ? (
-                        <motion.div key="saved" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-2 absolute">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M20 6 9 17l-5-5"/></svg>
-                          Saved
-                        </motion.div>
+                        <motion.div key="saved" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-2">✓ Saved</motion.div>
                       ) : (
-                        <motion.span key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute">
-                          Save Changes
-                        </motion.span>
+                        <motion.span key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Save Changes</motion.span>
                       )}
                     </AnimatePresence>
                   </button>
@@ -234,123 +207,97 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-10">
           
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-end pl-1 pr-2 cursor-default select-none">
-              <h3 className="text-[18px] font-bold tracking-[1px] text-[#FFDEBA]/90 font-serif drop-shadow-md">
-                Linked Loyalty Cards
+          <div className="flex flex-col gap-5">
+            <div className="flex justify-between items-end pl-1 pr-2">
+              <h3 className="text-[20px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif">
+                Loyalty Cards
               </h3>
-              <span className="text-[12px] text-[#FFDEBA]/40">For personalized discounts</span>
+              <span className="text-[12px] font-medium text-text-muted">For personalized deals</span>
             </div>
             
-            <div className="relative rounded-[36px] p-[1px] bg-gradient-to-br from-[#EC5800]/30 via-[#FFDEBA]/5 to-transparent shadow-[0_15px_35px_rgba(0,0,0,0.2)]">
-              <div className="flex flex-col gap-3 rounded-[36px] bg-[linear-gradient(135deg,rgba(55,50,55,0.15),rgba(30,26,30,0.15))] backdrop-blur-[20px] p-6">
+            <div className="relative rounded-[32px] p-[1px] bg-gradient-to-br from-brand-orange/30 via-black/5 dark:via-white/10 to-transparent">
+              <div className="flex flex-col gap-4 rounded-[32px] bg-white/40 dark:bg-white/5 backdrop-blur-[20px] p-6 border border-white/20 dark:border-transparent">
                 
-                <div className="group flex items-center justify-between p-4 rounded-2xl bg-[rgba(30,26,30,0.4)] border border-[#FFDEBA]/5 hover:bg-[rgba(70,59,70,0.2)] transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-16 items-center justify-center rounded-lg bg-orange-500 shadow-inner">
+                <div className="group flex items-center justify-between p-5 rounded-[22px] bg-white dark:bg-black/40 border border-black/5 dark:border-white/5 hover:shadow-md transition-all">
+                  <div className="flex items-center gap-5">
+                    <div className="flex h-11 w-18 items-center justify-center rounded-lg bg-[#EC5800] shadow-md">
                       <span className="text-[11px] font-black text-white italic tracking-wider">СІЛЬПО</span>
                     </div>
-                    <div className="flex flex-col select-none">
+                    <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <span className="text-[15px] font-bold text-[#FFDEBA]">Власний Рахунок</span>
-                        <span className="text-[9px] text-[#4ADE80] border border-[#4ADE80]/30 bg-[#4ADE80]/10 px-1.5 rounded-sm">Verified</span>
+                        <span className={`text-[16px] font-bold font-serif dark:text-text-primary`}>Власний Рахунок</span>
+                        <span className="text-[9px] font-black text-green-600 bg-green-500/10 px-1.5 rounded-sm border border-green-500/20">Verified</span>
                       </div>
-                      <span className="text-[12px] text-[#FFDEBA]/50 tracking-widest font-mono mt-0.5">**** 4123</span>
+                      <span className="text-[12px] text-text-muted tracking-widest font-mono mt-0.5 opacity-80">**** 4123</span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-[#FFDEBA]/40 mb-1">Synced 2h ago</span>
-                    <button className="text-[11px] font-bold text-[#FFDEBA]/30 hover:text-red-500 transition-colors">Remove</button>
-                  </div>
+                  <button className="text-[11px] font-black text-text-muted hover:text-red-500 transition-colors uppercase tracking-widest">Remove</button>
                 </div>
 
-                <div className="group flex items-center justify-between p-4 rounded-2xl bg-[rgba(30,26,30,0.4)] border border-[#FFDEBA]/5 hover:bg-[rgba(70,59,70,0.2)] transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-16 items-center justify-center rounded-lg bg-red-600 shadow-inner">
+                <div className="group flex items-center justify-between p-5 rounded-[22px] bg-white dark:bg-black/40 border border-black/5 dark:border-white/5 hover:shadow-md transition-all">
+                  <div className="flex items-center gap-5">
+                    <div className="flex h-11 w-18 items-center justify-center rounded-lg bg-[#0047AB] shadow-md">
                       <span className="text-[13px] font-black text-white tracking-widest">АТБ</span>
                     </div>
-                    <div className="flex flex-col select-none">
+                    <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <span className="text-[15px] font-bold text-[#FFDEBA]">Картка АТБ</span>
-                        <span className="text-[9px] text-[#4ADE80] border border-[#4ADE80]/30 bg-[#4ADE80]/10 px-1.5 rounded-sm">Verified</span>
+                        <span className={`text-[16px] font-bold font-serif dark:text-text-primary`}>Картка АТБ</span>
+                        <span className="text-[9px] font-black text-green-600 bg-green-500/10 px-1.5 rounded-sm border border-green-500/20">Verified</span>
                       </div>
-                      <span className="text-[12px] text-[#FFDEBA]/50 tracking-widest font-mono mt-0.5">**** 8802</span>
+                      <span className="text-[12px] text-text-muted tracking-widest font-mono mt-0.5 opacity-80">**** 8802</span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-[#FFDEBA]/40 mb-1">Synced 1d ago</span>
-                    <button className="text-[11px] font-bold text-[#FFDEBA]/30 hover:text-red-500 transition-colors">Remove</button>
-                  </div>
+                  <button className="text-[11px] font-black text-text-muted hover:text-red-500 transition-colors uppercase tracking-widest">Remove</button>
                 </div>
 
-                <button className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#FFDEBA]/10 py-3.5 text-[13px] font-bold text-[#FFDEBA]/50 transition-all hover:border-[#EC5800]/50 hover:bg-[#EC5800]/10 hover:text-[#EC5800]">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                <button className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-black/10 dark:border-white/10 py-4 text-[13px] font-black uppercase tracking-widest text-text-muted transition-all hover:border-brand-orange/40 hover:text-brand-orange hover:bg-brand-orange/5">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                   Link New Card
                 </button>
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col gap-4">
-            <h3 className="text-[18px] font-bold tracking-[1px] text-[#FFDEBA]/90 pl-1 font-serif cursor-default select-none drop-shadow-md">
-              Preferences
+          <div className="flex flex-col gap-5">
+            <h3 className="text-[20px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif pl-1">
+              General Preferences
             </h3>
             
-            <div className="relative rounded-[36px] p-[1px] bg-gradient-to-br from-[#EC5800]/30 via-[#FFDEBA]/5 to-transparent shadow-[0_15px_35px_rgba(0,0,0,0.2)]">
-              <div className="flex flex-col gap-3 rounded-[36px] bg-[linear-gradient(135deg,rgba(55,50,55,0.15),rgba(30,26,30,0.15))] backdrop-blur-[20px] p-6 h-full">
+            <div className="relative rounded-[32px] p-[1px] bg-gradient-to-br from-brand-orange/30 via-black/5 dark:via-white/10 to-transparent shadow-lg">
+              <div className="flex flex-col gap-4 rounded-[32px] bg-white/40 dark:bg-white/5 backdrop-blur-[20px] p-7 border border-white/20 dark:border-transparent">
                 
-                <div onClick={() => setIsDarkMode(!isDarkMode)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] overflow-hidden group-hover:text-[#EC5800] transition-colors">
+                <div onClick={() => setIsDarkMode(!isDarkMode)} className="group flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-black/20 border border-black/5 dark:border-white/5 cursor-pointer hover:shadow-md transition-all">
+                  <div className="flex items-center gap-5">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-black/5 dark:bg-white/5 text-brand-orange transition-all scale-110">
                       <AnimatePresence mode="wait" initial={false}>
-                        <motion.div key={isDarkMode ? "moon" : "sun"} initial={{ y: -20, opacity: 0, rotate: -90 }} animate={{ y: 0, opacity: 1, rotate: 0 }} exit={{ y: 20, opacity: 0, rotate: 90 }} transition={{ duration: 0.2 }} className="absolute">
-                          {isDarkMode ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg> : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>}
+                        <motion.div key={isDarkMode ? "moon" : "sun"} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} transition={{ duration: 0.2 }}>
+                          {isDarkMode ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg> : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m8-8h2M2 12h2"/></svg>}
                         </motion.div>
                       </AnimatePresence>
                     </div>
-                    <div className="flex flex-col select-none">
-                      <span className="text-[15px] font-medium text-[#FFDEBA] transition-colors group-hover:text-[#EC5800]">
-                        {isDarkMode ? "Dark Mode" : "Light Mode"}
-                      </span>
-                      <span className="text-[12px] text-[#FFDEBA]/50 transition-colors">
-                        {isDarkMode ? "Reduces eye strain" : "High contrast interface"}
-                      </span>
+                    <div className="flex flex-col">
+                      <span className="text-[16px] font-bold font-serif dark:text-text-primary">{isDarkMode ? "Dark Mode" : "Light Mode"}</span>
+                      <span className="text-[12px] text-text-muted opacity-80">{isDarkMode ? "Reduces eye strain" : "High contrast interface"}</span>
                     </div>
                   </div>
-                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${isDarkMode ? 'bg-[#EC5800]' : 'bg-bg-elevated'}`}>
-                     <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: isDarkMode ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
+                  <button className={`flex h-[30px] w-[54px] items-center rounded-full p-1 transition-all duration-500 shadow-inner ${isDarkMode ? 'bg-brand-orange shadow-brand-orange/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                     <motion.div layout className="h-[22px] w-[22px] rounded-full bg-white shadow-md" animate={{ x: isDarkMode ? 24 : 0 }} />
                   </button>
                 </div>
 
-                <div onClick={() => setEmailAlerts(!emailAlerts)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors mt-2">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">
-                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <div onClick={() => setEmailAlerts(!emailAlerts)} className="group flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-black/20 border border-black/5 dark:border-white/5 cursor-pointer hover:shadow-md transition-all">
+                  <div className="flex items-center gap-5">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-black/5 dark:bg-white/5 text-text-muted group-hover:text-brand-orange transition-colors">
+                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     </div>
-                    <div className="flex flex-col select-none">
-                      <span className="text-[15px] font-medium text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">Email Alerts</span>
-                      <span className="text-[12px] text-[#FFDEBA]/50">Get notified of 10%+ drops</span>
-                    </div>
-                  </div>
-                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${emailAlerts ? 'bg-[#EC5800]' : 'bg-bg-elevated'}`}>
-                     <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: emailAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
-                  </button>
-                </div>
-
-                <div onClick={() => setPushAlerts(!pushAlerts)} className="group flex items-center justify-between p-3 rounded-2xl bg-[rgba(30,26,30,0.2)] border border-[#FFDEBA]/5 cursor-pointer hover:bg-[rgba(70,59,70,0.2)] transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(70,59,70,0.3)] text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">
-                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    </div>
-                    <div className="flex flex-col select-none">
-                      <span className="text-[15px] font-medium text-[#FFDEBA] group-hover:text-[#EC5800] transition-colors">Push Notifications</span>
-                      <span className="text-[12px] text-[#FFDEBA]/50">Real-time browser alerts</span>
+                    <div className="flex flex-col">
+                      <span className="text-[16px] font-bold font-serif dark:text-text-primary">Email Alerts</span>
+                      <span className="text-[12px] text-text-muted opacity-80">Get notified of 10%+ price drops</span>
                     </div>
                   </div>
-                  <button className={`pointer-events-none flex h-[26px] w-[46px] items-center rounded-full p-1 transition-colors duration-300 ${pushAlerts ? 'bg-[#EC5800]' : 'bg-bg-elevated'}`}>
-                     <motion.div layout className="h-[18px] w-[18px] rounded-full bg-white shadow-sm" animate={{ x: pushAlerts ? 20 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
+                  <button className={`flex h-[30px] w-[54px] items-center rounded-full p-1 transition-all duration-500 shadow-inner ${emailAlerts ? 'bg-brand-orange' : 'bg-black/10'}`}>
+                     <motion.div layout className="h-[22px] w-[22px] rounded-full bg-white shadow-md" animate={{ x: emailAlerts ? 24 : 0 }} />
                   </button>
                 </div>
 

@@ -62,13 +62,14 @@ export function CartHeaderWidget() {
             <Image src="/orange_logo.svg" alt="logo" width={28} height={28} className="object-contain" />
           </div>
         </div>
-        <div className="absolute right-[2px] top-[4px] z-20 flex h-[44px] w-[44px] shrink-0 items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/basket:-translate-y-[4px] group-hover/basket:scale-105">
+        
+        <div className="absolute right-0 top-[0px] z-20 flex h-[50px] w-[50px] shrink-0 items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/basket:-translate-y-[4px] group-hover/basket:scale-105">
           
-          {/* ЗАМІНИЛИ ЗОБРАЖЕННЯ НА ТРАФАРЕТ ДЛЯ КОШИКА */}
           <div
             className={cn(
-              "relative top-[6px] w-[44px] h-[44px] bg-text-primary opacity-70 transition-all duration-300 group-hover/basket:bg-brand-orange group-hover/basket:opacity-100 group-hover/basket:-rotate-2",
-              isAnimating && "scale-110 bg-brand-orange drop-shadow-[0_0_10px_rgb(var(--brand-orange))]" 
+              "relative top-[2px] w-[50px] h-[50px] transition-all duration-300 group-hover/basket:bg-brand-orange group-hover/basket:opacity-100 group-hover/basket:-rotate-2",
+              "bg-text-main opacity-20 dark:bg-text-primary dark:opacity-90",
+              isAnimating && "scale-110 bg-brand-orange opacity-100 drop-shadow-[0_0_10px_rgb(var(--brand-orange))]" 
             )}
             style={{ 
               WebkitMaskImage: 'url(/basket.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
@@ -77,7 +78,13 @@ export function CartHeaderWidget() {
           />
           
           {!isEmpty && !isAnimating && (
-            <span className="absolute left-1/2 top-[40%] z-10 -translate-x-[50%] -translate-y-[20%] animate-in zoom-in text-[12px] font-black leading-none text-text-primary transition-all duration-300 group-hover/basket:text-brand-orange group-hover/basket:drop-shadow-[0_0_6px_rgb(var(--brand-orange)_/_0.5)]">
+            <span 
+              className={cn(
+                "absolute left-1/2 top-[44%] z-10 -translate-x-1/2 -translate-y-1/2 animate-in zoom-in text-[15px] font-black leading-none transition-all duration-300",
+                "text-text-main opacity-50 group-hover/basket:text-white group-hover/basket:opacity-100",
+                "dark:text-text-primary dark:opacity-100 dark:group-hover/basket:text-bg-deepest"
+              )}
+            >
               {safeTotalItems}
             </span>
           )}

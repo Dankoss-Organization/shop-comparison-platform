@@ -75,7 +75,6 @@ ProductModal.Window = function Window({ children }: { children: ReactNode }) {
       onClick={onClose}
       aria-label="Close modal"
     >
-      {/* Modal Container */}
       <div
         className="relative mb-12 min-h-[500px] w-[90vw] max-w-[1240px] overflow-hidden rounded-[2.5rem] border border-glass/10 bg-bg-surface text-text-primary shadow-[0_36px_90px_rgba(0,0,0,0.5)] lg:h-[86vh] animate-in zoom-in-95 fade-in duration-300"
         onClick={(e) => e.stopPropagation()}
@@ -295,7 +294,6 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
       
       <AccordionBlock label="Nutrition" open={expanded.nutrition} onToggle={() => toggle("nutrition")}>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {/* Кольорові акценти (крапки) залишаємо жорсткими HEX'ами, бо це брендування графіка */}
           <NutrientStat label="Calories" value={item.nutrition?.calories || "-"} accent="#EC5800" />
           <NutrientStat label="Carbs" value={item.nutrition?.carbs || "-"} accent="#f6a35a" />
           <NutrientStat label="Fats" value={item.nutrition?.fats || "-"} accent="#d87b34" />
@@ -315,7 +313,6 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
   );
 };
 
-// Utility Components - Переведено на змінні фонів
 function OptionBlock({ label, content }: { label: string; content: ReactNode }) { return <div className="rounded-[1.2rem] border border-glass/10 bg-bg-darker p-4 shadow-[0_10px_20px_rgba(0,0,0,0.08)] h-full"><p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-primary/50">{label}</p><div className="mt-3">{content}</div></div>; }
 function SoftTag({ children }: { children: ReactNode }) { return <span className="rounded-full border border-glass/10 bg-bg-highest px-3 py-1.5 text-sm font-semibold text-text-primary">{children}</span>; }
 function AccordionBlock({ label, open, onToggle, children }: { label: string; open: boolean; onToggle: () => void; children: ReactNode }) { return <div className="overflow-hidden rounded-[1.25rem] border border-glass/10 bg-bg-darker shadow-[0_10px_18px_rgba(0,0,0,0.08)]"><button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-5 py-4 text-left"><span className="text-base font-semibold text-text-primary">{label}</span><span className={cn("text-text-primary transition duration-300", open ? "rotate-180 text-brand-orange" : "")}><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>{open && <div className="border-t border-glass/5 px-5 py-4">{children}</div>}</div>; }

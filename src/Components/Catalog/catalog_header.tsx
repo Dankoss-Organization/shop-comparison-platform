@@ -42,20 +42,20 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
     <div className="mb-8 flex flex-col gap-6">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-black text-text-main">
             {state.activeCategory === "all"
               ? state.activeTab === "products"
                 ? "All Available Products"
                 : "All Curated Recipes"
               : state.currentCatLabel}
           </h2>
-          <span className="mt-3 inline-flex rounded-full bg-[#342E34] px-4 py-1.5 text-xs font-bold text-[#FFDEBA]">
+          <span className="mt-3 inline-flex rounded-full bg-bg-elevated px-4 py-1.5 text-xs font-bold text-brand-orange border border-glass/5 shadow-sm">
             {state.totalItemsCount} items total
           </span>
         </div>
 
         <div ref={controlsRef} className="relative flex flex-col gap-2 md:items-end">
-          <span className="px-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#FFDEBA]/45">
+          <span className="px-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-text-primary/50">
             Catalog controls
           </span>
 
@@ -66,9 +66,9 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
                 onOpenFilters();
                 setIsSortOpen(false);
               }}
-              className="group inline-flex items-center gap-3 rounded-[1rem] bg-[#1F1A1F] px-4 py-2.5 text-sm font-semibold text-[#FFDEBA] shadow-[inset_0_0_0_1px_#FFFFFF0F,0_10px_22px_#00000018] transition-all duration-300 hover:bg-[#262126]"
+              className="group inline-flex items-center gap-3 rounded-[1rem] bg-bg-surface px-4 py-2.5 text-sm font-semibold text-text-primary border border-glass/10 shadow-sm transition-all duration-300 hover:bg-bg-elevated hover:text-text-main"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[#EC5800]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-orange">
                 <path
                   d="M3 5H21M6 12H18M10 19H14"
                   stroke="currentColor"
@@ -78,7 +78,7 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
               </svg>
               <span>Filters</span>
               {state.activeFilterCount > 0 ? (
-                <span className="rounded-full bg-[#EC5800] px-2 py-0.5 text-[11px] font-bold text-white">
+                <span className="rounded-full bg-brand-orange px-2 py-0.5 text-[11px] font-bold text-white">
                   {state.activeFilterCount}
                 </span>
               ) : null}
@@ -88,17 +88,17 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
               type="button"
               onClick={() => setIsSortOpen((prev) => !prev)}
               className={cn(
-                "group inline-flex items-center justify-between gap-4 rounded-[1rem] px-4 py-2.5 text-left text-[#FFDEBA] transition-all duration-300 md:min-w-[220px]",
+                "group inline-flex items-center justify-between gap-4 rounded-[1rem] px-4 py-2.5 text-left text-text-primary transition-all duration-300 md:min-w-[220px] border border-glass/10 shadow-sm",
                 isSortOpen
-                  ? "bg-[#2A242A] shadow-[inset_0_0_0_1px_#EC58004A,0_10px_22px_#00000020]"
-                  : "bg-[#1F1A1F] shadow-[inset_0_0_0_1px_#FFFFFF0F,0_10px_22px_#00000018] hover:bg-[#262126]",
+                  ? "bg-bg-elevated border-brand-orange/40"
+                  : "bg-bg-surface hover:bg-bg-elevated hover:text-text-main",
               )}
             >
               <span className="text-sm font-semibold">{activeSortLabel}</span>
               <span
                 className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-full bg-[#342E34] text-[#FFDEBA]/65 transition-all duration-300 group-hover:text-[#EC5800]",
-                  isSortOpen ? "rotate-180 text-[#EC5800]" : "",
+                  "flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated text-text-primary/65 transition-all duration-300 group-hover:text-brand-orange",
+                  isSortOpen ? "rotate-180 text-brand-orange" : "",
                 )}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -116,7 +116,7 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
 
           <div
             className={cn(
-              "absolute right-0 top-full z-30 mt-3 w-full max-w-[320px] origin-top rounded-[1.2rem] bg-[#1C171C] p-1.5 shadow-[inset_0_0_0_1px_#FFFFFF10,0_18px_34px_#00000042] transition-all duration-200 sm:min-w-[300px]",
+              "absolute right-0 top-full z-30 mt-3 w-full max-w-[320px] origin-top rounded-[1.2rem] bg-bg-surface p-1.5 shadow-xl border border-glass/10 transition-all duration-200 sm:min-w-[300px]",
               isSortOpen
                 ? "pointer-events-auto translate-y-0 opacity-100"
                 : "pointer-events-none -translate-y-1 opacity-0",
@@ -136,8 +136,8 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
                     className={cn(
                       "flex items-center justify-between rounded-[0.9rem] px-3.5 py-2.5 text-sm font-medium transition-all duration-200",
                       isActive
-                        ? "bg-[#EC5800] text-white shadow-[0_10px_18px_#5E1F002F]"
-                        : "text-[#FFDEBA]/78 hover:bg-[#2A242A] hover:text-[#FFDEBA]",
+                        ? "bg-brand-orange text-white shadow-md"
+                        : "text-text-primary hover:bg-bg-elevated hover:text-text-main",
                     )}
                   >
                     <span>{option.label}</span>
@@ -164,10 +164,10 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
               key={chip.key === "market" ? `${chip.key}-${chip.value}` : chip.key}
               type="button"
               onClick={() => actions.handleRemoveFilterChip(chip)}
-              className="group inline-flex items-center gap-2 rounded-full bg-[#1F1A1F] px-3.5 py-2 text-xs font-semibold text-[#FFDEBA] shadow-[inset_0_0_0_1px_#FFFFFF10] transition-all duration-300 hover:bg-[#262026] hover:text-white"
+              className="group inline-flex items-center gap-2 rounded-full bg-bg-elevated px-3.5 py-2 text-xs font-semibold text-text-primary border border-glass/5 shadow-sm transition-all duration-300 hover:border-brand-orange/30 hover:text-text-main"
             >
               <span>{chip.label}</span>
-              <span className="text-[#FFDEBA]/45 transition-colors duration-300 group-hover:text-[#EC5800]">
+              <span className="text-text-primary/45 transition-colors duration-300 group-hover:text-brand-orange">
                 ×
               </span>
             </button>

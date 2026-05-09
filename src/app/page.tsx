@@ -24,21 +24,29 @@ import {
  * @description The main landing component for the website (`/`).
  * Iterates through arrays of mock data to render distinct presentation sections, including Hero elements,
  * horizontally scrolling DealCard carousels, and promotional Banners.
- * * @returns {JSX.Element} The composed Home page DOM hierarchy.
+ * @returns {JSX.Element} The composed Home page DOM hierarchy.
  */
 export default function Home() {
   return (
-    <main className="min-h-screen bg-brand-night text-white">
+    <main className="min-h-screen bg-bg-main text-text-main transition-colors duration-300">
       <Header />
-      <section className="relative overflow-x-hidden overflow-y-visible border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(236,88,0,0.22),transparent_28%),radial-gradient(circle_at_right,rgba(255,255,255,0.08),transparent_22%),linear-gradient(180deg,#2d282d_0%,#231f23_100%)]">
-      
-      <div>
+      <section 
+        className="relative overflow-x-hidden overflow-y-visible border-b border-text-main/5 dark:border-white/5 transition-colors duration-300"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at top left, rgb(var(--brand-orange) / 0.15), transparent 28%), 
+            radial-gradient(circle at right, rgb(var(--text-main) / 0.05), transparent 22%), 
+            linear-gradient(180deg, rgb(var(--bg-main)) 0%, rgb(var(--bg-darker)) 100%)
+          `
+        }}
+      >
+        <div>
           <StoreNav />
-      </div>
-      <div className="w-full pb-8 md:px-8 lg:px-12 2xl:px-[60px]">
-        <Hero featured={weekDiscounts.slice(0, 3)} />
-      </div>
-  </section>
+        </div>
+        <div className="w-full pb-8 md:px-8 lg:px-12 2xl:px-[60px]">
+          <Hero featured={weekDiscounts.slice(0, 3)} />
+        </div>
+      </section>
 
       <Banner
         eyebrow="Banner"

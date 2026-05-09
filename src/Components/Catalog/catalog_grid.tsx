@@ -23,9 +23,9 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
 
   if (items.length === 0) {
     return (
-      <div className="flex h-64 w-full flex-col items-center justify-center rounded-2xl border border-white/5 bg-[#1F1A1F] text-center">
+      <div className="flex h-64 w-full flex-col items-center justify-center rounded-2xl border border-glass/10 bg-bg-elevated shadow-inner text-center">
         <svg
-          className="mb-4 text-white/20"
+          className="mb-4 text-text-primary/40"
           width="48"
           height="48"
           viewBox="0 0 24 24"
@@ -38,8 +38,8 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <h3 className="text-lg font-bold text-white">No items found</h3>
-        <p className="mt-2 text-sm text-white/50">Try adjusting your filters to see more results.</p>
+        <h3 className="text-lg font-bold text-text-main">No items found</h3>
+        <p className="mt-2 text-sm text-text-primary/60">Try adjusting your filters to see more results.</p>
       </div>
     );
   }

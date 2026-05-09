@@ -169,15 +169,16 @@ export function ShopCard({ shop }: { shop: { name: string; src: string; active: 
       type="button"
       className={`group relative flex h-[68px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[22px] px-[24px] transition-all duration-300 ease-in-out ${
         shop.active
-          ? "z-10 scale-100 border border-text-primary bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--text-primary)_/_0.2)]"
+          ? "z-10 scale-100 border border-text-primary/20 bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--brand-orange)_/_0.2)]"
           : "bg-gradient-to-r from-bg-elevated to-brand-store/60 shadow-xl hover:z-50 hover:scale-[1.05] hover:to-brand-store"
       }`}
     >
       <div className="pointer-events-none relative flex h-[40px] w-full max-w-[110px] items-center justify-center">
-        {/* ТУТ ПОВЕРНУЛИ bg-text-primary (кремовий колір) */}
         <div
-          className={`w-full h-full transition-colors duration-300 ${
-            shop.active ? "bg-brand-orange" : "bg-text-primary group-hover:bg-brand-orange"
+          className={`w-full h-full transition-all duration-300 ${
+            shop.active 
+              ? "bg-brand-orange opacity-100" 
+              : "bg-text-main opacity-30 dark:bg-text-primary dark:opacity-80 group-hover:opacity-100 group-hover:bg-brand-orange dark:group-hover:bg-brand-orange"
           }`}
           style={{
             WebkitMaskImage: `url(${shop.src})`, WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',

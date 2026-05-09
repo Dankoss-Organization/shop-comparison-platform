@@ -49,7 +49,7 @@ export default function Hero({ featured: _featured }: { featured: DealCard[] }) 
         />
         
         <Image
-          src="/Cart_hero2.png" // TODO
+          src="/Cart_hero_light2.png" 
           alt="Dankoss background light"
           fill
           priority

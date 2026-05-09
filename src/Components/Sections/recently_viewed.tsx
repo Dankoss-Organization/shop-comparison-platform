@@ -85,7 +85,6 @@ export function RecentlyViewedPanel({
         >
           <defs>
             <linearGradient id={gradientId} x1="30%" y1="0%" x2="100%" y2="100%">
-              {/* Використовуємо CSS змінні для градієнту */}
               <stop offset="58%" stopColor="rgb(var(--bg-surface))" stopOpacity="1" />
               <stop offset="92%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="1" />
               <stop offset="96%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="0.6" />
@@ -143,7 +142,7 @@ export function RecentlyViewedPanel({
               className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full bg-brand-orange text-bg-main shadow-[0_0_14px_rgb(var(--brand-orange)_/_0.45)]"
               variants={{
                 hover: { 
-                  filter: "brightness(1.15)", // Робимо кнопку світлішою при ховері
+                  filter: "brightness(1.15)", 
                   boxShadow: "0 0 22px rgb(var(--brand-orange) / 0.6)",
                   scale: 1.05 
                 },

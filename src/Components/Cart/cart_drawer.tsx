@@ -27,7 +27,6 @@ export function CartDrawer() {
   useEffect(() => setIsMounted(true), []);
 
   const handleOptimize = () => {
-    // ... (логіка оптимізації залишається без змін)
     setIsOptimizing(true);
     const cartProducts: CartProduct[] = items.map((item: any) => {
       const activeOffer = item.selectedStoreId 

@@ -44,6 +44,7 @@ const contacts = [
     tooltip: "Open map",
   },
 ];
+
 const socials = [
   { href: "#", iconSrc: "/github.svg", alt: "GitHub" },
   { href: "#", iconSrc: "/instagram.svg", alt: "Instagram" },
@@ -130,7 +131,7 @@ export default function Footer() {
             <span className="text-[42px] font-semibold text-text-primary md:text-[46px]">SS</span>
           </div>
 
-          <p className="max-w-[360px] text-lg font-medium leading-6 tracking-[-1px] text-text-primary">
+          <p className="max-w-[360px] text-lg font-medium leading-6 tracking-[-1px] text-gray-500 dark:text-gray-400">
             Give a rich person 100$ and he will make it 10000$, give a poor person 100$ and he will
             make it 0$, give us 100$, please
           </p>
@@ -148,20 +149,28 @@ export default function Footer() {
             {contacts.map((item, index) => (
               <div key={item.text} className="flex flex-col items-start">
                 
-                <div className="flex items-center gap-[16px]">
-                  <div className="group relative z-10 hover:z-50">
+                <div className="flex items-center gap-[16px] group/item">
+                  <div className="relative z-10 hover:z-50">
                     <a href={item.href}>
                       <ChainIcon>
-                        <Image src={item.icon} alt={item.alt} width={22} height={22} />
+                        <div className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-black/10 transition-all duration-300 group-hover/item:bg-brand-orange dark:bg-white/10">
+                          <div 
+                            className="h-[18px] w-[18px] bg-gray-500 transition-all duration-300 group-hover/item:bg-white dark:bg-gray-400" 
+                            style={{ 
+                              maskImage: `url(${item.icon})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                              WebkitMaskImage: `url(${item.icon})`, WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center'
+                            }} 
+                          />
+                        </div>
                       </ChainIcon>
                     </a>
 
-                    <span className="pointer-events-none absolute z-50 left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-bg-deep px-3 py-1 text-xs text-text-primary opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-1 scale-95 group-hover:scale-100">
+                    <span className="pointer-events-none absolute z-50 left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-bg-deep px-3 py-1 text-xs text-text-primary opacity-0 shadow-lg transition-all duration-200 group-hover/item:opacity-100 group-hover/item:translate-y-1 scale-95 group-hover/item:scale-100">
                       {item.tooltip}
                     </span>
                   </div>
 
-                  <span className="text-[15px] leading-5 text-text-primary">
+                  <span className="text-[15px] leading-5 text-gray-500 transition-colors duration-300 group-hover/item:text-text-primary dark:text-gray-400">
                     {item.text}
                   </span>
                 </div>
@@ -180,14 +189,22 @@ export default function Footer() {
       <div className="mx-auto mb-5 max-w-[1400px] border-t border-text-primary/30" />
 
       <div className="mx-auto flex max-w-[1400px] flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <p className="text-[15px] text-text-primary">© 2026 DANKOSS. | terms and conditions</p>
+        <p className="text-[15px] text-gray-500 dark:text-gray-400">© 2026 DANKOSS. | terms and conditions</p>
 
-        <div className="group flex items-center">
+        <div className="flex items-center">
           {socials.map((social, index) => (
-            <div key={social.alt} className="flex items-center">
+            <div key={social.alt} className="flex items-center group/social">
               <a href={social.href}>
                 <ChainIcon>
-                  <Image src={social.iconSrc} alt={social.alt} width={28} height={28} />
+                  <div className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-black/10 transition-all duration-300 group-hover/social:bg-brand-orange dark:bg-white/10">
+                    <div 
+                      className="h-[22px] w-[22px] bg-gray-500 transition-all duration-300 group-hover/social:bg-white dark:bg-gray-400" 
+                      style={{ 
+                        maskImage: `url(${social.iconSrc})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                        WebkitMaskImage: `url(${social.iconSrc})`, WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center'
+                      }} 
+                    />
+                  </div>
                 </ChainIcon>
               </a>
 
@@ -224,10 +241,10 @@ export function FooterLinkColumn({ title, links }: { title: string; links: { lab
       <ul className="m-0 list-none p-0">
         {links.map((item) => (
           <li key={item.label} className="mb-[10px] flex items-center gap-[10px]">
-            <span className="text-[22px] leading-none text-text-primary">•</span>
+            <span className="text-[22px] leading-none text-gray-500 dark:text-gray-400">•</span>
             <Link
               href={item.href}
-              className="text-[20px] font-medium leading-[30px] tracking-[-1px] text-text-primary transition-colors duration-200 hover:text-brand-orange"
+              className="text-[20px] font-medium leading-[30px] tracking-[-1px] text-gray-500 dark:text-gray-400 transition-colors duration-200 hover:text-brand-orange"
             >
               {item.label}
             </Link>
