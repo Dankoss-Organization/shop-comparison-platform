@@ -1,3 +1,8 @@
+/**
+ * @file profile_layout.tsx
+ * @brief Dashboard Layout with adaptive glassmorphism for both Light and Dark themes.
+ */
+
 "use client";
 
 import Link from "next/link";
@@ -48,18 +53,18 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
       <div className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col lg:flex-row gap-6 lg:gap-8 p-4 md:p-8 xl:p-10">
         
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex justify-center">
-          <div className="absolute top-[-10%] left-[10%] h-[600px] w-[600px] rounded-full bg-[#EC5800]/15 blur-[150px]" />
-          <div className="absolute bottom-[-10%] right-[5%] h-[500px] w-[500px] rounded-full bg-[#EC5800]/10 blur-[130px]" />
+          <div className="absolute top-[-10%] left-[10%] h-[600px] w-[600px] rounded-full bg-brand-orange/15 blur-[150px]" />
+          <div className="absolute bottom-[-10%] right-[5%] h-[500px] w-[500px] rounded-full bg-brand-orange/10 blur-[130px]" />
         </div>
 
         <div className="flex w-full flex-col gap-4 lg:hidden z-20">
           <div className="flex items-center justify-between px-2">
             <div>
-              <h1 className="text-[22px] font-bold tracking-[1px] text-[#FFDEBA] uppercase">Dashboard</h1>
+              <h1 className="text-[22px] font-bold tracking-[1px] text-text-main dark:text-text-primary uppercase">Dashboard</h1>
             </div>
             <button 
               onClick={handleLogout}
-              className="flex items-center gap-2 rounded-xl bg-red-500/10 px-3 py-1.5 text-[12px] font-bold uppercase tracking-[1px] text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors"
+              className="flex items-center gap-2 rounded-xl bg-red-500/10 px-3 py-1.5 text-[12px] font-bold uppercase tracking-[1px] text-red-500 dark:text-red-400 hover:bg-red-500/20 transition-colors"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
               Log Out
@@ -67,8 +72,8 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
           </div>
 
           <div className="relative w-full">
-            <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-[#2B262C] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#2B262C] to-transparent z-10 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-bg-main to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-bg-main to-transparent z-10 pointer-events-none" />
             
             <div 
               className="flex w-full overflow-x-auto gap-3 pb-2 px-4 [&::-webkit-scrollbar]:hidden" 
@@ -82,12 +87,12 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                     href={item.path} 
                     className={`relative flex items-center gap-2 rounded-2xl px-4 py-2.5 transition-all duration-300 shrink-0 ${
                       isActive 
-                        ? "bg-[rgba(236,88,0,0.15)] border border-[#EC5800]/30 shadow-[0_0_15px_rgba(236,88,0,0.2)]" 
-                        : "bg-[rgba(30,26,30,0.4)] border border-[#FFDEBA]/10 hover:bg-[rgba(70,59,70,0.3)]"
+                        ? "bg-brand-orange/15 border border-brand-orange/30 shadow-[0_0_15px_rgba(236,88,0,0.2)]" 
+                        : "bg-white/40 dark:bg-[rgba(30,26,30,0.4)] border-black/5 dark:border-[#FFDEBA]/10 hover:bg-white/60 dark:hover:bg-[rgba(70,59,70,0.3)]"
                     }`}
                   >
-                    <div className={`${isActive ? "text-[#EC5800]" : "text-[#FFDEBA]/50"}`}>{item.icon}</div>
-                    <span className={`text-[14px] font-medium tracking-[-0.2px] ${isActive ? "text-[#FFDEBA]" : "text-[#FFDEBA]/70"}`}>
+                    <div className={`${isActive ? "text-brand-orange" : "text-text-main/50 dark:text-text-primary/50"}`}>{item.icon}</div>
+                    <span className={`text-[14px] font-medium tracking-[-0.2px] ${isActive ? "text-text-main dark:text-text-primary" : "text-text-main/70 dark:text-text-primary/70"}`}>
                       {item.name}
                     </span>
                   </Link>
@@ -99,24 +104,24 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
 
         <aside className="hidden w-[280px] shrink-0 flex-col gap-6 lg:flex z-10">
           <div className="flex flex-col gap-1 px-2">
-            <h1 className="text-[24px] font-bold tracking-[1px] text-[#FFDEBA] uppercase">Dashboard</h1>
-            <p className="text-[13px] text-[#FFDEBA]/50">Manage your DANKOSS experience</p>
+            <h1 className="text-[24px] font-bold tracking-[1px] text-text-main dark:text-text-primary uppercase">Dashboard</h1>
+            <p className="text-[13px] text-text-main/50 dark:text-text-primary/50">Manage your DANKOSS experience</p>
           </div>
 
           <div className="flex flex-col flex-1 gap-6">
-            <div className="relative rounded-[32px] p-[1px] bg-gradient-to-br from-[#EC5800]/30 via-[#FFDEBA]/5 to-transparent shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
-              <div className="flex flex-col gap-2 rounded-[32px] bg-[rgba(30,26,30,0.4)] backdrop-blur-[20px] p-3 w-full">
+            <div className="relative rounded-[32px] p-[1px] bg-gradient-to-br from-brand-orange/30 via-black/5 dark:via-[#FFDEBA]/5 to-transparent shadow-lg dark:shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+              <div className="flex flex-col gap-2 rounded-[32px] bg-white/40 dark:bg-[rgba(30,26,30,0.4)] backdrop-blur-[20px] p-3 w-full">
                 {navItems.map((item) => {
                   const isActive = pathname === item.path;
                   return (
                     <Link key={item.name} href={item.path}
-                      className={`group relative flex items-center gap-4 rounded-2xl px-4 py-3 transition-all duration-300 ${isActive ? "bg-[rgba(70,59,70,0.5)] shadow-inner" : "hover:bg-[rgba(70,59,70,0.3)]"}`}
+                      className={`group relative flex items-center gap-4 rounded-2xl px-4 py-3 transition-all duration-300 ${isActive ? "bg-black/5 dark:bg-[rgba(70,59,70,0.5)] shadow-inner" : "hover:bg-black/5 dark:hover:bg-[rgba(70,59,70,0.3)]"}`}
                     >
                       {isActive && (
-                        <motion.div layoutId="active-nav" className="absolute left-0 h-[60%] w-[3px] rounded-r-full bg-[#EC5800] shadow-[0_0_10px_#EC5800]" />
+                        <motion.div layoutId="active-nav" className="absolute left-0 h-[60%] w-[3px] rounded-r-full bg-brand-orange shadow-[0_0_10px_rgba(236,88,0,0.5)]" />
                       )}
-                      <div className={`transition-colors ${isActive ? "text-[#EC5800]" : "text-[#FFDEBA]/50 group-hover:text-[#EC5800]"}`}>{item.icon}</div>
-                      <span className={`text-[15px] font-medium transition-colors ${isActive ? "text-[#FFDEBA]" : "text-[#FFDEBA]/70 group-hover:text-[#FFDEBA]"}`}>{item.name}</span>
+                      <div className={`transition-colors ${isActive ? "text-brand-orange" : "text-text-main/50 dark:text-text-primary/50 group-hover:text-brand-orange"}`}>{item.icon}</div>
+                      <span className={`text-[15px] font-medium transition-colors ${isActive ? "text-text-main dark:text-text-primary" : "text-text-main/70 dark:text-text-primary/70 group-hover:text-text-main dark:group-hover:text-text-primary"}`}>{item.name}</span>
                     </Link>
                   );
                 })}
@@ -125,16 +130,15 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
 
             <button 
               onClick={handleLogout}
-              className="group flex items-center gap-4 rounded-2xl px-7 py-4 text-[15px] font-bold text-[#FFDEBA]/40 hover:text-red-400 hover:bg-red-500/10 transition-all duration-300 mt-auto border border-transparent hover:border-red-500/20"
+              className="group flex items-center gap-4 rounded-2xl px-7 py-4 text-[15px] font-bold text-text-main/50 dark:text-text-primary/40 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/10 transition-all duration-300 mt-auto border border-transparent hover:border-red-500/20"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 transition-transform group-hover:-translate-x-1"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
               Log Out
             </button>
           </div>
         </aside>
-
-        <div className="relative flex-1 z-10 rounded-[32px] lg:rounded-[40px] p-[1px] bg-gradient-to-br from-[#EC5800]/40 via-[#FFDEBA]/5 to-transparent shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-          <main className="h-full w-full overflow-hidden rounded-[32px] lg:rounded-[40px] bg-[rgba(30,26,30,0.4)] backdrop-blur-[25px]">
+        <div className="relative flex-1 z-10 rounded-[32px] lg:rounded-[40px] p-[1px] bg-gradient-to-br from-brand-orange/40 via-black/5 dark:via-[#FFDEBA]/5 to-transparent shadow-xl dark:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+          <main className="h-full w-full overflow-hidden rounded-[32px] lg:rounded-[40px] bg-white/40 dark:bg-[rgba(30,26,30,0.4)] backdrop-blur-[25px]">
             <div className="h-full w-full p-5 md:p-8 xl:p-12 overflow-y-auto custom-scrollbar">
               {children}
             </div>

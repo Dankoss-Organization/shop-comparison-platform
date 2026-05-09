@@ -13,20 +13,19 @@ const itemVariants: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
 };
 
-const BackgroundGlowShape = ({ color, size, position }: { color: string; size: string; position: string }) => (
+const BackgroundGlowShape = ({ colorClass, size, position }: { colorClass: string; size: string; position: string }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }}
     animate={{
       scale: [1, 1.2, 1],
-      opacity: [0.4, 0.7, 0.4], 
+      opacity: [0.15, 0.3, 0.15], 
     }}
     transition={{
       duration: 10 + Math.random() * 10,
       repeat: Infinity,
       ease: "easeInOut",
     }}
-    className={`absolute z-0 ${size} ${position} rounded-full blur-[120px] pointer-events-none mix-blend-screen`}
-    style={{ backgroundColor: color }}
+    className={`absolute z-0 ${size} ${position} ${colorClass} rounded-full blur-[100px] md:blur-[120px] pointer-events-none`}
   />
 );
 
@@ -34,12 +33,12 @@ export default function AboutUsPage() {
   return (
     <div className="relative w-full overflow-hidden pb-24 pt-10">
       
-      <BackgroundGlowShape color="#EC5800" size="h-[600px] w-[600px]" position="left-1/2 top-[2%] -translate-x-1/2" />
-      <BackgroundGlowShape color="#FFDEBA" size="h-[400px] w-[400px]" position="-left-[10%] top-[15%]" />
-      <BackgroundGlowShape color="#D34205" size="h-[550px] w-[550px]" position="-right-[5%] top-[40%]" />
-      <BackgroundGlowShape color="#EC5800" size="h-[450px] w-[450px]" position="-left-[15%] top-[60%]" />
-      <BackgroundGlowShape color="#FFDEBA" size="h-[500px] w-[500px]" position="-right-[10%] top-[80%]" />
-      <BackgroundGlowShape color="#EC5800" size="h-[600px] w-[600px]" position="left-[20%] bottom-[-5%]" />
+      <BackgroundGlowShape colorClass="bg-brand-orange" size="h-[600px] w-[600px]" position="left-1/2 top-[2%] -translate-x-1/2" />
+      <BackgroundGlowShape colorClass="bg-brand-store" size="h-[400px] w-[400px]" position="-left-[10%] top-[15%]" />
+      <BackgroundGlowShape colorClass="bg-brand-orangeDark" size="h-[550px] w-[550px]" position="-right-[5%] top-[40%]" />
+      <BackgroundGlowShape colorClass="bg-brand-orange" size="h-[450px] w-[450px]" position="-left-[15%] top-[60%]" />
+      <BackgroundGlowShape colorClass="bg-brand-store" size="h-[500px] w-[500px]" position="-right-[10%] top-[80%]" />
+      <BackgroundGlowShape colorClass="bg-brand-orange" size="h-[600px] w-[600px]" position="left-[20%] bottom-[-5%]" />
       
       <motion.div 
         variants={containerVariants}
@@ -48,11 +47,11 @@ export default function AboutUsPage() {
         className="relative z-10 mx-auto max-w-[1000px] px-6 md:px-10"
       >
         <motion.div variants={itemVariants} className="mb-20 text-center">
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#EC5800]">Our Mission</span>
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-[#FFDEBA] md:text-6xl font-serif drop-shadow-md">
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-brand-orange">Our Mission</span>
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-text-main md:text-6xl font-serif drop-shadow-md">
             Redefining Smart Shopping.
           </h1>
-          <div className="mx-auto mt-6 flex max-w-[600px] flex-col gap-3 text-[15px] leading-relaxed text-[#FFDEBA]/60">
+          <div className="mx-auto mt-6 flex max-w-[600px] flex-col gap-3 text-[15px] leading-relaxed text-text-main/70">
             <p>DANKOSS isn't just another grocery store. We are an intelligent aggregator built to scan, compare, and optimize your entire basket across multiple retailers in milliseconds.</p>
             <p>Our goal is to eliminate the guesswork and ensure you always pay the lowest possible total price.</p>
           </div>
@@ -79,17 +78,18 @@ export default function AboutUsPage() {
             <motion.div 
               key={idx}
               variants={itemVariants}
-              className="group flex flex-col items-start rounded-[32px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-2 hover:bg-white/[0.06] hover:border-white/20 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+              className="group flex flex-col items-start rounded-[32px] border border-text-main/10 bg-bg-elevated/40 p-8 backdrop-blur-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:bg-bg-elevated/70 hover:border-brand-orange/30 hover:shadow-xl"
             >
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#EC5800]/10 text-[#EC5800] border border-[#EC5800]/20 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#EC5800]/20 group-hover:shadow-[0_0_20px_rgba(236,88,0,0.2)]">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange border border-brand-orange/20 transition-all duration-300 group-hover:scale-110 group-hover:bg-brand-orange/20 group-hover:shadow-[0_0_20px_rgba(236,88,0,0.2)]">
                 {feature.icon}
               </div>
-              <h3 className="mb-3 text-xl font-bold text-[#FFDEBA]">{feature.title}</h3>
-              <p className="text-[13px] leading-relaxed text-[#FFDEBA]/60">{feature.text}</p>
+              <h3 className="mb-3 text-xl font-bold text-text-main">{feature.title}</h3>
+              <p className="text-[13px] leading-relaxed text-text-main/70">{feature.text}</p>
             </motion.div>
           ))}
         </div>
       </motion.div>
+
       <motion.div 
         initial="hidden"
         whileInView="visible"
@@ -98,8 +98,8 @@ export default function AboutUsPage() {
         className="relative z-10 mx-auto mt-32 max-w-[1000px] px-6 md:px-10"
       >
         <motion.div variants={itemVariants} className="mb-12">
-          <h2 className="text-3xl font-black text-[#FFDEBA] md:text-4xl font-serif">Our Philosophy</h2>
-          <p className="mt-3 text-[14px] text-[#FFDEBA]/60">The principles that drive our code and our culture.</p>
+          <h2 className="text-3xl font-black text-text-main md:text-4xl font-serif">Our Philosophy</h2>
+          <p className="mt-3 text-[14px] text-text-main/70">The principles that drive our code and our culture.</p>
         </motion.div>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -120,15 +120,16 @@ export default function AboutUsPage() {
             <motion.div 
               key={idx} 
               variants={itemVariants} 
-              className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-2xl"
+              className="relative overflow-hidden rounded-[24px] border border-text-main/10 bg-bg-elevated/40 p-6 backdrop-blur-2xl shadow-soft"
             >
-              <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#EC5800] to-transparent opacity-60" />
-              <h3 className="text-lg font-bold text-[#FFDEBA] mb-2">{val.title}</h3>
-              <p className="text-[13px] leading-relaxed text-[#FFDEBA]/50">{val.desc}</p>
+              <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-orange to-transparent opacity-60" />
+              <h3 className="text-lg font-bold text-text-main mb-2">{val.title}</h3>
+              <p className="text-[13px] leading-relaxed text-text-main/70">{val.desc}</p>
             </motion.div>
           ))}
         </div>
       </motion.div>
+
       <motion.div 
         initial="hidden"
         whileInView="visible"
@@ -137,8 +138,8 @@ export default function AboutUsPage() {
         className="relative z-10 mx-auto mt-32 max-w-[1100px] px-6 md:px-10"
       >
         <motion.div variants={itemVariants} className="mb-12 text-center">
-          <h2 className="text-3xl font-black text-[#FFDEBA] md:text-4xl font-serif">Meet the Brains</h2>
-          <p className="mt-3 text-[14px] text-[#FFDEBA]/60">The architects, engineers, and designers behind your savings.</p>
+          <h2 className="text-3xl font-black text-text-main md:text-4xl font-serif">Meet the Brains</h2>
+          <p className="mt-3 text-[14px] text-text-main/70">The architects, engineers, and designers behind your savings.</p>
         </motion.div>
 
         <div className="flex flex-wrap justify-center gap-6">
@@ -154,16 +155,16 @@ export default function AboutUsPage() {
             <motion.div 
               key={idx} 
               variants={itemVariants} 
-              className="group relative flex w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] max-w-[260px] flex-col items-center rounded-[32px] border border-white/10 bg-white/[0.03] p-6 text-center backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] transition-all duration-300 hover:-translate-y-2 hover:bg-white/[0.06] hover:border-white/20 hover:shadow-[0_15px_50px_rgba(0,0,0,0.5)]"
+              className="group relative flex w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] max-w-[260px] flex-col items-center rounded-[32px] border border-text-main/10 bg-bg-elevated/40 p-6 text-center backdrop-blur-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:bg-bg-elevated/70 hover:border-brand-orange/30 hover:shadow-xl"
             >
-              <div className="mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-white/10 bg-[#1a171a] p-1 transition-transform duration-300 group-hover:border-[#EC5800]/50 group-hover:scale-105">
-                <div className="flex h-full w-full items-center justify-center rounded-full bg-[rgba(255,222,186,0.1)] text-2xl text-[#FFDEBA]">
+              <div className="mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-text-main/10 bg-bg-main p-1 transition-transform duration-300 group-hover:border-brand-orange/50 group-hover:scale-105">
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-brand-orange/10 text-2xl font-bold text-text-main">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </div>
               </div>
-              <h4 className="text-base font-bold text-[#FFDEBA]">{member.name}</h4>
-              <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-[#EC5800]">{member.role}</p>
-              <p className="mt-2 text-[12px] text-[#FFDEBA]/40">{member.specialty}</p>
+              <h4 className="text-base font-bold text-text-main">{member.name}</h4>
+              <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-brand-orange">{member.role}</p>
+              <p className="mt-2 text-[12px] text-text-main/50">{member.specialty}</p>
             </motion.div>
           ))}
         </div>
@@ -178,17 +179,17 @@ export default function AboutUsPage() {
       >
         <motion.div 
           variants={itemVariants} 
-          className="relative flex flex-col items-center overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.03] p-10 text-center backdrop-blur-3xl shadow-[0_30px_70px_rgba(0,0,0,0.5)] md:p-16"
+          className="relative flex flex-col items-center overflow-hidden rounded-[40px] border border-text-main/10 bg-bg-elevated/40 p-10 text-center backdrop-blur-3xl shadow-soft md:p-16"
         >
-          <div className="pointer-events-none absolute bottom-0 left-1/2 z-0 h-[250px] w-[350px] -translate-x-1/2 translate-y-1/2 rounded-full bg-[#EC5800] opacity-[0.25] blur-[100px]" />
+          <div className="pointer-events-none absolute bottom-0 left-1/2 z-0 h-[250px] w-[350px] -translate-x-1/2 translate-y-1/2 rounded-full bg-brand-orange opacity-20 blur-[100px]" />
           
           <div className="relative z-10">
-            <h2 className="text-3xl font-black text-[#FFDEBA] md:text-5xl font-serif leading-tight">Stop searching. Start saving.</h2>
-            <p className="mx-auto mt-6 max-w-[550px] text-[15px] leading-relaxed text-[#FFDEBA]/70">Join thousands of smart shoppers who trust DANKOSS for their daily essentials.</p>
+            <h2 className="text-3xl font-black text-text-main md:text-5xl font-serif leading-tight">Stop searching. Start saving.</h2>
+            <p className="mx-auto mt-6 max-w-[550px] text-[15px] leading-relaxed text-text-main/70">Join thousands of smart shoppers who trust DANKOSS for their daily essentials.</p>
             
             <Link 
               href="/" 
-              className="group relative mt-10 mx-auto flex h-[56px] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-full bg-[#EC5800] text-[15px] font-black tracking-[0.12em] text-[#FFDEBA] shadow-[0_10px_25px_rgba(236,88,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(236,88,0,0.5)] active:scale-95"
+              className="group relative mt-10 mx-auto flex h-[56px] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-full bg-brand-orange text-[15px] font-black tracking-[0.12em] text-white shadow-[0_10px_25px_rgba(236,88,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(236,88,0,0.5)] active:scale-95"
             >
               <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
                 Build Your Smart Basket

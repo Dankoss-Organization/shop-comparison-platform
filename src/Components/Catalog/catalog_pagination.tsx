@@ -31,7 +31,7 @@ export default function CatalogPagination({
       {hasMore ? (
         <button
           onClick={onLoadMore}
-          className="group relative flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-[#EC5800] bg-[#1F1A1F] px-10 text-[15px] font-bold text-[#EC5800] transition-all duration-300 hover:bg-[#EC5800] hover:text-white active:scale-95"
+          className="group relative flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-brand-orange bg-bg-surface px-10 text-[15px] font-bold text-brand-orange transition-all duration-300 hover:bg-brand-orange hover:text-white active:scale-95 shadow-sm"
         >
           <span>Load More Rows</span>
           <svg
@@ -55,7 +55,7 @@ export default function CatalogPagination({
           <button
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1F1A1F] text-white transition-all hover:border-[#EC5800] disabled:pointer-events-none disabled:opacity-30"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-glass/10 bg-bg-elevated text-text-primary transition-all hover:border-brand-orange hover:text-brand-orange disabled:pointer-events-none disabled:opacity-20"
             aria-label="Previous page"
           >
             <svg
@@ -89,8 +89,8 @@ export default function CatalogPagination({
                     className={cn(
                       "flex h-12 w-12 items-center justify-center rounded-full text-[15px] font-bold transition-all",
                       isActive
-                        ? "bg-[#EC5800] text-white"
-                        : "border border-white/5 bg-[#1F1A1F] text-[#FFDEBA]/60 hover:border-[#EC5800]/40 hover:text-white",
+                        ? "bg-brand-orange text-white shadow-md shadow-brand-orange/20"
+                        : "border border-glass/5 bg-bg-elevated text-text-primary/70 hover:border-brand-orange/40 hover:text-text-main",
                     )}
                   >
                     {pageNum}
@@ -102,7 +102,7 @@ export default function CatalogPagination({
                 return (
                   <span
                     key={`ellipsis-${pageNum}`}
-                    className="flex h-12 w-6 items-center justify-center text-[#FFDEBA]/30"
+                    className="flex h-12 w-6 items-center justify-center text-text-primary/30"
                   >
                     …
                   </span>
@@ -116,7 +116,7 @@ export default function CatalogPagination({
           <button
             onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1F1A1F] text-white transition-all hover:border-[#EC5800] disabled:pointer-events-none disabled:opacity-30"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-glass/10 bg-bg-elevated text-text-primary transition-all hover:border-brand-orange hover:text-brand-orange disabled:pointer-events-none disabled:opacity-20"
             aria-label="Next page"
           >
             <svg

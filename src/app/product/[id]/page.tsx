@@ -48,7 +48,7 @@ export interface CartState {
  * @description The dynamic routing page component for displaying singular product details.
  * Retrieves product data based on the URL parameter, builds a list of similar items, and tracks
  * the user's viewing history in `sessionStorage` for breadcrumb navigation.
- * * @returns {JSX.Element} The assembled product detail screen layout.
+ * @returns {JSX.Element} The assembled product detail screen layout.
  */
 export default function ProductPage() {
   const params = useParams();
@@ -122,8 +122,8 @@ export default function ProductPage() {
 
   if (!isReady || !item) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#2d282d]">
-         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#EC5800] border-t-transparent"></div>
+      <div className="flex min-h-screen items-center justify-center bg-bg-main transition-colors duration-300">
+         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-orange border-t-transparent"></div>
       </div>
     );
   }
@@ -146,26 +146,26 @@ export default function ProductPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#2d282d]">
-      <div className="sticky top-0 z-50 w-full bg-[rgba(45,40,45,0.95)] border-b border-white/5">
+    <div className="flex min-h-screen flex-col bg-bg-main text-text-main transition-colors duration-300">
+      <div className="sticky top-0 z-50 w-full bg-bg-elevated/95 backdrop-blur-md border-b border-text-main/5 dark:border-text-primary/5 transition-colors duration-300">
         <Header />
       </div>
 
       <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-8 md:px-8 lg:px-12 2xl:px-[60px]">
         
-        <nav className="mb-4 mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-[#FFDEBA]/60">
-          <button onClick={handleBackToBrowsing} className="group flex items-center gap-1.5 transition-colors hover:text-[#EC5800]">
+        <nav className="mb-4 mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-text-muted dark:text-text-primary/60">
+          <button onClick={handleBackToBrowsing} className="group flex items-center gap-1.5 transition-colors hover:text-brand-orange">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:-translate-x-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Back to browsing
           </button>
           
           {historyTrail.map((h, i) => (
             <React.Fragment key={`crumb-${i}`}>
-              <span className="text-white/20">/</span>
+              <span className="text-text-main/20 dark:text-white/20">/</span>
               {i === historyTrail.length - 1 ? (
-                <span className="text-[#EC5800]">{h.title}</span>
+                <span className="text-brand-orange">{h.title}</span>
               ) : (
-                <button onClick={() => router.push(h.url)} className="transition-colors hover:text-[#FFDEBA] hover:underline">
+                <button onClick={() => router.push(h.url)} className="transition-colors hover:text-text-main dark:hover:text-text-primary hover:underline">
                   {h.title}
                 </button>
               )}
@@ -187,7 +187,7 @@ export default function ProductPage() {
         </div>
 
         {similarItems.length > 0 && (
-          <div className="-mx-4 border-t border-white/5 pt-8 md:-mx-8 lg:-mx-12 2xl:-mx-[60px]">
+          <div className="-mx-4 border-t border-text-main/5 dark:border-white/5 pt-8 md:-mx-8 lg:-mx-12 2xl:-mx-[60px]">
             <ProductCarousel
               id="related-products"
               eyebrow="More to Explore"

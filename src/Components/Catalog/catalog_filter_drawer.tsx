@@ -46,7 +46,7 @@ export default function CatalogFilterDrawer({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[70] bg-[#120F12B8] backdrop-blur-[2px]"
+            className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm"
           />
 
           <motion.aside
@@ -54,14 +54,14 @@ export default function CatalogFilterDrawer({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "-100%", opacity: 0.7 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed left-0 top-0 z-[80] flex h-screen w-full max-w-[420px] flex-col overflow-hidden bg-[#191519] shadow-[24px_0_60px_#00000042,inset_0_1px_0_#FFFFFF05]"
+            className="fixed left-0 top-0 z-[80] flex h-screen w-full max-w-[420px] flex-col overflow-hidden bg-bg-surface shadow-[24px_0_60px_rgba(0,0,0,0.15)] dark:shadow-[24px_0_60px_rgba(0,0,0,0.4)]"
           >
-            <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-5">
+            <div className="flex items-center justify-between border-b border-glass/10 px-5 py-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#FFDEBA]/45">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-text-primary/60">
                   Filters
                 </p>
-                <h3 className="mt-2 text-xl font-black text-white">Refine catalog</h3>
+                <h3 className="mt-2 text-xl font-black text-text-main">Refine catalog</h3>
               </div>
 
               <div className="flex items-center gap-2">
@@ -71,14 +71,14 @@ export default function CatalogFilterDrawer({
                     actions.handleResetFilters();
                     onClose();
                   }}
-                  className="rounded-full bg-[#262026] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#EC5800] transition-all duration-300 hover:bg-[#2E262D] hover:text-[#FF9B58]"
+                  className="rounded-full bg-bg-elevated px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-brand-orange transition-all duration-300 hover:bg-bg-highest hover:text-brand-orange"
                 >
                   Reset
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#262026] text-[#FFDEBA] transition-all duration-300 hover:bg-[#2E262D] hover:text-white"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-bg-elevated text-text-primary transition-all duration-300 hover:bg-bg-highest hover:text-text-main"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path
@@ -93,18 +93,18 @@ export default function CatalogFilterDrawer({
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-5">
-              <div className="rounded-[1.3rem] bg-[#211C21] shadow-[0_16px_28px_#00000024]">
-                <div className="border-t border-[#2F282F] px-4 py-4">
+              <div className="rounded-[1.3rem] bg-bg-deep shadow-sm dark:shadow-xl border border-glass/5">
+                <div className="border-b border-glass/10 px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA]/45">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-primary/60">
                         Price cap
                       </p>
-                      <p className="mt-2 text-sm font-semibold text-[#FFDEBA]">
+                      <p className="mt-2 text-sm font-semibold text-text-main">
                         Up to ${state.maxPrice.toFixed(2)}
                       </p>
                     </div>
-                    <span className="rounded-full bg-[#2A2120] px-3 py-1 text-xs font-bold text-[#EC5800]">
+                    <span className="rounded-full bg-bg-elevated px-3 py-1 text-xs font-bold text-brand-orange">
                       ${state.priceBounds.min.toFixed(2)} – ${state.priceBounds.max.toFixed(2)}
                     </span>
                   </div>
@@ -115,12 +115,12 @@ export default function CatalogFilterDrawer({
                     step={0.05}
                     value={state.maxPrice}
                     onChange={(e) => actions.handleMaxPriceChange(Number(e.target.value))}
-                    className="mt-5 h-2 w-full cursor-pointer appearance-none rounded-full bg-[#171317] accent-[#EC5800]"
+                    className="mt-5 h-2 w-full cursor-pointer appearance-none rounded-full bg-bg-elevated accent-brand-orange"
                   />
                 </div>
 
-                <div className="border-t border-[#2F282F] px-4 py-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA]/45">
+                <div className="border-b border-glass/10 px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-primary/60">
                     Minimum rating
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2.5">
@@ -132,8 +132,8 @@ export default function CatalogFilterDrawer({
                         className={cn(
                           "rounded-full px-3.5 py-2 text-sm font-semibold transition-all duration-300",
                           state.minRating === rating
-                            ? "bg-[#EC5800] text-white shadow-[0_10px_18px_#5E1F002F]"
-                            : "bg-[#171317] text-[#FFDEBA]/75 hover:bg-[#221B22] hover:text-[#FFDEBA]",
+                            ? "bg-brand-orange text-white shadow-[0_4px_12px_rgb(var(--brand-orange)_/_0.3)]"
+                            : "bg-bg-elevated text-text-primary hover:bg-bg-highest hover:text-text-main",
                         )}
                       >
                         {rating === 0 ? "Any" : `${rating}+`}
@@ -142,8 +142,8 @@ export default function CatalogFilterDrawer({
                   </div>
                 </div>
 
-                <div className="border-t border-[#2F282F] px-4 py-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA]/45">
+                <div className="border-b border-glass/10 px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-primary/60">
                     Discount
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2.5">
@@ -155,8 +155,8 @@ export default function CatalogFilterDrawer({
                         className={cn(
                           "rounded-full px-3.5 py-2 text-sm font-semibold transition-all duration-300",
                           state.minDiscount === discount
-                            ? "bg-[#EC5800] text-white shadow-[0_10px_18px_#5E1F002F]"
-                            : "bg-[#171317] text-[#FFDEBA]/75 hover:bg-[#221B22] hover:text-[#FFDEBA]",
+                            ? "bg-brand-orange text-white shadow-[0_4px_12px_rgb(var(--brand-orange)_/_0.3)]"
+                            : "bg-bg-elevated text-text-primary hover:bg-bg-highest hover:text-text-main",
                         )}
                       >
                         {discount === 0 ? "Any" : `${discount}%+`}
@@ -165,17 +165,17 @@ export default function CatalogFilterDrawer({
                   </div>
                 </div>
 
-                <div className="border-t border-[#2F282F] px-4 py-4">
+                <div className="px-4 py-4">
                   <button
                     type="button"
                     onClick={() => setIsStoresOpen((prev) => !prev)}
-                    className="flex w-full items-center justify-between gap-3 rounded-[1rem] bg-[#171317] px-3.5 py-3 text-left transition-all duration-300 hover:bg-[#1D181D]"
+                    className="flex w-full items-center justify-between gap-3 rounded-[1rem] bg-bg-elevated px-3.5 py-3 text-left transition-all duration-300 hover:bg-bg-highest"
                   >
                     <div className="flex items-center gap-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA]/45">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-primary/60">
                         Stores
                       </p>
-                      <span className="rounded-full bg-[#241F24] px-3 py-1 text-xs font-bold text-[#FFDEBA]">
+                      <span className="rounded-full bg-bg-surface px-3 py-1 text-xs font-bold text-text-main">
                         {state.selectedMarkets.length > 0
                           ? state.selectedMarkets.length
                           : state.availableMarkets.length}
@@ -183,8 +183,8 @@ export default function CatalogFilterDrawer({
                     </div>
                     <span
                       className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded-full bg-[#241F24] text-[#FFDEBA]/70 transition-all duration-300",
-                        isStoresOpen ? "rotate-180 text-[#EC5800]" : "",
+                        "flex h-7 w-7 items-center justify-center rounded-full bg-bg-surface text-text-primary transition-all duration-300",
+                        isStoresOpen ? "rotate-180 text-brand-orange" : "",
                       )}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -219,8 +219,8 @@ export default function CatalogFilterDrawer({
                                 className={cn(
                                   "flex items-center justify-between rounded-[0.95rem] px-3.5 py-3 text-sm font-semibold transition-all duration-300",
                                   isActive
-                                    ? "bg-[#2A2120] text-[#FFDEBA]"
-                                    : "bg-[#171317] text-[#FFDEBA]/72 hover:bg-[#221B22] hover:text-[#FFDEBA]",
+                                    ? "bg-brand-orange/10 text-brand-orange"
+                                    : "bg-bg-elevated text-text-primary hover:bg-bg-highest hover:text-text-main",
                                 )}
                               >
                                 <span>{market}</span>
@@ -228,8 +228,8 @@ export default function CatalogFilterDrawer({
                                   className={cn(
                                     "flex h-5 w-5 items-center justify-center rounded-full text-[10px] transition-all duration-300",
                                     isActive
-                                      ? "bg-[#EC5800] text-white shadow-[0_0_0_1px_#EC580040]"
-                                      : "bg-[#100D10] text-transparent shadow-[inset_0_0_0_1px_#FFFFFF14]",
+                                      ? "bg-brand-orange text-white"
+                                      : "bg-bg-surface text-transparent border border-glass/10",
                                   )}
                                 >
                                   ✓

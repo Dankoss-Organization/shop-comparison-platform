@@ -12,6 +12,7 @@ import { useState } from "react";
 import { cn } from "@/Lib/utils";
 import { useCartStore } from "@/Store/use_cart_store";
 import { useUserStore } from "@/Store/user_store"; 
+
 export type CheckoutStatus = "IDLE" | "LOADING" | "SUCCESS";
 
 const COLORS = ["#EC5800", "#4ADE80", "#3B82F6", "#A855F7", "#D946EF", "#EAB308"];
@@ -76,9 +77,9 @@ export function CheckoutButton() {
       disabled={status !== "IDLE"}
       className={cn(
         "group relative flex h-14 w-full items-center justify-center overflow-hidden rounded-2xl font-black transition-all duration-500",
-        status === "IDLE" && "bg-[#EC5800] text-white hover:shadow-[0_0_20px_#ec580066]",
-        status === "LOADING" && "bg-[#EC5800]/50 text-white/50 cursor-wait",
-        status === "SUCCESS" && "bg-green-600 text-white"
+        status === "IDLE" && "bg-brand-orange text-white hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.4)]",
+        status === "LOADING" && "bg-brand-orange/50 text-white/50 cursor-wait",
+        status === "SUCCESS" && "bg-green-500 dark:bg-green-600 text-white shadow-[0_0_20px_rgba(34,197,94,0.4)]"
       )}
     >
       <div className="flex items-center gap-3">

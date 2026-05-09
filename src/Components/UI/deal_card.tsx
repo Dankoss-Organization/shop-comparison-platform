@@ -98,13 +98,13 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
     <article 
       onClick={onClick} 
       onMouseLeave={() => setIsOffersOpen(false)}
-      className={cn("group relative isolate border border-[#ffffff14] bg-[#342e34] shadow-sm rounded-2xl !overflow-visible z-10 hover:z-30", size.wrapper, clickable ? "cursor-pointer transform-gpu transition duration-300 hover:-translate-y-1" : "", className)}
+      className={cn("group relative isolate border border-glass/10 bg-bg-elevated shadow-sm rounded-2xl !overflow-visible z-10 hover:z-30", size.wrapper, clickable ? "cursor-pointer transform-gpu transition duration-300 hover:-translate-y-1" : "", className)}
     >
       <div className={cn("relative rounded-t-[inherit]", size.image)}>
         
         <div className="absolute inset-0 overflow-hidden rounded-t-[inherit]">
           <SmartImage src={item.image} alt={item.title} />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#342e34] to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-elevated to-transparent pointer-events-none" />
         </div>
         
         <div className={compact ? "absolute left-3 right-3 top-3 flex items-start justify-between z-50" : "absolute left-4 right-4 top-4 flex items-start justify-between z-50"}>
@@ -116,8 +116,8 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
                 "flex items-center gap-1.5 rounded-full border font-semibold uppercase tracking-[0.18em] transition-all duration-300", 
                 size.badge,
                 isOffersOpen 
-                  ? "bg-[rgba(35,30,35,0.65)] backdrop-blur-[24px] border-[#ffffff20] text-white shadow-[0_4px_12px_rgba(0,0,0,0.3)]" 
-                  : "bg-[#171316CC] border-[#ffffff12] text-[#FFDEBA] hover:bg-[#171316]"
+                  ? "bg-bg-deep/80 backdrop-blur-[24px] border-glass/20 text-text-main shadow-[0_4px_12px_rgba(0,0,0,0.3)]" 
+                  : "bg-bg-deepest/80 border-glass/10 text-text-primary hover:bg-bg-deepest"
               )}
             >
               {currentOffer ? currentOffer.store_name : "N/A"}
@@ -137,9 +137,9 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -5 }}
                   transition={{ type: "spring", stiffness: 300, damping: 25, duration: 0.2 }}
-                  className="absolute top-[calc(100%+6px)] left-0 z-50 flex w-[125px] flex-col overflow-hidden rounded-[16px] bg-[rgba(35,30,35,0.65)] backdrop-blur-[24px] shadow-[0_25px_50px_rgba(0,0,0,0.6)] border border-[#ffffff15]"
+                  className="absolute top-[calc(100%+6px)] left-0 z-50 flex w-[125px] flex-col overflow-hidden rounded-[16px] bg-bg-deep/80 backdrop-blur-[24px] shadow-[0_25px_50px_rgba(0,0,0,0.6)] border border-glass/15"
                 >
-                  <div className="px-2 py-2 text-[8px] font-bold uppercase tracking-[0.2em] text-[#FFDEBA]/80 border-b border-[#ffffff10] text-center w-full">
+                  <div className="px-2 py-2 text-[8px] font-bold uppercase tracking-[0.2em] text-text-primary/80 border-b border-glass/10 text-center w-full">
                     Available at
                   </div>
                   
@@ -162,19 +162,19 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
                             onClick={(e) => handleSelectOffer(e, offer.store_id)}
                             className={cn(
                               "group flex w-full items-center justify-between gap-2 px-3 py-2 outline-none transition-all duration-300",
-                              isSelected ? "bg-[#EC5800]/[0.08]" : "hover:bg-[#ffffff0a]"
+                              isSelected ? "bg-brand-orange/10" : "hover:bg-glass/5"
                             )}
                           >
                             <span className={cn(
                               "text-[11px] font-bold tracking-wider transition-colors duration-300",
-                              isSelected ? "text-[#FFDEBA]" : "text-[#FFDEBA]/70 group-hover:text-[#FFDEBA]"
+                              isSelected ? "text-text-primary" : "text-text-primary/70 group-hover:text-text-primary"
                             )}>
                               {offer.store_name}
                             </span>
                             <div className="flex flex-col items-end">
-                              <span className="text-[12px] font-black text-[#EC5800]">${offer.pricing.current_price.toFixed(2)}</span>
+                              <span className="text-[12px] font-black text-brand-orange">${offer.pricing.current_price.toFixed(2)}</span>
                               {offer.pricing.discount_percent > 0 && (
-                                <span className="text-[8px] text-[#FFDEBA]/40 line-through leading-none">${offer.pricing.regular_price.toFixed(2)}</span>
+                                <span className="text-[8px] text-text-primary/40 line-through leading-none">${offer.pricing.regular_price.toFixed(2)}</span>
                               )}
                             </div>
                           </button>
@@ -186,29 +186,41 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
             </AnimatePresence>
           </div>
 
-          <button type="button" onClick={handleFavourite} className={cn("flex items-center justify-center rounded-full transition-all duration-300 z-10", size.icon, isFavourite ? "bg-[#EC5800] text-white shadow-[0_0_10px_#EC5800]" : "bg-black/40 backdrop-blur-sm text-white/90 border border-white/10")}>
-            <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}><HeartIcon filled={isFavourite} size={size.iconSize || 20} /></div>
+          <button 
+            type="button" 
+            onClick={handleFavourite} 
+            className={cn(
+              "flex items-center justify-center rounded-full transition-all duration-300 z-10 outline-none focus:outline-none", // Додали outline-none
+              size.icon, 
+              isFavourite 
+                ? "bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))] border-brand-orange" // Додали border того ж кольору, що й фон
+                : "bg-bg-deepest/40 backdrop-blur-sm text-text-main/90 border border-glass/10 hover:bg-bg-deepest/60"
+            )}
+          >
+            <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}>
+              <HeartIcon filled={isFavourite} size={size.iconSize || 20} />
+            </div>
           </button>
         </div>
 
         <div className={cn("z-20 pointer-events-none", compact ? "absolute bottom-3 left-3 flex items-center gap-1.5" : "absolute bottom-4 left-4 flex items-center gap-2")}>
           {currentOffer && currentOffer.pricing.discount_percent > 0 && (
-            <span className={cn("rounded-full bg-[#EC5800] font-semibold text-white shadow-[0_8px_16px_#5e1f0033]", size.badge)}>
+            <span className={cn("rounded-full bg-brand-orange font-semibold text-white shadow-[0_8px_16px_rgb(var(--brand-orange)_/_0.2)]", size.badge)}>
               -{currentOffer.pricing.discount_percent}%
             </span>
           )}
-          <span className={cn("rounded-full border border-[#ffffff10] bg-[#171316CC] font-semibold text-[#FFDEBA] backdrop-blur-md", size.badge)}>
+          <span className={cn("rounded-full border border-glass/10 bg-bg-deepest/80 font-semibold text-text-primary backdrop-blur-md", size.badge)}>
             ★ {item.rating}
           </span>
         </div>
       </div>
       
-      <div className={cn("relative z-[1] -mt-px bg-[#342e34] rounded-b-[inherit]", size.container)}>
-        <h3 className={cn(size.title, "font-black text-white")}>{item.title}</h3>
-        <p className={cn("mt-2 text-white/60", size.description)}>{item.description}</p>
+      <div className={cn("relative z-[1] -mt-px bg-bg-elevated rounded-b-[inherit]", size.container)}>
+        <h3 className={cn(size.title, "font-black text-text-main")}>{item.title}</h3>
+        <p className={cn("mt-2 text-text-main/60", size.description)}>{item.description}</p>
         <div className={compact ? "mt-3 flex items-end justify-between gap-3" : "mt-5 flex items-end justify-between gap-4"}>
           <div>
-            <p className={cn(size.price, "font-black text-[#EC5800]")}>
+            <p className={cn(size.price, "font-black text-brand-orange")}>
               {currentOffer ? `$${currentOffer.pricing.current_price.toFixed(2)}` : "Unavailable"}
             </p>
           </div>
@@ -218,7 +230,7 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
               e.stopPropagation(); 
               addItem({ ...item, selectedStoreId: currentOffer.store_id } as any); 
             }}
-            className={cn("rounded-full bg-[#fff4eb] font-semibold text-[#2D282D] transition-all duration-300 hover:bg-[#EC5800] hover:text-white active:scale-95 active:bg-[#D34205] shadow-sm hover:shadow-[0_4px_12px_rgba(236,88,0,0.3)]", size.cta)}
+            className={cn("rounded-full bg-text-primary font-semibold text-bg-main transition-all duration-300 hover:bg-brand-orange hover:text-white active:scale-95 active:bg-brand-orange-dark shadow-sm hover:shadow-[0_4px_12px_rgb(var(--brand-orange)_/_0.3)]", size.cta)}
           >
             Buy
           </button>

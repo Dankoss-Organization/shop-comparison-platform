@@ -18,9 +18,6 @@ import CatalogPagination from "@/Components/Catalog/catalog_pagination";
 
 /**
  * @description Internal component responsible for rendering the content body of the catalog.
- * Uses the `useCatalogFacade` hook to govern complex state like current tab, active category, and pagination variables.
- * Designed to be encapsulated by a React Suspense boundary.
- * @returns {JSX.Element} The header controls, filters, and paginated product grid.
  */
 function CatalogContent() {
   const { state, actions } = useCatalogFacade();
@@ -68,17 +65,11 @@ function CatalogContent() {
             <div>
               <button
                 onClick={actions.handleBackToBrowsing}
-                className="group mb-6 flex items-center gap-2 text-sm font-semibold text-[#FFDEBA]/60 transition-colors hover:text-[#EC5800]"
+                className="group mb-6 flex items-center gap-2 text-sm font-semibold text-text-primary/60 transition-colors hover:text-brand-orange"
               >
                 <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                   className="transition-transform duration-300 group-hover:-translate-x-1"
                 >
                   <line x1="19" y1="12" x2="5" y2="12" />
@@ -86,15 +77,15 @@ function CatalogContent() {
                 </svg>
                 Back to browsing
               </button>
-              <h1 className="text-4xl font-black tracking-tight text-white md:text-5xl lg:text-[54px]">
+              <h1 className="text-4xl font-black tracking-tight text-text-main md:text-5xl lg:text-[54px]">
                 Full Catalog
               </h1>
             </div>
 
-            <div data-testid="tab-switcher" className="relative grid grid-cols-2 gap-2 rounded-2xl border border-white/5 bg-[#1F1A1F] p-1.5 shadow-[inset_0_1px_0_#FFFFFF08,0_14px_28px_#00000020]">
+            <div data-testid="tab-switcher" className="relative grid grid-cols-2 gap-2 rounded-2xl border border-glass/10 bg-bg-elevated p-1.5 shadow-sm">
               <div
                 className={cn(
-                  "pointer-events-none absolute bottom-1.5 top-1.5 z-0 rounded-[0.95rem] bg-[#EC5800] shadow-[0_12px_24px_#5E1F0035] transition-all duration-300 ease-out",
+                  "pointer-events-none absolute bottom-1.5 top-1.5 z-0 rounded-[0.95rem] bg-brand-orange shadow-[0_12px_24px_rgb(var(--brand-orange)_/_0.3)] transition-all duration-300 ease-out",
                   state.activeTab === "products"
                     ? "left-1.5 right-[calc(50%+0.25rem)]"
                     : "left-[calc(50%+0.25rem)] right-1.5",
@@ -106,7 +97,7 @@ function CatalogContent() {
                   "relative z-10 rounded-xl px-8 py-3.5 text-sm font-bold transition-all duration-300",
                   state.activeTab === "products"
                     ? "text-white"
-                    : "text-[#FFDEBA]/60 hover:bg-white/5 hover:text-white",
+                    : "text-text-primary/60 hover:text-text-main",
                 )}
               >
                 All Products
@@ -117,7 +108,7 @@ function CatalogContent() {
                   "relative z-10 rounded-xl px-8 py-3.5 text-sm font-bold transition-all duration-300",
                   state.activeTab === "recipes"
                     ? "text-white"
-                    : "text-[#FFDEBA]/60 hover:bg-white/5 hover:text-white",
+                    : "text-text-primary/60 hover:text-text-main",
                 )}
               >
                 All Recipes
@@ -131,10 +122,10 @@ function CatalogContent() {
                 key={cat.id}
                 onClick={() => actions.handleCategoryChange(cat.id)}
                 className={cn(
-                  "rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5",
+                  "rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-sm",
                   state.activeCategory === cat.id
-                    ? "border-white/20 bg-white/10 text-white shadow-[0_10px_18px_#00000018]"
-                    : "border-white/5 bg-transparent text-[#FFDEBA]/50 hover:bg-white/5 hover:text-white",
+                    ? "border-brand-orange/20 bg-brand-orange/10 text-brand-orange"
+                    : "border-glass/10 bg-bg-surface text-text-primary/70 hover:bg-bg-elevated hover:text-text-main",
                 )}
               >
                 {cat.label}
@@ -175,22 +166,16 @@ function CatalogContent() {
   );
 }
 
-/**
- * @description The main page component for the `/catalog` route.
- * Combines layout-level elements (Header, Footer, CartDrawer) and provides 
- * a loading state fallback for the main `CatalogContent`.
- * @returns {JSX.Element} The composed catalog page.
- */
 export default function CatalogPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#2D282D] font-sans">
-      <div className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#2D282DF2]">
+    <div className="flex min-h-screen flex-col bg-bg-main font-sans transition-colors duration-500">
+      <div className="sticky top-0 z-50 w-full border-b border-glass/10 bg-bg-surface/95 backdrop-blur-md">
         <Header />
       </div>
       <Suspense
         fallback={
           <div className="flex min-h-screen flex-1 items-center justify-center pt-8">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#EC5800] border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
           </div>
         }
       >

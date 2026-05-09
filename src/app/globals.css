@@ -9,25 +9,58 @@
 
 @layer base {
   :root {
-    --background: 248 245 248;
-    --foreground: 45 40 45; 
-    
-    --brand-night: 230 225 230; 
-    --brand-orange: 236 88 0; 
-    --brand-orangeSoft: 255 140 71; 
-    
-    --glass-bg: 0 0 0; 
+    /* 1. Foundation (The "Desk") - Cool Grey Shadow */
+    --bg-main: 242 239 242;       /* #F2EFF2 */
+    --bg-darker: 235 231 235;     /* #EBE7EB */
+    --bg-deepest: 225 215 225;    /* #E1D7E1 */
+    --bg-highest: 230 225 230;    /* Кнопки хедера */
+
+    /* 2. Surfaces (The "Paper") - Signature Creamy */
+    --bg-surface: 255 251 240;    /* #FFFBF0 */
+    --bg-elevated: 255 255 255;   /* #FFFFFF */
+    --bg-deep: 255 251 240;       /* Dropdowns */
+    --glass-bg: 255 251 240;
+    --glass-opacity: 0.7;
+
+    /* 3. Ink (Typography) - Hue 22 Base */
+    --text-main: 45 40 45;        /* #2D282D */
+    --text-primary: 236 88 0;     /* #EC5800 - Тепер це Dark Orange (H:22, L:46) */
+    --text-muted: 110 100 110;    /* #6E646E */
+
+    /* 4. Energy (Brand Actions) - Pure Hue 22 */
+    --brand-orange: 255 129 41;   /* #FF8129 - New Vibrant Sunset (H:22, L:58) */
+    --brand-orange-dark: 236 88 0; /* #EC5800 - Original DNA (H:22, L:46) */
+    --brand-orange-light: 255 241 224; /* #FFF1E0 - Дуже ніжний кремово-помаранчевий */
+    --store-accent: 217 197 178;
+
+    /* Effects */
+    --shadow-soft: 0 4px 20px rgba(45, 40, 45, 0.05);
+    --logo-filter: invert(1) hue-rotate(180deg) brightness(0.2);
   }
 
   .dark {
-    --background: 45 40 45; 
-    --foreground: 255 255 255; 
-    
-    --brand-night: 45 40 45; 
-    --brand-orange: 236 88 0;
-    --brand-orangeSoft: 255 140 71; 
-    
-    --glass-bg: 255 255 255; 
+    /* Твоя ідеальна Dark Theme - Hue 22 збережено */
+    --bg-main: 45 40 45;
+    --bg-surface: 43 38 44;
+    --bg-elevated: 54 46 54;
+    --bg-highest: 90 80 90;
+    --bg-darker: 30 27 30;
+    --bg-deep: 26 24 28;
+    --bg-deepest: 16 14 16;
+
+    --text-main: 255 255 255;
+    --text-primary: 255 222 186;  /* #FFDEBA - Creamy Peach */
+    --text-muted: 110 100 110; 
+
+    --brand-orange: 236 88 0;     /* Original DNA */
+    --brand-orange-dark: 211 66 5; 
+    --brand-orange-light: 134 50 0; 
+    --store-accent: 115 73 52;
+
+    --glass-bg: 255 255 255;
+    --glass-opacity: 0.1;
+    --shadow-soft: 0 20px 50px rgba(0, 0, 0, 0.4);
+    --logo-filter: none;
   }
 }
 
@@ -37,7 +70,7 @@ html {
 
 body {
   margin: 0;
-  background-color: rgb(var(--background));
+  background-color: rgb(var(--bg-main));
   color: rgb(var(--foreground));
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }

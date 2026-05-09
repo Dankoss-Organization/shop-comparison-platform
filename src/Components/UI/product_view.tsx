@@ -36,13 +36,13 @@ export function ImageGallery({ item }: { item: DealCard }) {
   const bestOffer = getBestOffer(item.offers);
 
   return (
-    <div className="relative flex-1 overflow-hidden rounded-[1.5rem] border border-[#ffffff0f] bg-[linear-gradient(180deg,#3a343a_0%,#241f24_100%)] p-4 shadow-[0_15px_30px_rgba(0,0,0,0.4)]">
+    <div className="relative flex-1 overflow-hidden rounded-[1.5rem] border border-glass/10 bg-gradient-to-b from-bg-elevated to-bg-darker p-4 shadow-[0_15px_30px_rgba(0,0,0,0.4)]">
       <div className="absolute left-5 top-5 z-10 flex items-center gap-2">
-        <span className="rounded-full bg-[#171316E6] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FFDEBA]">
+        <span className="rounded-full bg-bg-deepest/90 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-text-primary">
           {bestOffer ? bestOffer.store_name : "MARKET"}
         </span>
         {bestOffer && bestOffer.pricing.discount_percent > 0 && (
-          <span className="rounded-full bg-[#EC5800] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+          <span className="rounded-full bg-brand-orange px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
             -{bestOffer.pricing.discount_percent}%
           </span>
         )}
@@ -57,8 +57,8 @@ export function ImageGallery({ item }: { item: DealCard }) {
         className={cn(
           "absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 active:scale-75",
           favourite
-            ? "border border-[#EC5800] bg-[#EC5800] text-white shadow-[0_4px_15px_rgba(236,88,0,0.5)]"
-            : "border border-white/20 bg-black/30 text-white/90 backdrop-blur-md hover:bg-black/50 hover:text-white"
+            ? "border border-brand-orange bg-brand-orange text-white shadow-[0_4px_15px_rgb(var(--brand-orange)_/_0.5)]"
+            : "border border-glass/20 bg-bg-deepest/40 text-text-main/90 backdrop-blur-md hover:bg-bg-deepest/60 hover:text-text-main"
         )}
       >
         <div className={cn("transition-transform duration-300", favourite ? "scale-110" : "scale-100")}>
@@ -66,7 +66,7 @@ export function ImageGallery({ item }: { item: DealCard }) {
         </div>
       </button>
 
-      <div className="mx-auto aspect-square w-full max-w-[450px] overflow-hidden rounded-xl bg-[#1e1a1e] flex items-center justify-center">
+      <div className="mx-auto aspect-square w-full max-w-[450px] overflow-hidden rounded-xl bg-bg-main flex items-center justify-center">
         <SmartImage src={item.image} alt={item.title} />
       </div>
     </div>
@@ -92,21 +92,21 @@ export function Reviews({ item }: { item: DealCard }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-[1.2rem] border border-[#ffffff0d] bg-[#342e34] p-3.5">
-        <div className="rounded-xl border border-[#ffffff10] bg-[#2d282d] p-4">
+      <div className="rounded-[1.2rem] border border-glass/5 bg-bg-darker p-3.5">
+        <div className="rounded-xl border border-glass/10 bg-bg-elevated p-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.24em] text-[#FFDEBA80]">Rating</p>
-              <p className="mt-1 text-4xl font-black leading-none text-[#FFDEBA]">{item.rating || "4.9"}</p>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-text-primary/50">Rating</p>
+              <p className="mt-1 text-4xl font-black leading-none text-text-primary">{item.rating || "4.9"}</p>
             </div>
-            <div className="rounded-full bg-[#EC58001A] px-3 py-1.5 text-[11px] font-semibold text-[#EC5800]">Verified reviews</div>
+            <div className="rounded-full bg-brand-orange/10 px-3 py-1.5 text-[11px] font-semibold text-brand-orange">Verified reviews</div>
           </div>
-          <div className="mt-3 flex items-center gap-1 text-[15px] text-[#EC5800]">
+          <div className="mt-3 flex items-center gap-1 text-[15px] text-brand-orange">
             {Array.from({ length: 5 }).map((_, index) => (
               <span key={`hero-star-${index}`}>{index < Math.round(Number(item.rating || 5)) ? "★" : "☆"}</span>
             ))}
           </div>
-          <p className="mt-2 text-[13px] leading-relaxed text-[#FFDEBAA6]">Loved for strong savings, clear nutrition info, and quick basket decisions.</p>
+          <p className="mt-2 text-[13px] leading-relaxed text-text-primary/60">Loved for strong savings, clear nutrition info, and quick basket decisions.</p>
         </div>
       </div>
 
@@ -131,20 +131,20 @@ export function ProductHeader({ item, categoryTitle }: { item: DealCard, categor
 
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#EC5800]">{categoryTitle}</p>
-      <h1 className="mt-2 text-3xl font-black leading-tight text-white lg:text-4xl">{item.title}</h1>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-brand-orange">{categoryTitle}</p>
+      <h1 className="mt-2 text-3xl font-black leading-tight text-text-main lg:text-4xl">{item.title}</h1>
       
       <div className="mt-4 flex flex-wrap items-end gap-x-4 gap-y-2">
-        <p className="text-4xl font-black text-[#EC5800]">
+        <p className="text-4xl font-black text-brand-orange">
           ${bestOffer ? bestOffer.pricing.current_price.toFixed(2) : "0.00"}
         </p>
         {bestOffer && bestOffer.pricing.regular_price > bestOffer.pricing.current_price && (
-          <span className="mb-1.5 text-lg text-white/40 line-through">
+          <span className="mb-1.5 text-lg text-text-main/40 line-through">
             ${bestOffer.pricing.regular_price.toFixed(2)}
           </span>
         )}
       </div>
-      <p className="mt-4 text-[14px] leading-relaxed text-[#FFDEBAA6]">{item.description}</p>
+      <p className="mt-4 text-[14px] leading-relaxed text-text-primary/60">{item.description}</p>
     </div>
   );
 }
@@ -192,17 +192,17 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
         <OptionBlock label="Quantity" content={
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <button type="button" onClick={handleDecrease} disabled={parsedQuantity.isWeight ? amount <= 100 : amount <= 1} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#ffffff12] bg-[#2d282d] text-lg font-semibold text-[#FFDEBA] transition disabled:cursor-not-allowed disabled:opacity-45 hover:border-[#EC5800]">
+              <button type="button" onClick={handleDecrease} disabled={parsedQuantity.isWeight ? amount <= 100 : amount <= 1} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-glass/10 bg-bg-darker text-lg font-semibold text-text-primary transition disabled:cursor-not-allowed disabled:opacity-45 hover:border-brand-orange">
                 −
               </button>
-              <div className="flex h-10 w-full items-center justify-center rounded-lg border border-[#ffffff12] bg-[#2d282d] px-4 text-sm font-semibold text-[#FFDEBA]">
+              <div className="flex h-10 w-full items-center justify-center rounded-lg border border-glass/10 bg-bg-darker px-4 text-sm font-semibold text-text-primary">
                 {amountDisplay}
               </div>
-              <button type="button" onClick={handleIncrease} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#ffffff12] bg-[#2d282d] text-lg font-semibold text-[#FFDEBA] transition hover:border-[#EC5800]">
+              <button type="button" onClick={handleIncrease} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-glass/10 bg-bg-darker text-lg font-semibold text-text-primary transition hover:border-brand-orange">
                 +
               </button>
             </div>
-            <p className="text-[11px] font-medium text-[#FFDEBA66]">Total: {totalDisplay}</p>
+            <p className="text-[11px] font-medium text-text-primary/40">Total: {totalDisplay}</p>
           </div>
         } />
         <OptionBlock label="Pack info" content={
@@ -221,7 +221,7 @@ export function ProductActions({ item, categoryTitle }: { item: DealCard, catego
             "w-full rounded-2xl px-5 py-4 text-[16px] font-bold text-white transition-all duration-300 active:scale-[0.98]",
             added 
               ? "bg-green-500 shadow-[0_8px_20px_rgba(34,197,94,0.3)] hover:shadow-[0_12px_25px_rgba(34,197,94,0.4)]"
-              : "bg-[#EC5800] shadow-[0_8px_20px_rgba(236,88,0,0.3)] hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_12px_25px_rgba(236,88,0,0.4)]"
+              : "bg-brand-orange shadow-[0_8px_20px_rgb(var(--brand-orange)_/_0.3)] hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_12px_25px_rgb(var(--brand-orange)_/_0.4)]"
           )}
         >
           {added ? "Added! ✓" : "Add to cart"}
@@ -248,7 +248,7 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard, catego
   return (
     <div className="flex flex-col gap-3">
       <AccordionBlock label="Description" open={expanded.description} onToggle={() => toggle("description")}>
-        <div className="space-y-3 pt-2 text-[13px] leading-relaxed text-[#FFDEBAA6]">
+        <div className="space-y-3 pt-2 text-[13px] leading-relaxed text-text-primary/60">
           <p>{item.description}</p>
           <div className="grid gap-2 sm:grid-cols-2">
             <QuickFact label="Category" value={categoryTitle} />
@@ -271,7 +271,7 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard, catego
       </AccordionBlock>
 
       <AccordionBlock label="Details & allergens" open={expanded.details} onToggle={() => toggle("details")}>
-        <div className="space-y-3 pt-2 text-[13px] text-[#FFDEBAA6]">
+        <div className="space-y-3 pt-2 text-[13px] text-text-primary/60">
           <DetailLine title="Allergens" values={item.allergens?.length ? item.allergens : ["No major allergens listed"]} />
           <DetailLine title="Notes" values={item.notes?.length ? item.notes : ["No extra notes available"]} />
         </div>
@@ -282,29 +282,29 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard, catego
 
 function OptionBlock({ label, content }: { label: string; content: ReactNode }) {
   return (
-    <div className="rounded-xl border border-[#ffffff10] bg-[#342e34] p-4 shadow-sm h-full">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p>
+    <div className="rounded-xl border border-glass/10 bg-bg-darker p-4 shadow-sm h-full">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-text-primary/50">{label}</p>
       <div className="mt-3">{content}</div>
     </div>
   );
 }
 
 function SoftTag({ children }: { children: ReactNode }) { 
-  return <span className="rounded-full border border-[#ffffff12] bg-[#2d282d] px-2.5 py-1 text-[11px] font-semibold text-[#FFDEBA]">{children}</span>; 
+  return <span className="rounded-full border border-glass/10 bg-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-text-primary">{children}</span>; 
 }
 
 function AccordionBlock({ label, open, onToggle, children }: { label: string; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-[#ffffff10] bg-[#342e34] shadow-sm">
-      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-5 py-3.5 text-left transition hover:bg-white/5">
-        <span className="text-[15px] font-bold text-white">{label}</span>
-        <span className={cn("text-white transition-transform duration-300", open ? "rotate-180 text-[#EC5800]" : "")}>
+    <div className="overflow-hidden rounded-xl border border-glass/10 bg-bg-darker shadow-sm">
+      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-5 py-3.5 text-left transition hover:bg-glass/5">
+        <span className="text-[15px] font-bold text-text-main">{label}</span>
+        <span className={cn("text-text-main transition-transform duration-300", open ? "rotate-180 text-brand-orange" : "")}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
       </button>
       <div className={cn("grid transition-all duration-300", open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
         <div className="overflow-hidden">
-          <div className="border-t border-[#ffffff0c] px-5 pb-4">{children}</div>
+          <div className="border-t border-glass/5 px-5 pb-4">{children}</div>
         </div>
       </div>
     </div>
@@ -313,21 +313,21 @@ function AccordionBlock({ label, open, onToggle, children }: { label: string; op
 
 function QuickFact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-[#2d282d] px-3 py-2.5">
-      <p className="text-[9px] uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p>
-      <p className="mt-1 text-[13px] font-semibold text-white">{value}</p>
+    <div className="rounded-lg bg-bg-elevated px-3 py-2.5">
+      <p className="text-[9px] uppercase tracking-[0.24em] text-text-primary/50">{label}</p>
+      <p className="mt-1 text-[13px] font-semibold text-text-main">{value}</p>
     </div>
   );
 }
 
 function NutrientStat({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
-    <div className="rounded-lg border border-[#ffffff10] bg-[#2d282d] p-3">
+    <div className="rounded-lg border border-glass/10 bg-bg-elevated p-3">
       <div className="flex items-center justify-between">
-        <p className="text-[9px] uppercase tracking-[0.24em] text-[#FFDEBA80]">{label}</p>
+        <p className="text-[9px] uppercase tracking-[0.24em] text-text-primary/50">{label}</p>
         <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: accent }} />
       </div>
-      <p className="mt-1.5 text-lg font-black text-white">{value}</p>
+      <p className="mt-1.5 text-lg font-black text-text-main">{value}</p>
     </div>
   );
 }
@@ -335,9 +335,9 @@ function NutrientStat({ label, value, accent }: { label: string; value: string; 
 function DetailLine({ title, values }: { title: string; values: string[] }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#FFDEBA80]">{title}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-text-primary/50">{title}</p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {values.map((value) => <span key={`${title}-${value}`} className="rounded-full border border-[#EC580022] bg-[#EC580014] px-2.5 py-1 text-[11px] font-semibold text-[#FFDEBA]">{value}</span>)}
+        {values.map((value) => <span key={`${title}-${value}`} className="rounded-full border border-brand-orange/20 bg-brand-orange/10 px-2.5 py-1 text-[11px] font-semibold text-text-primary">{value}</span>)}
       </div>
     </div>
   );
@@ -345,17 +345,17 @@ function DetailLine({ title, values }: { title: string; values: string[] }) {
 
 function ReviewCard({ author, stars, text }: { author: string; stars: number; text: string }) {
   return (
-    <div className="rounded-lg border border-[#ffffff10] bg-[#2d282d] p-3.5">
+    <div className="rounded-lg border border-glass/10 bg-bg-elevated p-3.5">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <p className="text-[13px] font-semibold text-white">{author}</p>
-          <div className="mt-0.5 flex items-center gap-0.5 text-[#EC5800] text-[11px]">
+          <p className="text-[13px] font-semibold text-text-main">{author}</p>
+          <div className="mt-0.5 flex items-center gap-0.5 text-brand-orange text-[11px]">
             {Array.from({ length: 5 }).map((_, i) => <span key={`${author}-${i}`}>{i < stars ? "★" : "☆"}</span>)}
           </div>
         </div>
-        <span className="rounded-full bg-[#EC580014] px-2.5 py-1 text-[10px] font-semibold text-[#EC5800]">Verified</span>
+        <span className="rounded-full bg-brand-orange/10 px-2.5 py-1 text-[10px] font-semibold text-brand-orange">Verified</span>
       </div>
-      <p className="mt-2 text-[12px] leading-relaxed text-[#FFDEBAA6]">{text}</p>
+      <p className="mt-2 text-[12px] leading-relaxed text-text-primary/60">{text}</p>
     </div>
   );
 }

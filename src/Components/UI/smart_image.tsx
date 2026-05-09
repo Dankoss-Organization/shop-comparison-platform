@@ -25,7 +25,7 @@ export default function SmartImage({
   className?: string;
 }) {
   return (
-    <div className={`relative h-full w-full overflow-hidden bg-[#2a242a] ${className || ""}`}>
+    <div className={`relative h-full w-full overflow-hidden bg-bg-elevated ${className || ""}`}>
       <img
         src={src}
         alt={alt}

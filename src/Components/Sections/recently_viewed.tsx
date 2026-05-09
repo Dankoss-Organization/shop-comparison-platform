@@ -33,6 +33,7 @@ const panelVariants: Variants = {
     transition: { type: "spring", stiffness: 100, damping: 20 },
   },
 };
+
 /**
  * @brief Main section container for recently viewed panels.
  * @returns {JSX.Element} The rendered recently viewed section.
@@ -77,17 +78,17 @@ export function RecentlyViewedPanel({
         
         <svg
           viewBox="0 0 860 500"
-          className="absolute inset-0 h-full w-full [filter:drop-shadow(0px_-2px_5px_#EC5800)]"
+          className="absolute inset-0 h-full w-full [filter:drop-shadow(0px_-2px_5px_rgb(var(--brand-orange)))]"
           fill="none"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
           <defs>
             <linearGradient id={gradientId} x1="30%" y1="0%" x2="100%" y2="100%">
-              <stop offset="55%" stopColor="#2D282D" stopOpacity="1" />
-              <stop offset="82%" stopColor="#6A311D" stopOpacity="1" />
-              <stop offset="96%" stopColor="#CC4A0B" stopOpacity="1" />
-              <stop offset="100%" stopColor="#EC5800" stopOpacity="1" />
+              <stop offset="58%" stopColor="rgb(var(--bg-surface))" stopOpacity="1" />
+              <stop offset="92%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="1" />
+              <stop offset="96%" stopColor="rgb(var(--brand-orange-dark))" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(var(--brand-orange))" stopOpacity="1" />
             </linearGradient>
           </defs>
           <path
@@ -115,9 +116,9 @@ export function RecentlyViewedPanel({
         </div>
 
         <div className="absolute left-[510px] top-[105px] z-10 flex h-[176px] w-[255px] items-center justify-center">
-          <h2 className="text-center text-[45px] font-black leading-[1.14] tracking-[-0.03em] text-[#ffdeba]">
+          <h2 className="text-center text-[45px] font-black leading-[1.14] tracking-[-0.03em] text-text-primary">
             Recently<br />viewed<br />
-            <span className="text-[#EC5800]">{accent}</span>
+            <span className="text-brand-orange">{accent}</span>
           </h2>
         </div>
 
@@ -131,18 +132,18 @@ export function RecentlyViewedPanel({
             variants={{ hover: { x: 12 } }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
-            <span className="text-[27px] font-semibold tracking-[-0.02em] text-white/95">
+            <span className="text-[27px] font-semibold tracking-[-0.02em] text-text-main">
               View all
             </span>
             
             <motion.button
               type="button"
               aria-label={`Open recently viewed ${accent}`}
-              className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full bg-[#EC5800] text-white shadow-[0_0_14px_rgba(236,88,0,0.45)]"
+              className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full bg-brand-orange text-bg-main shadow-[0_0_14px_rgb(var(--brand-orange)_/_0.45)]"
               variants={{
                 hover: { 
-                  backgroundColor: "#ff6a0d",
-                  boxShadow: "0 0 22px rgba(236,88,0,0.6)",
+                  filter: "brightness(1.15)", 
+                  boxShadow: "0 0 22px rgb(var(--brand-orange) / 0.6)",
                   scale: 1.05 
                 },
                 tap: { scale: 0.9 }
