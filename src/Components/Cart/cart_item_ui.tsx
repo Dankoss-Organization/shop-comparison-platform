@@ -31,7 +31,7 @@ export function CartItemUI({
   return (
     <div className="flex gap-4 py-5 w-full">
       <div 
-        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-bg-main dark:bg-bg-deep border border-text-main/5 dark:border-white/5 shadow-inner cursor-pointer transition-transform hover:scale-105"
+        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white dark:bg-bg-deep border border-text-main/5 dark:border-white/5 shadow-sm dark:shadow-inner cursor-pointer transition-transform hover:scale-105"
         onClick={onClick}
       >
         <Image src={item.image} alt={item.title} fill className="object-cover" />
@@ -60,10 +60,10 @@ export function CartItemUI({
           <p className="font-black text-brand-orange text-lg">
             ${activeOffer ? activeOffer.pricing.current_price.toFixed(2) : "0.00"}
           </p>
-          <div className="flex items-center gap-1.5 rounded-full border border-text-main/10 dark:border-white/10 bg-text-main/5 dark:bg-black/20 p-1">
-            <button onClick={onDecrease} className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated dark:bg-bg-deepest text-text-muted dark:text-text-primary/60 hover:text-text-main dark:hover:text-text-primary shadow-sm dark:shadow-none transition">-</button>
+          <div className="flex items-center gap-1.5 rounded-full border border-text-main/10 dark:border-white/10 bg-white dark:bg-black/20 p-1 shadow-sm dark:shadow-none">
+            <button onClick={onDecrease} className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-main dark:bg-bg-deepest text-text-muted dark:text-text-primary/60 hover:text-text-main dark:hover:text-text-primary transition">-</button>
             <span className="w-6 text-center text-xs font-black text-text-main dark:text-text-primary">{item.cartQuantity}</span>
-            <button onClick={onIncrease} className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated dark:bg-bg-deepest text-text-muted dark:text-text-primary/60 hover:text-text-main dark:hover:text-text-primary shadow-sm dark:shadow-none transition">+</button>
+            <button onClick={onIncrease} className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-main dark:bg-bg-deepest text-text-muted dark:text-text-primary/60 hover:text-text-main dark:hover:text-text-primary transition">+</button>
           </div>
         </div>
       </div>

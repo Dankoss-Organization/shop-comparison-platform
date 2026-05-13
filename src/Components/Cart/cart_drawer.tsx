@@ -100,7 +100,7 @@ export function CartDrawer() {
     <>
       <div 
         className={cn(
-          "fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm transition-opacity duration-500",
+          "fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm transition-opacity duration-500",
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setOpen(false)}
@@ -108,11 +108,11 @@ export function CartDrawer() {
 
       <aside 
         className={cn(
-          "fixed right-0 top-0 z-[101] h-full w-full max-w-[420px] overflow-hidden bg-white/40 dark:bg-bg-deep/30 p-6 backdrop-blur-3xl border-l border-text-main/5 dark:border-white/5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          isOpen ? "translate-x-0 shadow-[-30px_0_60px_rgba(0,0,0,0.3)] dark:shadow-[-30px_0_60px_rgba(0,0,0,0.6)]" : "translate-x-full shadow-none"
+          "fixed right-0 top-0 z-[101] h-full w-full max-w-[420px] overflow-hidden bg-bg-surface/95 dark:bg-bg-deep/30 p-6 backdrop-blur-3xl border-l border-text-main/5 dark:border-white/5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          isOpen ? "translate-x-0 shadow-[-30px_0_60px_rgba(0,0,0,0.15)] dark:shadow-[-30px_0_60px_rgba(0,0,0,0.6)]" : "translate-x-full shadow-none"
         )}
       >
-        <div className="pointer-events-none absolute -right-20 -top-20 z-0 h-[400px] w-[400px] rounded-full bg-brand-orange opacity-20 dark:opacity-30 blur-[100px]" />
+        <div className="pointer-events-none absolute -right-20 -top-20 z-0 h-[400px] w-[400px] rounded-full bg-brand-orange opacity-[0.08] dark:opacity-30 blur-[100px]" />
 
         <div className="relative z-10 flex h-full flex-col">
           
@@ -143,7 +143,7 @@ export function CartDrawer() {
             
             <button 
               onClick={() => setOpen(false)} 
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-text-main/10 dark:border-white/5 bg-text-main/5 dark:bg-white/5 text-text-muted dark:text-text-primary/60 transition-all hover:border-brand-orange/50 hover:bg-brand-orange/10 hover:text-brand-orange"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-text-main/10 dark:border-white/5 bg-white dark:bg-white/5 shadow-sm dark:shadow-none text-text-muted dark:text-text-primary/60 transition-all hover:border-brand-orange/50 hover:bg-brand-orange/10 hover:text-brand-orange"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
@@ -160,7 +160,7 @@ export function CartDrawer() {
                   transition={{ duration: 0.4 }}
                   className="flex h-full flex-col items-center justify-center px-6 text-center"
                 >
-                  <div className="relative mb-8 flex h-[144px] w-[144px] cursor-default items-center justify-center rounded-full border border-text-main/5 dark:border-white/5 bg-black/5 dark:bg-black/30 shadow-inner">
+                  <div className="relative mb-8 flex h-[144px] w-[144px] cursor-default items-center justify-center rounded-full border border-text-main/5 dark:border-white/5 bg-white/50 dark:bg-black/30 shadow-inner">
                     <Image 
                       src="/basket.svg" 
                       alt="Empty basket" 
@@ -169,7 +169,7 @@ export function CartDrawer() {
                       className="opacity-40 transition-transform duration-500 hover:scale-105"
                       style={{ filter: "var(--logo-filter)" }}
                     />
-                    <span className="pointer-events-none select-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] border-bg-elevated/80 dark:border-bg-deep/80 bg-black/10 dark:bg-black/60 text-[12px] font-black text-text-main/60 dark:text-text-primary/70 shadow-sm backdrop-blur-md">
+                    <span className="pointer-events-none select-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] border-bg-surface dark:border-bg-deep/80 bg-white dark:bg-black/60 text-[12px] font-black text-text-main/60 dark:text-text-primary/70 shadow-sm backdrop-blur-md">
                       0
                     </span>
                   </div>
@@ -180,7 +180,7 @@ export function CartDrawer() {
                   
                   <button 
                     onClick={() => setOpen(false)}
-                    className="group relative flex h-[48px] w-full max-w-[240px] items-center justify-center overflow-hidden rounded-[24px] border border-transparent bg-black/5 dark:bg-bg-deepest/60 text-[12px] font-black tracking-[0.15em] text-text-main dark:text-text-primary shadow-sm dark:shadow-[2px_2px_1px_rgb(var(--brand-orange))] backdrop-blur-md transition-all duration-300 hover:-translate-y-[2px] hover:border-brand-orange/50 hover:shadow-md dark:hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.4)] hover:text-brand-orange active:scale-95"
+                    className="group relative flex h-[48px] w-full max-w-[240px] items-center justify-center overflow-hidden rounded-[24px] border border-text-main/10 dark:border-transparent bg-white dark:bg-bg-deepest/60 text-[12px] font-black tracking-[0.15em] text-text-main dark:text-text-primary shadow-sm dark:shadow-[2px_2px_1px_rgb(var(--brand-orange))] backdrop-blur-md transition-all duration-300 hover:-translate-y-[2px] hover:border-brand-orange/50 hover:shadow-md dark:hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.4)] hover:text-brand-orange active:scale-95"
                   >
                     <span className="relative z-10 transition-transform duration-300 group-hover:scale-105 flex items-center gap-2">
                       BROWSE HITS
@@ -250,8 +250,8 @@ export function CartDrawer() {
                   disabled={isOptimizing}
                   className={`group relative mb-3 flex h-[48px] w-full items-center justify-center overflow-hidden rounded-[24px] text-[13px] font-black tracking-[0.2em] transition-all duration-300 backdrop-blur-md ${
                     isOptimizing
-                      ? "bg-black/5 dark:bg-bg-deepest/60 text-text-muted dark:text-text-primary/50 cursor-not-allowed border border-text-main/5 dark:border-white/10"
-                      : "bg-black/5 dark:bg-bg-deepest/40 border border-brand-orange/50 text-text-main dark:text-text-primary shadow-sm dark:shadow-[2px_2px_1px_rgb(var(--brand-orange))] hover:-translate-y-[2px] hover:shadow-md dark:hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.4)] hover:text-brand-orange active:scale-95"
+                      ? "bg-white dark:bg-bg-deepest/60 text-text-muted dark:text-text-primary/50 cursor-not-allowed border border-text-main/10 dark:border-white/10"
+                      : "bg-white dark:bg-bg-deepest/40 border border-brand-orange/40 dark:border-brand-orange/50 text-brand-orange dark:text-text-primary shadow-sm dark:shadow-[2px_2px_1px_rgb(var(--brand-orange))] hover:-translate-y-[2px] hover:shadow-md dark:hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.4)] hover:border-brand-orange active:scale-95"
                   }`}
                 >
                   {isOptimizing ? (
