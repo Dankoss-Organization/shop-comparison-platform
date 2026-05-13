@@ -22,11 +22,15 @@ const config: Config = {
         text: {
           main: "rgb(var(--text-main) / <alpha-value>)",
           primary: "rgb(var(--text-primary) / <alpha-value>)",
+          muted: "rgb(var(--text-muted) / <alpha-value>)",
         },
         brand: {
           orange: "rgb(var(--brand-orange) / <alpha-value>)",
           orangeDark: "rgb(var(--brand-orange-dark) / <alpha-value>)",
           store: "rgb(var(--store-accent) / <alpha-value>)",
+        },
+        semantic: {
+          danger: "rgb(var(--semantic-danger) / <alpha-value>)",
         },
         glass: "rgb(var(--glass-bg) / <alpha-value>)",
       },
