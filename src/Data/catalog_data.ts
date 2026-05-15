@@ -167,6 +167,7 @@ export const categories: Category[] = [
       { name: "ATB" },
       { name: "Fora" },
       { name: "Silpo" },
+      { name: "Varus" },
     ],
   },
 ];
