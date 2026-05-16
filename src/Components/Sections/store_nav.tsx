@@ -6,7 +6,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import Link from "next/link"; 
 
 const initialShops = [
   { name: "Novus", src: "/novus_logo.svg", active: false },
@@ -163,10 +163,11 @@ export function ArrowSquare({
     </button>
   );
 }
+
 export function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
   return (
-    <button
-      type="button"
+    <Link
+      href={`/store/${shop.name.toLowerCase()}`}
       className={`group relative flex h-[68px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[22px] px-[24px] transition-all duration-300 ease-in-out ${
         shop.active
           ? "z-10 scale-100 border border-text-primary/20 bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--brand-orange)_/_0.2)]"
@@ -186,6 +187,6 @@ export function ShopCard({ shop }: { shop: { name: string; src: string; active: 
           }}
         />
       </div>
-    </button>
+    </Link>
   );
 }

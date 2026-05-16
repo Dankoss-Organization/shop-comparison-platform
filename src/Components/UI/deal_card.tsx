@@ -1,8 +1,6 @@
 /**
  * @file deal_card.tsx
- * @description A factory component for rendering product/deal cards with dynamic sizing based on layout context.
- * @pattern Factory: Abstracts the logic of determining the card's visual variant (compact, recent, default) based on where it is rendered.
- * @pattern Smart UI: Connects directly to global stores (Zustand) to handle "Add to Cart" and "Favorite" actions autonomously.
+ * @description A factory component for rendering product/deal cards with dynamic sizing.
  */
 "use client";
 
@@ -24,6 +22,7 @@ export type DealCardFactoryProps = {
   compact?: boolean;
   onClick?: () => void;
   className?: string;
+  preferredStore?: string; 
 };
 
 export interface FavoritesState {
@@ -42,6 +41,7 @@ export default function DealCardFactory({
   compact,
   onClick,
   className,
+  preferredStore, 
 }: DealCardFactoryProps) {
   let activeVariant: "default" | "recent" | "compact" = variant || (compact ? "compact" : "default");
 
@@ -52,7 +52,7 @@ export default function DealCardFactory({
 
   const sizeConfig = cardSizes[activeVariant] || cardSizes["default"];
 
-  return <BaseDealCard item={item} size={sizeConfig} compact={activeVariant === "compact"} onClick={onClick} className={className} />;
+  return <BaseDealCard item={item} size={sizeConfig} compact={activeVariant === "compact"} onClick={onClick} className={className} preferredStore={preferredStore} />;
 }
 
 function getBestOffer(offers: StoreOffer[]): StoreOffer | null {
@@ -60,14 +60,13 @@ function getBestOffer(offers: StoreOffer[]): StoreOffer | null {
   return [...offers].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
 }
 
-export function BaseDealCard({ item, onClick, compact, className = "", size }: { item: DealCardType; onClick?: () => void; compact?: boolean; className?: string; size: any }) {
+export function BaseDealCard({ item, onClick, compact, className = "", size, preferredStore }: { item: DealCardType; onClick?: () => void; compact?: boolean; className?: string; size: any; preferredStore?: string; }) {
   const toggleFavorite = useFavoritesStore((state: FavoritesState) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state: FavoritesState) => state.isFavorite(item.title));
   const addItem = useCartStore((state: CartState) => state.addItem);
   
   const [isMounted, setIsMounted] = useState(false);
   const [isOffersOpen, setIsOffersOpen] = useState(false);
-  
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
 
   useEffect(() => setIsMounted(true), []);
@@ -92,7 +91,19 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
   };
 
   const bestOffer = getBestOffer(item.offers);
-  const currentOffer = item.offers.find(o => o.store_id === selectedOfferId) || bestOffer || item.offers[0];
+  
+  let currentOffer = item.offers.find(o => o.store_id === selectedOfferId);
+  
+  if (!currentOffer && preferredStore) {
+    currentOffer = item.offers.find(o => 
+      o.store_name.toLowerCase() === preferredStore.toLowerCase() || 
+      o.store_id.toLowerCase() === `s_${preferredStore.toLowerCase()}`
+    );
+  }
+  
+  if (!currentOffer) {
+    currentOffer = bestOffer || item.offers[0];
+  }
 
   return (
     <article 
@@ -153,8 +164,8 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
                   >
                     {[...item.offers]
                       .sort((a, b) => a.pricing.current_price - b.pricing.current_price)
-                      .map((offer, index) => {
-                        const isSelected = currentOffer.store_id === offer.store_id;
+                      .map((offer) => {
+                        const isSelected = currentOffer?.store_id === offer.store_id;
 
                         return (
                           <button 
@@ -190,10 +201,10 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
             type="button" 
             onClick={handleFavourite} 
             className={cn(
-              "flex items-center justify-center rounded-full transition-all duration-300 z-10 outline-none focus:outline-none", // Додали outline-none
+              "flex items-center justify-center rounded-full transition-all duration-300 z-10 outline-none focus:outline-none",
               size.icon, 
               isFavourite 
-                ? "bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))] border-brand-orange" // Додали border того ж кольору, що й фон
+                ? "bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))] border-brand-orange"
                 : "bg-bg-deepest/40 backdrop-blur-sm text-text-main/90 border border-glass/10 hover:bg-bg-deepest/60"
             )}
           >
@@ -228,7 +239,7 @@ export function BaseDealCard({ item, onClick, compact, className = "", size }: {
             type="button" 
             onClick={(e) => { 
               e.stopPropagation(); 
-              addItem({ ...item, selectedStoreId: currentOffer.store_id } as any); 
+              addItem({ ...item, selectedStoreId: currentOffer?.store_id } as any); 
             }}
             className={cn("rounded-full bg-text-primary font-semibold text-bg-main transition-all duration-300 hover:bg-brand-orange hover:text-white active:scale-95 active:bg-brand-orange-dark shadow-sm hover:shadow-[0_4px_12px_rgb(var(--brand-orange)_/_0.3)]", size.cta)}
           >
