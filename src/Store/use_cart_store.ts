@@ -14,7 +14,7 @@ export interface CartItem extends DealCardType {
   selectedStoreId?: string;
 }
 
-interface CartState {
+export interface CartState {
   items: CartItem[];
   isOpen: boolean;
   setOpen: (open: boolean) => void;

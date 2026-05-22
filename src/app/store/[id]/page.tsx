@@ -8,6 +8,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { StoreOffer } from "@/Data/home_data";
 
 import { 
   weekDiscounts, 
@@ -42,7 +43,7 @@ export default function StorePage() {
     
     if (storeId) {
       const filtered = allProducts.filter(product => 
-        product.offers?.some(offer => 
+          product.offers?.some((offer: StoreOffer) =>
           offer.store_name.toLowerCase() === storeId || 
           offer.store_id.toLowerCase() === `s_${storeId}`
         )

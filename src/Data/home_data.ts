@@ -222,3 +222,7 @@ export const recentItems = [
   { title: "Olive Oil Promo",       type: "Viewed discount", detail: "Novus | Yesterday" },
   { title: "Salmon Rice Plate",     type: "Viewed recipe",   detail: "Recipe | Yesterday" },
 ];
+
+export const weekDiscounts: DealCard[] = [];
+export const dailyDiscounts: DealCard[] = [];
+export const expiringDiscounts: DealCard[] = [];

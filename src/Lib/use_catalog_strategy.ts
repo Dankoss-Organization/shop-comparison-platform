@@ -1,6 +1,6 @@
 /**
  * @file use_catalog_strategy.ts
- * @brief Strategy pattern implementation separating data sourcing and listing operations between local recipes and backend product APIs.
+ * @description Strategy pattern implementation separating data sourcing and listing operations between local recipes and backend product APIs.
  */
 
 "use client";
@@ -10,7 +10,7 @@ import { productsApi } from "@/Lib/api/index";
 import { mapCatalogItemToDealCard, mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
 
 /**
- * @brief Represents a specific navigation node category option within a catalog tab layout.
+ * @description Represents a specific navigation node category option within a catalog tab layout.
  */
 export interface CatalogCategory {
   id: string;
@@ -19,7 +19,7 @@ export interface CatalogCategory {
 }
 
 /**
- * @brief Unified criteria parameters used for executing paginated filter workflows.
+ * @description Unified criteria parameters used for executing paginated filter workflows.
  */
 export interface StrategyFetchParams {
   page: number;
@@ -30,7 +30,7 @@ export interface StrategyFetchParams {
 }
 
 /**
- * @brief Structural encapsulation detailing a resolved paginated segment slice data block.
+ * @description Structural encapsulation detailing a resolved paginated segment slice data block.
  */
 export interface StrategyFetchResult {
   items: (DealCard & { _cat?: string; _uniqueId?: string })[];
@@ -39,7 +39,7 @@ export interface StrategyFetchResult {
 }
 
 /**
- * @brief Contract definition guaranteeing consistent layout and lookup structures across tab view domains.
+ * @description Contract definition guaranteeing consistent layout and lookup structures across tab view domains.
  */
 export interface CatalogStrategy {
   categories: CatalogCategory[];
@@ -53,7 +53,7 @@ function truncate(str: string | undefined, length = 80) {
 }
 
 /**
- * @brief Dictionary matching layout strategies mapped to structural navigation keys.
+ * @description Dictionary matching layout strategies mapped to structural navigation keys.
  */
 export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
   recipes: {

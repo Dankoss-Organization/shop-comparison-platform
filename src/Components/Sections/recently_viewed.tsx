@@ -1,6 +1,6 @@
 /**
  * @file RecentlyViewed.tsx
- * @brief Component displaying recently viewed items using custom SVG panel backgrounds.
+ * @description Component displaying recently viewed items using custom SVG panel backgrounds.
  */
 
 "use client";
@@ -72,7 +72,7 @@ export default function RecentlyViewed() {
 }
 
 /**
- * @brief Component of one brand panel
+ * @description Component of one brand panel
  */
 export function RecentlyViewedPanel({ 
   item, 

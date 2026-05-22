@@ -1,6 +1,6 @@
 /**
  * @file ProductCarousel.tsx
- * @brief Horizontal product deal carousel with modal or direct link integration.
+ * @description Horizontal product deal carousel with modal or direct link integration.
  */
 
 "use client";
