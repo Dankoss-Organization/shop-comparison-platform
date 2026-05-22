@@ -190,13 +190,35 @@ export default function CatalogDropdown({ categories }: Props) {
                   ) : (
                     <div className="w-full p-6 overflow-y-auto custom-scrollbar">
                       <div className="grid grid-cols-2 gap-x-5 gap-y-3">
-                        {activeCategoryData.subcategories.map((sub) => (
-                          <div key={sub.name} className="group/item flex cursor-pointer items-center px-3 py-2 rounded-2xl transition-all duration-300 hover:bg-brand-orange/15 hover:shadow-sm">
-                            <span className="text-[15px] font-medium text-text-primary/80 transition-colors group-hover/item:text-brand-orange">
-                              {sub.name}
-                            </span>
-                          </div>
-                        ))}
+                        {activeCategoryData.subcategories.map((sub) => {
+                          const isStoreCategory = currentActiveCategoryName === "Stores";
+                          
+                          if (isStoreCategory) {
+                            return (
+                              <Link 
+                                key={sub.name} 
+                                href={`/store/${sub.name.toLowerCase()}`}
+                                onClick={() => {
+                                  const catalogCloseBtn = document.getElementById('catalog-trigger');
+                                  if (catalogCloseBtn) catalogCloseBtn.click();
+                                }}
+                                className="group/item flex cursor-pointer items-center px-3 py-2 rounded-2xl transition-all duration-300 hover:bg-brand-orange/15 hover:shadow-sm"
+                              >
+                                <span className="text-[15px] font-medium text-text-primary/80 transition-colors group-hover/item:text-brand-orange">
+                                  {sub.name}
+                                </span>
+                              </Link>
+                            );
+                          }
+
+                          return (
+                            <div key={sub.name} className="group/item flex cursor-pointer items-center px-3 py-2 rounded-2xl transition-all duration-300 hover:bg-brand-orange/15 hover:shadow-sm">
+                              <span className="text-[15px] font-medium text-text-primary/80 transition-colors group-hover/item:text-brand-orange">
+                                {sub.name}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

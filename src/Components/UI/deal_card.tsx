@@ -2,6 +2,7 @@
  * @file deal_card.tsx
  * @description Unified factory and presentation architecture for multi-variant product deals.
  */
+
 "use client";
 
 import { MouseEvent, useEffect, useState } from "react";
@@ -85,10 +86,9 @@ export function BaseDealCard({
   size: CardSizeTokens;
   preferredStore?: string;
 }) {
-  const toggleFavorite = useFavoritesStore((state: any) => state.toggleFavorite);
-  const isFavoriteGlobal = useFavoritesStore((state: any) => state.isFavorite(item.id));
-  const addItem = useCartStore((state: any) => state.addItem);
-
+  const toggleFavorite = useFavoritesStore((state: FavoritesState) => state.toggleFavorite);
+  const isFavoriteGlobal = useFavoritesStore((state: FavoritesState) => state.isFavorite(item.id))
+  const addItem = useCartStore((state: CartState) => state.addItem);
   const [isMounted, setIsMounted] = useState(false);
   const [isOffersOpen, setIsOffersOpen] = useState(false);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
@@ -115,6 +115,7 @@ export function BaseDealCard({
   };
 
   const bestOffer = getBestOffer(item.offers);
+
   const currency = item.currency ?? "UAH";
 
   let currentOffer = item.offers.find((offer) => offer.store_id === selectedOfferId);
@@ -249,7 +250,7 @@ export function BaseDealCard({
             type="button"
             onClick={handleFavourite}
             className={cn(
-              "z-10 flex items-center justify-center rounded-full transition-all duration-300 outline-none focus:outline-none",
+            "z-10 flex items-center justify-center rounded-full transition-all duration-300 outline-none focus:outline-none",
               size.icon,
               isFavourite
                 ? "border border-brand-orange bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))]"
@@ -305,11 +306,11 @@ export function BaseDealCard({
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              addItem({ ...item, selectedStoreId: currentOffer?.store_id });
+          <button 
+            type="button" 
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              addItem({ ...item, selectedStoreId: currentOffer?.store_id } as any); 
             }}
             className={cn(
               "rounded-full bg-text-primary font-semibold text-bg-main shadow-sm transition-all duration-300 hover:bg-brand-orange hover:text-white hover:shadow-[0_4px_12px_rgb(var(--brand-orange)_/_0.3)] active:scale-95 active:bg-brand-orange-dark flex-shrink-0",
