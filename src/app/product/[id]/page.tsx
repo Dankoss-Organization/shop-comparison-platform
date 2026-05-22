@@ -1,65 +1,65 @@
 /**
- * @file ProductPage.tsx
- * @description Dynamic product details view. Handles URL ID parsing, related items matching, and maintains a session-based viewing history trail.
+ * @file page.tsx
+ * @description Dynamic product details view backed by the real products API.
  */
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/Components/Layout/header";
 import Footer from "@/Components/Layout/footer";
 import ProductCarousel from "@/Components/Sections/product_carousel";
 import { useCartStore } from "@/Store/use_cart_store";
-import { CartDrawer } from "@/Components/Cart/cart_drawer"; 
-
-import { 
-  ImageGallery, 
-  Reviews, 
-  ProductHeader, 
-  ProductActions, 
-  ProductDetails 
+import { CartDrawer } from "@/Components/Cart/cart_drawer";
+import {
+  ImageGallery,
+  ProductActions,
+  ProductDetails,
+  ProductHeader,
+  Reviews,
 } from "@/Components/UI/product_view";
+import type { DealCard } from "@/Data/home_data";
+import {
+  mapProductCardToDealCard,
+  mapRelatedProductsToDealCards,
+} from "@/Lib/api/products_api.adapters";
+import { productsApi } from "@/Lib/api";
 
-import { 
-  weekDiscounts, 
-  dailyDiscounts, 
-  expiringDiscounts, 
-  seasonalRecipes, 
-  peopleLiked,
-  type DealCard 
-} from "@/Data/home_data";
-
-/**
- * @description Represents a breadcrumb entry stored in sessionStorage to track viewed products.
- */
 export interface HistoryItem {
   title: string;
   url: string;
 }
 
-/**
- * @description Defines the cart store interface dependency for controlling the cart's visibility state.
- */
-export interface CartState {
+interface CartState {
   setOpen: (open: boolean) => void;
 }
 
-/**
- * @description The dynamic routing page component for displaying singular product details.
- * Retrieves product data based on the URL parameter, builds a list of similar items, and tracks
- * the user's viewing history in `sessionStorage` for breadcrumb navigation.
- * @returns {JSX.Element} The assembled product detail screen layout.
- */
+const PRODUCT_ROUTE_ALIASES: Record<string, string> = {
+  "BAR-005": "BAR-005",
+  "Spaghetti No.5": "BAR-005",
+  "Barilla Pasta": "BAR-005",
+  "KMO-112": "KMO-112",
+  "Gouda Cheese": "KMO-112",
+  "Cream Cheese": "KMO-112",
+  "GAL-025": "GAL-025",
+  "Kefir 2.5%": "GAL-025",
+  "Greek Yogurt": "GAL-025",
+  "OLN-001": "OLN-001",
+  "Sunflower Oil": "OLN-001",
+  "Olive Oil": "OLN-001",
+};
+
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
+
   const setOpen = useCartStore((state: CartState) => state.setOpen);
-  
+
   const rawId = Array.isArray(params?.id) ? params.id[0] : params?.id;
   const decodedId = rawId ? decodeURIComponent(rawId) : "";
+  const backendProductId = PRODUCT_ROUTE_ALIASES[decodedId] ?? decodedId;
   const fromSource = searchParams.get("from");
 
   const [item, setItem] = useState<DealCard | null>(null);
@@ -67,63 +67,107 @@ export default function ProductPage() {
   const [categoryTitle, setCategoryTitle] = useState("Premium Selection");
   const [historyTrail, setHistoryTrail] = useState<HistoryItem[]>([]);
   const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname, setOpen]);
 
   useEffect(() => {
-    if (!decodedId) {
+    if (!backendProductId) {
       setIsReady(true);
       return;
     }
 
-    const allProducts = [
-      ...weekDiscounts.map(i => ({ ...i, _catTitle: "Week Discounts", _isRecipe: false })),
-      ...dailyDiscounts.map(i => ({ ...i, _catTitle: "Daily Discounts", _isRecipe: false })),
-      ...expiringDiscounts.map(i => ({ ...i, _catTitle: "Expiring Discounts", _isRecipe: false })),
-      ...seasonalRecipes.map(i => ({ ...i, _catTitle: "Seasonal Recipes", _isRecipe: true })),
-      ...peopleLiked.map(i => ({ ...i, _catTitle: "People Also Liked", _isRecipe: true }))
-    ];
-    
-    const matchId = decodedId.toLowerCase().replace(/\s+/g, '-');
-    let match = allProducts.find((i) => 
-      i.title === decodedId || 
-      i.title.toLowerCase().replace(/\s+/g, '-') === matchId ||
-      encodeURIComponent(i.title) === decodedId
-    );
+    let cancelled = false;
 
-    if (!match) match = allProducts[0];
+    const load = async () => {
+      setIsReady(false);
+      setError(null);
+      setItem(null);
+      setSimilarItems([]);
 
-    const related = allProducts.filter((i) => i.title !== match?.title).slice(0, 10);
+      const applyHistory = (resolved: DealCard) => {
+        try {
+          const stored = sessionStorage.getItem("productHistoryTrail");
+          let parsed: HistoryItem[] = stored ? JSON.parse(stored) : [];
 
-    setItem(match);
-    setSimilarItems(related);
-    setCategoryTitle((match as any)._catTitle || "Premium Selection");
+          const existingIndex = parsed.findIndex((entry) => entry.title === resolved.title);
+          if (existingIndex !== -1) {
+            parsed = parsed.slice(0, existingIndex + 1);
+          } else {
+            parsed.push({
+              title: resolved.title,
+              url: `/product/${encodeURIComponent(resolved.id)}`,
+            });
+            if (parsed.length > 6) parsed.shift();
+          }
 
-    try {
-      const storedHistory = sessionStorage.getItem("productHistoryTrail");
-      let parsed: HistoryItem[] = storedHistory ? JSON.parse(storedHistory) : [];
-      
-      const existingIdx = parsed.findIndex((p) => p.title === match?.title);
-      if (existingIdx !== -1) {
-        parsed = parsed.slice(0, existingIdx + 1);
-      } else {
-        parsed.push({ title: match.title, url: `/product/${encodeURIComponent(match.title)}` });
-        if (parsed.length > 6) parsed.shift();
+          if (!cancelled) setHistoryTrail(parsed);
+          sessionStorage.setItem("productHistoryTrail", JSON.stringify(parsed));
+        } catch {
+        }
+      };
+
+      try {
+        const [cardResult, relatedResult] = await Promise.allSettled([
+          productsApi.getProductCard(backendProductId),
+          productsApi.getRelatedProducts(backendProductId, { limit: 10 }),
+        ]);
+
+        if (cancelled) return;
+
+        if (cardResult.status === "fulfilled") {
+          const card = mapProductCardToDealCard(cardResult.value);
+          setItem(card);
+          applyHistory(card);
+
+          if (cardResult.value.product.category) {
+            const category = cardResult.value.product.category as any;
+            setCategoryTitle(category.name ?? String(category));
+          }
+        } else {
+          setError("Product not found or failed to load.");
+        }
+
+        if (relatedResult.status === "fulfilled") {
+          setSimilarItems(mapRelatedProductsToDealCards(relatedResult.value));
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Something went wrong while loading this product.");
+        }
+      } finally {
+        if (!cancelled) setIsReady(true);
       }
-      
-      setHistoryTrail(parsed);
-      sessionStorage.setItem("productHistoryTrail", JSON.stringify(parsed));
-    } catch (e) {}
+    };
 
-    setIsReady(true);
-  }, [decodedId]);
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [backendProductId]);
 
-  if (!isReady || !item) {
+  if (!isReady) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bg-main transition-colors duration-300">
-         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-orange border-t-transparent"></div>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-bg-main text-text-main transition-colors duration-300">
+        <p className="text-xl font-semibold text-text-primary/60">
+          {error ?? "Product not found."}
+        </p>
+        <button
+          onClick={() => router.back()}
+          className="rounded-full bg-brand-orange px-6 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+        >
+          Go back
+        </button>
       </div>
     );
   }
@@ -135,38 +179,55 @@ export default function ProductPage() {
       router.push("/favorites");
       return;
     }
-    
+
     const lastCatalogUrl = sessionStorage.getItem("lastCatalogUrl");
     if (lastCatalogUrl) {
       router.push(lastCatalogUrl);
     } else {
-      const isRecipe = (item as any)?._isRecipe || item?.title.toLowerCase().includes("recipe") || item?.title.toLowerCase().includes("pasta");
-      router.push(isRecipe ? "/#recipes" : "/#products");
+      router.push("/#products");
     }
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-bg-main text-text-main transition-colors duration-300">
-      <div className="sticky top-0 z-50 w-full bg-bg-elevated/95 backdrop-blur-md border-b border-text-main/5 dark:border-text-primary/5 transition-colors duration-300">
+      <div className="sticky top-0 z-50 w-full border-b border-text-main/5 bg-bg-elevated/95 backdrop-blur-md transition-colors duration-300 dark:border-text-primary/5">
         <Header />
       </div>
 
       <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-8 md:px-8 lg:px-12 2xl:px-[60px]">
-        
         <nav className="mb-4 mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-text-muted dark:text-text-primary/60">
-          <button onClick={handleBackToBrowsing} className="group flex items-center gap-1.5 transition-colors hover:text-brand-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:-translate-x-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <button
+            onClick={handleBackToBrowsing}
+            className="group flex items-center gap-1.5 transition-colors hover:text-brand-orange"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="transition-transform group-hover:-translate-x-1"
+            >
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
             Back to browsing
           </button>
-          
-          {historyTrail.map((h, i) => (
-            <React.Fragment key={`crumb-${i}`}>
+
+          {historyTrail.map((historyItem, index) => (
+            <React.Fragment key={`crumb-${index}`}>
               <span className="text-text-main/20 dark:text-white/20">/</span>
-              {i === historyTrail.length - 1 ? (
-                <span className="text-brand-orange">{h.title}</span>
+              {index === historyTrail.length - 1 ? (
+                <span className="text-brand-orange">{historyItem.title}</span>
               ) : (
-                <button onClick={() => router.push(h.url)} className="transition-colors hover:text-text-main dark:hover:text-text-primary hover:underline">
-                  {h.title}
+                <button
+                  onClick={() => router.push(historyItem.url)}
+                  className="transition-colors hover:text-text-main hover:underline dark:hover:text-text-primary"
+                >
+                  {historyItem.title}
                 </button>
               )}
             </React.Fragment>
@@ -187,7 +248,7 @@ export default function ProductPage() {
         </div>
 
         {similarItems.length > 0 && (
-          <div className="-mx-4 border-t border-text-main/5 dark:border-white/5 pt-8 md:-mx-8 lg:-mx-12 2xl:-mx-[60px]">
+          <div className="-mx-4 border-t border-text-main/5 pt-8 dark:border-white/5 md:-mx-8 lg:-mx-12 2xl:-mx-[60px]">
             <ProductCarousel
               id="related-products"
               eyebrow="More to Explore"

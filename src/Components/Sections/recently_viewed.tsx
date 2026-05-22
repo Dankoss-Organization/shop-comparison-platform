@@ -1,44 +1,47 @@
 /**
  * @file RecentlyViewed.tsx
- * @brief Component displaying recently viewed items using custom SVG panel backgrounds.
- * @pattern Framer Motion - Added scroll-triggered entrance animations and spring physics for hover/tap interactions.
+ * @description Component displaying recently viewed items using custom SVG panel backgrounds.
  */
 
 "use client";
 
-import { useId } from "react";
+import { useId, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import DealCardView from "@/Components/UI/deal_card";
-import { expiringDiscounts, peopleLiked, type DealCard } from "@/Data/home_data";
-
-const recentDiscount = expiringDiscounts[2];
-const recentRecipe = peopleLiked[1];
+import { productsApi } from "@/Lib/api/index";
+import { mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
+import { peopleLiked, type DealCard } from "@/Data/home_data";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
 };
 
 const panelVariants: Variants = {
   hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 100, damping: 20 },
-  },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 20 } },
 };
 
-/**
- * @brief Main section container for recently viewed panels.
- * @returns {JSX.Element} The rendered recently viewed section.
- */
 export default function RecentlyViewed() {
+  const [recentProduct, setRecentProduct] = useState<DealCard | null>(null);
+  const recentRecipe = peopleLiked?.[0] || null;
+  useEffect(() => {
+    async function fetchRecentProduct() {
+      try {
+        const response = await productsApi.getProducts({ page: 1, limit: 1 });
+        if (response?.items && response.items.length > 0) {
+          const cardData = await productsApi.getProductCard(response.items[0].productId);
+          const dealCard = mapProductCardToDealCard(cardData);
+          setRecentProduct(dealCard);
+        }
+      } catch (error) {
+        console.error("Не вдалося завантажити продукт для RecentlyViewed:", error);
+      }
+    }
+    fetchRecentProduct();
+  }, []);
+
   return (
     <section className="mx-auto flex w-full justify-center px-2 py-12 sm:px-3 lg:px-4">
       <motion.div 
@@ -48,26 +51,43 @@ export default function RecentlyViewed() {
         viewport={{ once: true, amount: 0.2 }} 
         className="grid shrink-0 grid-cols-1 justify-items-center gap-8 lg:gap-10 xl:gap-12 min-[1100px]:grid-cols-2"
       >
-        <RecentlyViewedPanel item={recentDiscount} accent="discounts" />
-        <RecentlyViewedPanel item={recentRecipe} accent="recipes" />
+        {recentProduct && (
+          <RecentlyViewedPanel 
+            item={recentProduct} 
+            accent="products" 
+            category="all" 
+          />
+        )}
+        
+        {recentRecipe && (
+          <RecentlyViewedPanel 
+            item={recentRecipe} 
+            accent="recipes" 
+            category="peoples-liking" 
+          />
+        )}
       </motion.div>
     </section>
   );
 }
 
 /**
- * @brief Renders an individual recently viewed panel with an SVG mask/background.
+ * @description Component of one brand panel
  */
-export function RecentlyViewedPanel({
-  item,
+export function RecentlyViewedPanel({ 
+  item, 
   accent,
-}: {
-  item: DealCard;
-  accent: string;
+  category 
+}: { 
+  item: DealCard; 
+  accent: "products" | "recipes"; 
+  category: string;
 }) {
   const router = useRouter();
   const rawId = useId();
   const gradientId = "gradient-" + rawId.replace(/:/g, "");
+
+  if (!item) return null;
 
   return (
     <motion.div 
@@ -75,7 +95,6 @@ export function RecentlyViewedPanel({
       className="relative h-[212px] w-[367px] sm:h-[242px] sm:w-[419px] md:h-[261px] md:w-[452px] lg:h-[282px] lg:w-[487px] xl:h-[335px] xl:w-[579px] 2xl:h-[390px] 2xl:w-[675px]"
     >
       <div className="absolute left-0 top-0 h-[500px] w-[860px] origin-top-left scale-[0.427] sm:scale-[0.487] md:scale-[0.525] lg:scale-[0.566] xl:scale-[0.673] 2xl:scale-[0.785]">
-        
         <svg
           viewBox="0 0 860 500"
           className="absolute inset-0 h-full w-full [filter:drop-shadow(0px_-2px_5px_rgb(var(--brand-orange)))]"
@@ -98,19 +117,13 @@ export function RecentlyViewedPanel({
           />
         </svg>
 
-        <div 
-          className="absolute left-[45px] top-[10px] z-10 origin-top-left"
-          style={{ transform: 'scale(1.274)' }}
-        >
-          <motion.div 
-            whileHover={{ y: -8, scale: 1.02 }} 
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          >
+        <div className="absolute left-[45px] top-[10px] z-10 origin-top-left" style={{ transform: 'scale(1.274)' }}>
+          <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300, damping: 15 }}>
             <DealCardView
               item={item}
               variant="default"
               className="w-[280px] shadow-[0_20px_40px_rgba(0,0,0,0.5)] cursor-pointer"
-              onClick={() => router.push(`/product/${encodeURIComponent(item.title)}`)}
+              onClick={() => router.push(`/product/${encodeURIComponent(item.id || item.title || "")}`)}
             />
           </motion.div>
         </div>
@@ -126,26 +139,20 @@ export function RecentlyViewedPanel({
           className="absolute left-[600px] top-[368px] z-10 flex cursor-pointer items-center"
           whileHover="hover"
           whileTap="tap"
+          onClick={() => router.push(`/catalog?tab=${accent}&category=${category}`)}
         >
           <motion.div
             className="flex items-center gap-6"
             variants={{ hover: { x: 12 } }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
-            <span className="text-[27px] font-semibold tracking-[-0.02em] text-text-main">
-              View all
-            </span>
-            
+            <span className="text-[27px] font-semibold tracking-[-0.02em] text-text-main">View all</span>
             <motion.button
               type="button"
               aria-label={`Open recently viewed ${accent}`}
               className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full bg-brand-orange text-bg-main shadow-[0_0_14px_rgb(var(--brand-orange)_/_0.45)]"
               variants={{
-                hover: { 
-                  filter: "brightness(1.15)", 
-                  boxShadow: "0 0 22px rgb(var(--brand-orange) / 0.6)",
-                  scale: 1.05 
-                },
+                hover: { filter: "brightness(1.15)", boxShadow: "0 0 22px rgb(var(--brand-orange) / 0.6)", scale: 1.05 },
                 tap: { scale: 0.9 }
               }}
             >

@@ -1,11 +1,11 @@
 /**
- * @file app/favorites/page.tsx
+ * @file page.tsx (app/favorites/page.tsx)
  * @description Dedicated view displaying all products users saved.
+ * Fetches real product data from the backend based on saved IDs.
  */
-
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/Components/Layout/header";
 import Footer from "@/Components/Layout/footer";
@@ -13,44 +13,62 @@ import DealCardFactory from "@/Components/UI/deal_card";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useUserStore } from "@/Store/user_store";
 import { useUIStore } from "@/Store/use_ui_store";
-import {
-  weekDiscounts,
-  dailyDiscounts,
-  expiringDiscounts,
-  seasonalRecipes,
-  peopleLiked,
-} from "@/Data/home_data";
+import { productsApi } from "@/Lib/api/index";
+import { mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
+import type { DealCard } from "@/Data/home_data";
 
 export default function FavoritesPage() {
   const router = useRouter();
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const { isAuthenticated } = useUserStore();
   const openProfileWithLoginHint = useUIStore((state) => state.openProfileWithLoginHint);
+  
   const [isMounted, setIsMounted] = useState(false);
+  const [favoriteItems, setFavoriteItems] = useState<DealCard[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const favoriteItems = useMemo(() => {
-    const allItems = [
-      ...weekDiscounts,
-      ...dailyDiscounts,
-      ...expiringDiscounts,
-      ...seasonalRecipes,
-      ...peopleLiked,
-    ];
-    
-    const itemMap = new Map<string, (typeof allItems)[0]>();
-    allItems.forEach((item) => itemMap.set(item.title, item));
+  useEffect(() => {
+    if (!isMounted || !isAuthenticated) return;
 
-    return favoriteIds.map((id) => itemMap.get(id)).filter(Boolean) as typeof allItems;
-  }, [favoriteIds]);
+    if (favoriteIds.length === 0) {
+      setFavoriteItems([]);
+      return;
+    }
 
-  /**
-   * Scrolls to the top so the header is visible, then opens the profile
-   * dropdown with the Sign In button bounce via the shared UI store.
-   */
+    let isCancelled = false;
+
+    const fetchFavorites = async () => {
+      setIsFetching(true);
+      try {
+        const results = await Promise.allSettled(
+          favoriteIds.map((id) => productsApi.getProductCard(id))
+        );
+
+        if (isCancelled) return;
+
+        const validItems = results
+          .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+          .map((r) => mapProductCardToDealCard(r.value));
+
+        setFavoriteItems(validItems);
+      } catch (error) {
+        console.error("[Favorites] Error fetching favorite products:", error);
+      } finally {
+        if (!isCancelled) setIsFetching(false);
+      }
+    };
+
+    fetchFavorites();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isMounted, isAuthenticated, favoriteIds]);
+
   const handleSignInHint = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => openProfileWithLoginHint(), 300);
@@ -141,7 +159,7 @@ export default function FavoritesPage() {
               Favorites
             </h1>
             <p className="mt-3 text-[15px] text-text-muted font-light">
-              {!isMounted
+              {!isMounted || isFetching
                 ? "Loading…"
                 : !isAuthenticated
                 ? "Sign in to view your synced wishlist"
@@ -163,9 +181,9 @@ export default function FavoritesPage() {
           </div>
         </div>
 
-        {!isMounted ? (
+        {!isMounted || isFetching ? (
           <div className="flex h-[40vh] items-center justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-brand-orange border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
           </div>
         ) : !isAuthenticated ? (
           <LockedView />
@@ -174,12 +192,12 @@ export default function FavoritesPage() {
         ) : (
           <div className="grid w-full grid-cols-1 place-items-center gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8 2xl:gap-9">
             {favoriteItems.map((item, idx) => (
-              <div key={`${item.title}-${idx}`} className="flex h-full w-full min-w-0 justify-center">
+              <div key={`${item.id}-${idx}`} className="flex h-full w-full min-w-0 justify-center">
                 <DealCardFactory
                   item={item}
                   context="grid"
                   className="flex h-full w-full max-w-[320px] flex-col items-stretch justify-between shadow-xl"
-                  onClick={() => router.push(`/product/${encodeURIComponent(item.title)}?from=favorites`)}
+                  onClick={() => router.push(`/product/${encodeURIComponent(item.id)}?from=favorites`)}
                 />
               </div>
             ))}
