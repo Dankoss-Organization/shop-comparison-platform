@@ -1,6 +1,8 @@
 /**
- * @file page.tsx
- * @description Main catalog view with tabbed navigation (products/recipes), category filtering, and a paginated grid layout. Utilizes a facade pattern for state logic.
+ * @file page.tsx  (app/catalog/page.tsx)
+ * @description Full catalog view with tabbed navigation (Products / Recipes),
+ * category filter pills, and a server-paginated grid.
+ * Data is fetched from the real backend API via useCatalogFacade → strategy.fetchData.
  */
 "use client";
 
@@ -16,29 +18,26 @@ import CatalogHeader from "@/Components/Catalog/catalog_header";
 import CatalogGrid from "@/Components/Catalog/catalog_grid";
 import CatalogPagination from "@/Components/Catalog/catalog_pagination";
 
-/**
- * @description Internal component responsible for rendering the content body of the catalog.
- */
 function CatalogContent() {
   const { state, actions } = useCatalogFacade();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     if (isFilterOpen) {
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      const w = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow    = "hidden";
+      document.body.style.paddingRight = `${w}px`;
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow    = "";
       document.body.style.paddingRight = "";
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow    = "";
       document.body.style.paddingRight = "";
     };
   }, [isFilterOpen]);
 
-  const catalogMotionKey = [
+  const motionKey = [
     state.activeTab,
     state.activeCategory,
     state.sortBy,
@@ -48,7 +47,7 @@ function CatalogContent() {
     state.minRating,
     state.maxPrice,
     state.minDiscount,
-  ].join("-");
+  ].join("|");
 
   return (
     <>
@@ -61,6 +60,7 @@ function CatalogContent() {
 
       <main className="mx-auto flex w-full max-w-[1800px] flex-1 px-3 pb-24 pt-8 md:px-6 lg:px-8 2xl:px-10">
         <div className="mx-auto w-full max-w-[1700px]">
+
           <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
               <button
@@ -82,7 +82,10 @@ function CatalogContent() {
               </h1>
             </div>
 
-            <div data-testid="tab-switcher" className="relative grid grid-cols-2 gap-2 rounded-2xl border border-glass/10 bg-bg-elevated p-1.5 shadow-sm">
+            <div
+              data-testid="tab-switcher"
+              className="relative grid grid-cols-2 gap-2 rounded-2xl border border-glass/10 bg-bg-elevated p-1.5 shadow-sm"
+            >
               <div
                 className={cn(
                   "pointer-events-none absolute bottom-1.5 top-1.5 z-0 rounded-[0.95rem] bg-brand-orange shadow-[0_12px_24px_rgb(var(--brand-orange)_/_0.3)] transition-all duration-300 ease-out",
@@ -95,9 +98,7 @@ function CatalogContent() {
                 onClick={() => actions.handleTabChange("products")}
                 className={cn(
                   "relative z-10 rounded-xl px-8 py-3.5 text-sm font-bold transition-all duration-300",
-                  state.activeTab === "products"
-                    ? "text-white"
-                    : "text-text-primary/60 hover:text-text-main",
+                  state.activeTab === "products" ? "text-white" : "text-text-primary/60 hover:text-text-main",
                 )}
               >
                 All Products
@@ -106,9 +107,7 @@ function CatalogContent() {
                 onClick={() => actions.handleTabChange("recipes")}
                 className={cn(
                   "relative z-10 rounded-xl px-8 py-3.5 text-sm font-bold transition-all duration-300",
-                  state.activeTab === "recipes"
-                    ? "text-white"
-                    : "text-text-primary/60 hover:text-text-main",
+                  state.activeTab === "recipes" ? "text-white" : "text-text-primary/60 hover:text-text-main",
                 )}
               >
                 All Recipes
@@ -122,7 +121,7 @@ function CatalogContent() {
                 key={cat.id}
                 onClick={() => actions.handleCategoryChange(cat.id)}
                 className={cn(
-                  "rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-sm",
+                  "rounded-full border px-5 py-2.5 text-sm font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5",
                   state.activeCategory === cat.id
                     ? "border-brand-orange/20 bg-brand-orange/10 text-brand-orange"
                     : "border-glass/10 bg-bg-surface text-text-primary/70 hover:bg-bg-elevated hover:text-text-main",
@@ -140,25 +139,52 @@ function CatalogContent() {
           />
 
           <section className="w-full">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={catalogMotionKey}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <CatalogGrid items={state.visibleItems} />
-              </motion.div>
-            </AnimatePresence>
+            {state.isLoading ? (
+              <div className="flex min-h-[400px] items-center justify-center">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
+              </div>
+            ) : state.visibleItems.length === 0 ? (
+              <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 text-center">
+                <p className="text-xl font-semibold text-text-primary/60">No items found</p>
+                <p className="text-sm text-text-primary/40">
+                  Try adjusting your filters or search term.
+                </p>
+                <button
+                  onClick={actions.handleResetFilters}
+                  className="mt-2 rounded-full bg-brand-orange px-6 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                >
+                  Reset filters
+                </button>
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={motionKey}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <CatalogGrid items={state.visibleItems} />
+                </motion.div>
+              </AnimatePresence>
+            )}
 
-            <CatalogPagination
-              currentPage={state.currentPage}
-              totalPages={state.totalPages}
-              hasMore={state.hasMore}
-              onPageChange={actions.handlePageChange}
-              onLoadMore={actions.handleLoadMore}
-            />
+            {state.isLoadingMore && (
+              <div className="mt-6 flex justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
+              </div>
+            )}
+
+            {!state.isLoading && !state.isLoadingMore && state.visibleItems.length > 0 && (
+              <CatalogPagination
+                currentPage={state.currentPage}
+                totalPages={state.totalPages}
+                hasMore={state.hasMore}
+                onPageChange={actions.handlePageChange}
+                onLoadMore={actions.handleLoadMore}
+              />
+            )}
           </section>
         </div>
       </main>
@@ -172,15 +198,17 @@ export default function CatalogPage() {
       <div className="sticky top-0 z-50 w-full border-b border-glass/10 bg-bg-surface/95 backdrop-blur-md">
         <Header />
       </div>
+
       <Suspense
         fallback={
-          <div className="flex min-h-screen flex-1 items-center justify-center pt-8">
+          <div className="flex min-h-screen flex-1 items-center justify-center">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
           </div>
         }
       >
         <CatalogContent />
       </Suspense>
+
       <Footer />
       <CartDrawer />
     </div>

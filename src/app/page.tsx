@@ -1,7 +1,10 @@
 /**
- * @file page.tsx (Home)
- * @description Home page assembling various promotional banners, seasonal product carousels, and navigation sections.
+ * @file page.tsx  (app/page.tsx — Home)
+ * @description Home page.  React Server Component — all product data is fetched
+ * directly from the backend API at request time.  No mock data is used for products.
+ * Recipe carousels keep static data until a dedicated /api/v1/recipes endpoint exists.
  */
+
 import Header from "@/Components/Layout/header";
 import Footer from "@/Components/Layout/footer";
 import Banner from "@/Components/Sections/banner";
@@ -11,33 +14,63 @@ import ProductCarousel from "@/Components/Sections/product_carousel";
 import RecentlyViewed from "@/Components/Sections/recently_viewed";
 import StoreNav from "@/Components/Sections/store_nav";
 
-import {
-  dailyDiscounts,
-  expiringDiscounts,
-  peopleLiked,
-  recentItems,
-  seasonalRecipes,
-  weekDiscounts,
-} from "@/Data/home_data";
+import { seasonalRecipes, peopleLiked } from "@/Data/home_data";
+import type { DealCard } from "@/Data/home_data";
+import { mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
+
+import { ProductsApiClient } from "@/Lib/api/products_api.client";
+import { getApiBaseUrl } from "@/Lib/api/index";
+
+const serverProductsApi = new ProductsApiClient({
+  baseUrl: getApiBaseUrl(),
+  fetchImpl: (input, init) => fetch(input, { ...init, next: { revalidate: 60 } })
+});
 
 /**
- * @description The main landing component for the website (`/`).
- * Iterates through arrays of mock data to render distinct presentation sections, including Hero elements,
- * horizontally scrolling DealCard carousels, and promotional Banners.
- * @returns {JSX.Element} The composed Home page DOM hierarchy.
+ * Fetch one page of the product catalog and convert it to DealCard UI models.
+ * Returns [] on any error so the page always renders even when the API is down.
  */
-export default function Home() {
+async function fetchProductSlice(options: {
+  page: number;
+  limit: number;
+  sort?: "updated" | "name";
+  inStock?: boolean;
+}): Promise<DealCard[]> {
+  try {
+    const data = await serverProductsApi.getProducts(options);
+    
+    const cards = await Promise.allSettled(
+      data.items.map((item) => serverProductsApi.getProductCard(item.productId))
+    );
+
+    return cards
+      .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+      .map((r) => mapProductCardToDealCard(r.value));
+  } catch (err) {
+    console.error("[Home] fetchProductSlice error:", err);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const [weekDiscounts, dailyDiscounts, expiringDiscounts] = await Promise.all([
+    fetchProductSlice({ page: 1, limit: 12, sort: "updated", inStock: true }),
+    fetchProductSlice({ page: 2, limit: 12, sort: "updated", inStock: true }),
+    fetchProductSlice({ page: 3, limit: 12, sort: "updated", inStock: true }),
+  ]);
+
   return (
     <main className="min-h-screen bg-bg-main text-text-main transition-colors duration-300">
       <Header />
-      <section 
+
+      <section
         className="relative overflow-x-hidden overflow-y-visible border-b border-text-main/5 dark:border-white/5 transition-colors duration-300"
         style={{
           backgroundImage: `
-            radial-gradient(circle at top left, rgb(var(--brand-orange) / 0.15), transparent 28%), 
-            radial-gradient(circle at right, rgb(var(--text-main) / 0.05), transparent 22%), 
+            radial-gradient(circle at top left, rgb(var(--brand-orange) / 0.15), transparent 28%),
+            radial-gradient(circle at right, rgb(var(--text-main) / 0.05), transparent 22%),
             linear-gradient(180deg, rgb(var(--bg-main)) 0%, rgb(var(--bg-darker)) 100%)
-          `
+          `,
         }}
       >
         <div>
@@ -100,7 +133,7 @@ export default function Home() {
         items={peopleLiked}
       />
 
-      <RecentlyViewed/>
+      <RecentlyViewed />
       <Newsletter />
       <Footer />
     </main>

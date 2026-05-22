@@ -59,7 +59,7 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
             item={item}
             context="grid"
             className="flex h-full w-full max-w-[320px] flex-col items-stretch justify-between shadow-xl"
-            onClick={() => router.push(`/product/${encodeURIComponent(item.title)}`)}
+            onClick={() => router.push(`/product/${encodeURIComponent(item.id)}`)}
           />
         </motion.div>
       ))}

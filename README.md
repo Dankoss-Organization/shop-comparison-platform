@@ -15,7 +15,9 @@ AI-powered price comparison and deal aggregator. Compare discounts across multip
 `npm install clsx tailwind-merge`
 * **Animations:** [Framer Motion](https://www.framer.com/motion/)
 
-`npm install framer-motion`
+`npm install framer-motion matter-js`
+
+`npm install -D @types/matter-js`
 * **State Management:** [Zustand](https://github.com/pmndrs/zustand)
 
 `npm install zustand`

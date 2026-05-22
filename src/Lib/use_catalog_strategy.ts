@@ -1,24 +1,16 @@
 /**
  * @file use_catalog_strategy.ts
- * @description Defines the data-fetching and categorization strategies for the catalog.
- * @pattern Strategy Pattern: Encapsulates the specific logic for formatting, categorizing, and retrieving different types of catalog items (Products vs. Recipes) behind a common interface.
- * @pattern Data Mocking: Uses a helper to multiply smaller datasets into larger arrays to simulate a robust, paginated backend response.
+ * @brief Strategy pattern implementation separating data sourcing and listing operations between local recipes and backend product APIs.
  */
 
-import { 
-  weekDiscounts, 
-  dailyDiscounts, 
-  expiringDiscounts, 
-  seasonalRecipes, 
-  peopleLiked,
-  type DealCard 
-} from "@/Data/home_data";
+"use client";
+
+import { seasonalRecipes, peopleLiked, type DealCard } from "@/Data/home_data";
+import { productsApi } from "@/Lib/api/index";
+import { mapCatalogItemToDealCard, mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
 
 /**
- * @description Represents a selectable category/filter tab within a specific catalog strategy.
- * @property {string} id - The internal identifier used for state matching.
- * @property {string} label - The human-readable name displayed in the UI.
- * @property {string} slug - The full URL path and query string used for routing.
+ * @brief Represents a specific navigation node category option within a catalog tab layout.
  */
 export interface CatalogCategory {
   id: string;
@@ -27,76 +19,127 @@ export interface CatalogCategory {
 }
 
 /**
- * @description The common interface that all catalog data sources must implement.
- * Ensures the facade and UI components can interact with any data type interchangeably.
- * @property {"products" | "recipes"} id - Identifies the strategy domain.
- * @property {CatalogCategory[]} categories - The list of valid filter categories for this domain.
- * @property {Function} getData - A method that returns the fully formatted, flattened array of items.
+ * @brief Unified criteria parameters used for executing paginated filter workflows.
  */
-export interface CatalogStrategy {
-  id: "products" | "recipes";
-  categories: CatalogCategory[];
-  getData: () => (DealCard & { _cat: string; _uniqueId: string })[];
+export interface StrategyFetchParams {
+  page: number;
+  limit: number;
+  search?: string;
+  categoryId?: string;
+  sort?: string;
 }
 
-const FALLBACK_IMG = "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80";
-
-const truncateDesc = (text: string, maxLength = 70) => {
-  if (!text) return "";
-  return text.length > maxLength ? text.substring(0, maxLength).trim() + "..." : text;
-};
-
-const formatData = (baseArray: DealCard[], categoryId: string) => {
-  return Array(8).fill(baseArray).flat().map((item, i) => ({
-    ...item,
-    _cat: categoryId,
-    _uniqueId: `${item.title}-${i}`,
-    image: item.image || FALLBACK_IMG,
-    description: truncateDesc(item.description)
-  }));
-};
+/**
+ * @brief Structural encapsulation detailing a resolved paginated segment slice data block.
+ */
+export interface StrategyFetchResult {
+  items: (DealCard & { _cat?: string; _uniqueId?: string })[];
+  total: number;
+  totalPages: number;
+}
 
 /**
- * @description Strategy implementation specifically for handling Grocery Products.
- * Aggregates weekly, daily, and expiring discounts.
+ * @brief Contract definition guaranteeing consistent layout and lookup structures across tab view domains.
  */
-export const ProductStrategy: CatalogStrategy = {
-  id: "products",
-  categories: [
-    { id: "all", label: "All Products", slug: "/catalog?tab=products&category=all" },
-    { id: "week-discounts", label: "Week Discounts", slug: "/catalog?tab=products&category=week-discounts" },
-    { id: "daily-discounts", label: "Daily Discounts", slug: "/catalog?tab=products&category=daily-discounts" },
-    { id: "expiring-discounts", label: "Expiring Soon", slug: "/catalog?tab=products&category=expiring-discounts" },
-  ],
-  getData: () => [
-    ...formatData(weekDiscounts || [], "week-discounts"),
-    ...formatData(dailyDiscounts || [], "daily-discounts"),
-    ...formatData(expiringDiscounts || [], "expiring-discounts"),
-  ]
-};
+export interface CatalogStrategy {
+  categories: CatalogCategory[];
+  fetchData: (params: StrategyFetchParams) => Promise<StrategyFetchResult>;
+}
+
+function truncate(str: string | undefined, length = 80) {
+  if (!str) return "";
+  if (str.length <= length) return str;
+  return str.substring(0, length) + "...";
+}
 
 /**
- * @description Strategy implementation specifically for handling Culinary Recipes.
- * Aggregates seasonal picks and community-liked content.
+ * @brief Dictionary matching layout strategies mapped to structural navigation keys.
  */
-export const RecipeStrategy: CatalogStrategy = {
-  id: "recipes",
-  categories: [
-    { id: "all", label: "All Recipes", slug: "/catalog?tab=recipes&category=all" },
-    { id: "seasonal-recipes", label: "Seasonal Recipes", slug: "/catalog?tab=recipes&category=seasonal-recipes" },
-    { id: "people-liked", label: "People Also Liked", slug: "/catalog?tab=recipes&category=people-liked" },
-  ],
-  getData: () => [
-    ...formatData(seasonalRecipes || [], "seasonal-recipes"),
-    ...formatData(peopleLiked || [], "people-liked"),
-  ]
-};
+export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
+  recipes: {
+    categories: [
+      { id: "all",              label: "All Recipes",      slug: "/catalog?tab=recipes&category=all" },
+      { id: "seasonal-recipes", label: "Seasonal Recipes", slug: "/catalog?tab=recipes&category=seasonal-recipes" },
+      { id: "people-liked",     label: "People Also Liked",slug: "/catalog?tab=recipes&category=people-liked" },
+    ],
 
-/**
- * @description A dictionary exporting all available strategies, allowing dynamic lookup 
- * based on the active tab.
- */
-export const strategies = {
-  products: ProductStrategy,
-  recipes: RecipeStrategy
+    async fetchData(params) {
+      const source =
+        params.categoryId === "seasonal-recipes" ? seasonalRecipes
+        : params.categoryId === "people-liked"   ? peopleLiked
+        : [...seasonalRecipes, ...peopleLiked];
+
+      const filtered = params.search?.trim()
+        ? source.filter((r) => r.title.toLowerCase().includes(params.search!.toLowerCase()))
+        : source;
+
+      const total      = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(total / params.limit));
+      const start      = (params.page - 1) * params.limit;
+      const page       = filtered.slice(start, start + params.limit);
+
+      const items = page.map((item, i) => ({
+        ...item,
+        description: truncate(item.description),
+        _cat: params.categoryId ?? "all",
+        _uniqueId: `${item.id}-r${params.page}-${i}`,
+      }));
+
+      return { items, total, totalPages };
+    },
+  },
+
+  products: {
+    categories: [
+      { id: "all",      label: "All Products", slug: "/catalog?tab=products&category=all" },
+      { id: "in-stock", label: "In Stock Now",  slug: "/catalog?tab=products&category=in-stock" },
+    ],
+
+    async fetchData(params) {
+      try {
+        const isAll     = !params.categoryId || params.categoryId === "all";
+        const isInStock = params.categoryId === "in-stock";
+        const backendSortOrder: "name" | "updated" = params.sort === "name" ? "name" : "updated";
+
+        const response = await productsApi.getProducts({
+          page:       params.page,
+          limit:      params.limit,
+          search:     params.search?.trim() || undefined,
+          sort:       backendSortOrder, 
+          categoryId: isAll || isInStock ? undefined : params.categoryId,
+          inStock:    isInStock ? true : undefined,
+        });
+
+        const targetItems = response?.items || [];
+
+        const cardResults = await Promise.allSettled(
+          targetItems.map((item) => productsApi.getProductCard(item.productId)),
+        );
+
+        const items = targetItems.map((catalogItem, i) => {
+          const cardResult = cardResults[i];
+
+          const dealCard =
+            cardResult.status === "fulfilled"
+              ? mapProductCardToDealCard(cardResult.value)
+              : mapCatalogItemToDealCard(catalogItem);
+
+          return {
+            ...dealCard,
+            _cat:      params.categoryId ?? "all",
+            _uniqueId: `${catalogItem.productId}-p${params.page}-${i}`,
+          };
+        });
+
+        return {
+          items,
+          total:      response?.total ?? 0,
+          totalPages: response?.totalPages ?? 1,
+        };
+      } catch (error) {
+        console.error("[CatalogStrategy] fetchData failed:", error);
+        return { items: [], total: 0, totalPages: 1 };
+      }
+    },
+  },
 };

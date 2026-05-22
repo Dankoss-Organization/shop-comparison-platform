@@ -12,19 +12,6 @@ import type { DealCard } from "@/Data/home_data";
 import DealCardFactory from "@/Components/UI/deal_card";
 import { ProductModal } from "@/Components/UI/product_modal";
 
-/**
- * @brief Renders a scrollable list of DealCards.
- * Depending on the directLink prop, clicking a card either opens a modal or navigates to the product page.
- * @param {Object} props Component properties.
- * @param {string} [props.id] Optional ID for the section.
- * @param {string} props.eyebrow Over-title text for the carousel section.
- * @param {string} props.title Main title for the carousel section.
- * @param {string} props.description Brief descriptive text.
- * @param {DealCard[]} props.items List of deals to map and render.
- * @param {string} [props.viewAllLink] Optional URL for the "View All" link.
- * @param {boolean} [props.directLink=false] Dictates whether card click routes directly or opens a modal.
- * @returns {JSX.Element} The rendered product carousel section.
- */
 export default function ProductCarousel({
   id,
   eyebrow,
@@ -32,7 +19,9 @@ export default function ProductCarousel({
   description,
   items,
   viewAllLink, 
-  directLink = false 
+  directLink = false,
+  tab,
+  category
 }: {
   id?: string; 
   eyebrow: string;
@@ -41,10 +30,36 @@ export default function ProductCarousel({
   items: DealCard[];
   viewAllLink?: string;
   directLink?: boolean;
+  tab?: "products" | "recipes";
+  category?: string;
 }) {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<DealCard | null>(null);
-  const finalViewAllLink = viewAllLink || "/catalog";
+
+  const lowTitle = title.toLowerCase();
+  const lowEyebrow = eyebrow.toLowerCase();
+  const isRecipeContext = 
+    lowTitle.includes("recipe") || 
+    lowEyebrow.includes("recipe") ||
+    lowTitle.includes("liking") || 
+    lowTitle.includes("liked") || 
+    lowTitle.includes("people");
+
+  const targetTab = tab || (isRecipeContext ? "recipes" : "products");
+
+  const getAutoCategory = () => {
+    if (category) return category;
+    if (lowTitle.includes("liking") || lowTitle.includes("liked") || lowTitle.includes("people")) {
+      return "peoples-liking";
+    }
+    if (lowTitle.includes("seasonal") || lowTitle.includes("expiring")) {
+      return "seasonal";
+    }
+    return "all";
+  };
+
+  const targetCategory = getAutoCategory();
+  const finalViewAllLink = viewAllLink || `/catalog?tab=${targetTab}&category=${targetCategory}`;
 
   return (
     <>
@@ -74,7 +89,7 @@ export default function ProductCarousel({
               item={item}
               onClick={() => {
                 if (directLink) {
-                  router.push(`/product/${encodeURIComponent(item.title)}`);
+                  router.push(`/product/${encodeURIComponent(item.id)}`);
                 } else {
                   setSelectedItem(item);
                 }

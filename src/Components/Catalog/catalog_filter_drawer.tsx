@@ -1,12 +1,12 @@
 /**
  * @file catalog_filter_drawer.tsx
- * @description A sliding drawer component for refining catalog results based on price, rating, discount, and market availability.
+ * @description Sliding drawer for refining catalog results.
  */
 "use client";
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/Lib/utils";
+import { cn, formatCurrency } from "@/Lib/utils";
 import type { useCatalogFacade } from "@/Lib/use_catalog_facade";
 
 type FacadeReturn = ReturnType<typeof useCatalogFacade>;
@@ -21,11 +21,6 @@ export interface CatalogFilterDrawerProps {
 const ratingOptions = [0, 4, 4.5, 4.8];
 const discountOptions = [0, 10, 20, 30];
 
-/**
- * @description Renders the filter drawer interface.
- * @param {CatalogFilterDrawerProps} props - The drawer state, facade state, actions, and close handler.
- * @returns {JSX.Element | null} The animated drawer or null.
- */
 export default function CatalogFilterDrawer({
   isOpen,
   state,
@@ -93,7 +88,7 @@ export default function CatalogFilterDrawer({
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-5">
-              <div className="rounded-[1.3rem] bg-bg-deep shadow-sm dark:shadow-xl border border-glass/5">
+              <div className="rounded-[1.3rem] border border-glass/5 bg-bg-deep shadow-sm dark:shadow-xl">
                 <div className="border-b border-glass/10 px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
                     <div>
@@ -101,11 +96,11 @@ export default function CatalogFilterDrawer({
                         Price cap
                       </p>
                       <p className="mt-2 text-sm font-semibold text-text-main">
-                        Up to ${state.maxPrice.toFixed(2)}
+                        Up to {formatCurrency(state.maxPrice)}
                       </p>
                     </div>
                     <span className="rounded-full bg-bg-elevated px-3 py-1 text-xs font-bold text-brand-orange">
-                      ${state.priceBounds.min.toFixed(2)} – ${state.priceBounds.max.toFixed(2)}
+                      {formatCurrency(state.priceBounds.min)} - {formatCurrency(state.priceBounds.max)}
                     </span>
                   </div>
                   <input
@@ -229,10 +224,10 @@ export default function CatalogFilterDrawer({
                                     "flex h-5 w-5 items-center justify-center rounded-full text-[10px] transition-all duration-300",
                                     isActive
                                       ? "bg-brand-orange text-white"
-                                      : "bg-bg-surface text-transparent border border-glass/10",
+                                      : "border border-glass/10 bg-bg-surface text-transparent",
                                   )}
                                 >
-                                  ✓
+                                  {"\u2713"}
                                 </span>
                               </button>
                             );
