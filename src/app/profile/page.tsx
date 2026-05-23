@@ -1,19 +1,45 @@
 /**
  * @file page.tsx
- * @brief Dashboard Overview with pixel-perfect Avatar UI and Catalog glassmorphism.
+ * @brief Dashboard Overview with dynamic basket history.
  */
 
 "use client";
 
-import { motion, animate } from "framer-motion";
+import { motion, animate, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useUserStore } from "@/Store/user_store";
+import Link from "next/link";
+import { createPortal } from "react-dom";
+import Image from "next/image";
+import { ProductModal } from "@/Components/UI/product_modal";
+import { type DealCard as DealCardType } from "@/Data/home_data";
+import { cn } from "@/Lib/utils";
+
+
+function PortalWrapper({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  return mounted ? createPortal(children, document.body) : null;
+}
 
 export default function OverviewPage() {
   const [isMounted, setIsMounted] = useState(false);
+
+  const [selectedBasket, setSelectedBasket] = useState<any | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<DealCardType | null>(null);
   
-  const { displayName, email, avatarUrl, setAvatarUrl } = useUserStore();
+  const { displayName, email, avatarUrl, setAvatarUrl, baskets } = useUserStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+const latestBasket =
+  baskets.length > 0
+    ? [...baskets].sort((a, b) => b.id - a.id)[0]
+    : null;
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,6 +96,38 @@ export default function OverviewPage() {
   };
 
   if (!isMounted) return null;
+
+  const getUniqueStores = (basket: any) => {
+  const stores = new Set<string>();
+
+  basket.items?.forEach((item: any) => {
+    if (item.selectedStoreId && item.offers) {
+      const offer = item.offers.find(
+        (o: any) => o.store_id === item.selectedStoreId
+      );
+
+      if (offer) stores.add(offer.store_name);
+    } else if (item.offers && item.offers.length > 0) {
+      const sortedOffers = [...item.offers].sort(
+        (a, b) => a.pricing.current_price - b.pricing.current_price
+      );
+
+      stores.add(sortedOffers[0].store_name);
+    }
+  });
+
+  if (stores.size === 0) {
+    return basket.stores?.length > 0
+      ? basket.stores
+      : ["DANKOSS Checkout"];
+  }
+
+  return Array.from(stores);
+};
+
+const latestBasketStores = latestBasket
+  ? getUniqueStores(latestBasket)
+  : [];
 
   return (
     <div className="relative flex flex-col gap-10 w-full pb-10">
@@ -196,36 +254,48 @@ export default function OverviewPage() {
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-end pl-1 pr-2">
             <h3 className="text-[20px] font-bold tracking-[1px] text-text-main font-serif cursor-default select-none drop-shadow-sm">Recent Baskets</h3>
-            <button className="text-[12px] font-bold text-brand-orange uppercase tracking-wide hover:brightness-110 transition-all drop-shadow-sm">View All</button>
+            <Link href="/profile/history" className="text-[12px] font-bold text-brand-orange uppercase tracking-wide hover:brightness-110 transition-all drop-shadow-sm">
+              View All
+            </Link>
           </div>
           
-          <div className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] sm:rounded-[32px] md:rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-8 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md cursor-pointer">
-            <div className="relative z-10 flex flex-col gap-6 h-full justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange border border-brand-orange/20">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          {latestBasket ? (
+            <div onClick={() => setSelectedBasket(latestBasket)}
+                className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-8 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md cursor-pointer">
+              <div className="relative z-10 flex flex-col gap-6 h-full justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange border border-brand-orange/20">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[15px] font-bold text-text-main drop-shadow-sm">{latestBasket.name}</span>
+                        <span className="text-[12px] text-text-muted">{latestBasket.date}</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-[15px] font-bold text-text-main drop-shadow-sm">Weekend BBQ Cart</span>
-                      <span className="text-[12px] text-text-muted">Saved 2 days ago</span>
-                    </div>
+                    <span className="text-[20px] font-black text-brand-orange drop-shadow-sm">${latestBasket.price.toFixed(2)}</span>
                   </div>
-                  <span className="text-[20px] font-black text-brand-orange drop-shadow-sm">$42.50</span>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <span className="text-[12px] font-bold uppercase tracking-[1px] text-text-muted">Optimized across:</span>
+                  <div className="flex items-center gap-3">
+                    {latestBasketStores.slice(0, 2).map((store: string) => (
+                      <div key={store} className="flex h-12 min-w-[80px] items-center justify-center rounded-xl bg-black/5 dark:bg-black/40 border border-black/5 dark:border-white/10 text-[11px] font-bold text-text-main shadow-inner">{store}</div>
+                    ))}
+                    {latestBasketStores.length > 2 && (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-black/40 text-[11px] font-bold text-text-muted border border-black/5 dark:border-white/5">+{latestBasketStores.length - 2}</div>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-3">
-                <span className="text-[12px] font-bold uppercase tracking-[1px] text-text-muted">Optimized across:</span>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-20 items-center justify-center rounded-xl bg-black/5 dark:bg-black/40 border border-black/5 dark:border-white/10 text-[11px] font-bold text-text-main shadow-inner">Сільпо</div>
-                  <div className="flex h-12 w-20 items-center justify-center rounded-xl bg-black/5 dark:bg-black/40 border border-black/5 dark:border-white/10 text-[11px] font-bold text-text-main shadow-inner">NOVUS</div>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-black/40 text-[11px] font-bold text-text-muted border border-black/5 dark:border-white/5">+2</div>
-                </div>
-              </div>
+              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-brand-orange/10 to-transparent blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:from-brand-orange/20" />
             </div>
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-brand-orange/10 to-transparent blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:from-brand-orange/20" />
-          </div>
+          ) : (
+             <div className="flex h-full items-center justify-center rounded-[36px] bg-white/30 border border-dashed border-black/10 p-8 text-text-muted">
+               No recent baskets yet.
+             </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4">
@@ -284,6 +354,134 @@ export default function OverviewPage() {
           </div>
         </div>
       </div>
+      <PortalWrapper>
+  <AnimatePresence>
+    {selectedBasket && (
+      <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+
+        <motion.div
+          onClick={(e) => e.stopPropagation()}
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          className="relative w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
+        >
+          <div className="bg-bg-surface dark:bg-[#2a252a] p-5 sm:p-6 md:p-8 relative border border-white/20 dark:border-white/5">
+            <div className="relative z-10">
+              
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-text-main/10 dark:border-white/10">
+                <h3 className="text-[22px] sm:text-[26px] font-bold text-text-main dark:text-text-primary font-serif">
+                  {selectedBasket.name}
+                </h3>
+
+                <button
+                  onClick={() => setSelectedBasket(null)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-text-muted hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                {selectedBasket.items.length > 0 ? (
+                  selectedBasket.items.map((item: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "flex justify-between items-center px-5 py-4 rounded-[20px] transition-all group border",
+                        "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] border-text-main/5",
+                        "dark:bg-white/5 dark:border-white/10 dark:shadow-none",
+                        "hover:border-brand-orange/40 hover:scale-[1.01]"
+                      )}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/5 dark:border-white/10 shadow-inner bg-bg-main dark:bg-black/20">
+                          {item.image ? (
+                            <Image
+                              src={item.image}
+                              alt={item.title || item.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-sm opacity-50">
+                              🛍️
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col">
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedProduct(item as DealCardType);
+                            }}
+                            className="text-[15px] font-bold cursor-pointer text-text-main dark:text-text-primary hover:text-brand-orange transition-colors"
+                          >
+                            {item.title || item.name}
+                          </span>
+
+                          <span className="text-[11px] text-text-muted dark:text-text-primary/40">
+                            {item.quantity || "1 pc"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-end">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-bold text-text-muted dark:text-text-primary/40">
+                              x{item.cartQuantity || 1}
+                            </span>
+
+                            <span className="font-black text-[15px] text-brand-orange">
+                              ${(item.price * (item.cartQuantity || 1)).toFixed(2)}
+                            </span>
+                          </div>
+
+                          <span className="text-[9px] text-text-muted dark:text-text-primary/30 uppercase font-black tracking-tighter">
+                            Total
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-text-muted italic text-center py-10">
+                    No items found.
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
+</PortalWrapper>
+
+<PortalWrapper>
+  <AnimatePresence>
+    {selectedProduct && (
+      <ProductModal item={selectedProduct} onClose={() => setSelectedProduct(null)}>
+        <ProductModal.Window>
+          <ProductModal.LeftColumn>
+            <ProductModal.ImageGallery />
+            <ProductModal.Reviews />
+          </ProductModal.LeftColumn>
+
+          <ProductModal.RightColumn>
+            <ProductModal.Header categoryTitle="Historical Item" />
+            <ProductModal.Actions categoryTitle="Historical Item" />
+            <ProductModal.Details categoryTitle="Historical Item" />
+          </ProductModal.RightColumn>
+        </ProductModal.Window>
+      </ProductModal>
+    )}
+  </AnimatePresence>
+</PortalWrapper>
     </div>
   );
 }
