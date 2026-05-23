@@ -21,6 +21,9 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     { name: "Overview", path: "/profile", icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
     )},
+    { name: "Personal Info", path: "/profile/settings", icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    )},
     { name: "My Locations", path: "/profile/locations", icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
     )},
@@ -137,6 +140,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             </button>
           </div>
         </aside>
+        
         <div className="relative flex-1 z-10 rounded-[32px] lg:rounded-[40px] p-[1px] bg-gradient-to-br from-brand-orange/40 via-black/5 dark:via-[#FFDEBA]/5 to-transparent shadow-xl dark:shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
           <main className="h-full w-full overflow-hidden rounded-[32px] lg:rounded-[40px] bg-white/40 dark:bg-[rgba(30,26,30,0.4)] backdrop-blur-[25px]">
             <div className="h-full w-full p-5 md:p-8 xl:p-12 overflow-y-auto custom-scrollbar">

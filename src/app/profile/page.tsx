@@ -75,7 +75,7 @@ export default function OverviewPage() {
     <div className="relative flex flex-col gap-10 w-full pb-10">
       
       <div className="flex flex-col gap-6 z-10">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8 relative">
+        <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-8 relative">
           
           <div className="relative group shrink-0 w-[110px] h-[110px]">
             <div 
@@ -116,9 +116,9 @@ export default function OverviewPage() {
             </div>
           </div>
           
-          <div className="flex flex-col gap-2.5 w-full">
-            <div className="flex flex-wrap items-center gap-4">
-              <h2 className="text-[36px] font-bold tracking-[1px] text-text-main leading-none font-serif drop-shadow-sm">
+          <div className="flex flex-col gap-2.5 w-full items-center md:items-start">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <h2 className="text-[32px] sm:text-[36px] font-bold tracking-[1px] text-text-main leading-none font-serif drop-shadow-sm">
                 {displayName}
               </h2>
               <span className="flex items-center gap-1.5 rounded-full bg-brand-orange/10 border border-brand-orange/30 px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[1px] text-brand-orange backdrop-blur-md shadow-[0_0_15px_rgba(236,88,0,0.1)]">
@@ -126,7 +126,7 @@ export default function OverviewPage() {
                 Savvy Shopper
               </span>
             </div>
-            <p className="text-[16px] font-medium text-text-muted tracking-wide cursor-default select-none">{email}</p>
+            <p className="text-[15px] sm:text-[16px] font-medium text-text-muted tracking-wide cursor-default select-none">{email}</p>
           </div>
         </div>
 
@@ -148,8 +148,8 @@ export default function OverviewPage() {
         <h3 className="text-[20px] font-bold tracking-[1px] text-text-main pl-1 font-serif cursor-default select-none drop-shadow-sm">
           Your Impact
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="group flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="group flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
             <span className="text-[13px] font-bold text-text-muted uppercase tracking-[1.5px] cursor-default select-none">Total Savings</span>
             <div className="mt-4 flex flex-col cursor-default select-none">
               <div className="flex items-end gap-1.5">
@@ -165,7 +165,7 @@ export default function OverviewPage() {
             </div>
           </div>
 
-          <div className="group flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
+          <div className="group flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
             <span className="text-[13px] font-bold text-text-muted uppercase tracking-[1.5px] cursor-default select-none">Active Alerts</span>
             <div className="mt-4 flex flex-col cursor-default select-none">
               <span className="text-[42px] font-black text-text-main leading-none tracking-tight drop-shadow-sm">
@@ -177,7 +177,7 @@ export default function OverviewPage() {
             </div>
           </div>
 
-          <div className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
+          <div className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
             <div className="relative z-10 flex flex-col cursor-default select-none">
               <span className="text-[13px] font-bold text-text-muted uppercase tracking-[1.5px]">Top Store</span>
               <span className="mt-4 text-[32px] font-black text-text-main leading-none tracking-tight drop-shadow-sm">Сільпо</span>
@@ -199,7 +199,7 @@ export default function OverviewPage() {
             <button className="text-[12px] font-bold text-brand-orange uppercase tracking-wide hover:brightness-110 transition-all drop-shadow-sm">View All</button>
           </div>
           
-          <div className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-8 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md cursor-pointer">
+          <div className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] sm:rounded-[32px] md:rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-8 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md cursor-pointer">
             <div className="relative z-10 flex flex-col gap-6 h-full justify-between">
               <div>
                 <div className="flex items-center justify-between">
@@ -240,7 +240,7 @@ export default function OverviewPage() {
             <button className="text-[12px] font-bold text-brand-orange uppercase tracking-wide hover:brightness-110 transition-all drop-shadow-sm">Manage</button>
           </div>
           
-          <div className="flex h-full flex-col justify-center rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-8">
+          <div className="flex h-full flex-col justify-center rounded-[24px] sm:rounded-[32px] md:rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-8">
             <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-5">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-xl bg-black/5 dark:bg-black/40 p-2 border border-black/5 dark:border-white/5 shadow-inner">

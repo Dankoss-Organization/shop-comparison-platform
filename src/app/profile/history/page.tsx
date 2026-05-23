@@ -128,14 +128,14 @@ export default function HistoryPage() {
         </AnimatePresence>
       </PortalWrapper>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-text-main/5 dark:border-white/5 pb-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif drop-shadow-sm">Basket History</h2>
-          <p className="text-[15px] text-text-muted dark:text-text-primary/60">Review your past purchases and reorder your favorite sets.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-text-main/5 dark:border-white/5 pb-5 md:pb-6">
+        <div className="flex flex-col gap-1.5 md:gap-2">
+          <h2 className="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif drop-shadow-sm leading-tight">Basket History</h2>
+          <p className="text-[14px] sm:text-[15px] text-text-muted dark:text-text-primary/60">Review your past purchases and reorder your favorite sets.</p>
         </div>
-        <div className="flex flex-col items-end">
-          <span className="text-[11px] font-bold text-text-muted dark:text-text-primary/40 uppercase tracking-widest">Total Historical Value</span>
-          <span className="text-[28px] font-black text-brand-orange drop-shadow-[0_2px_10px_rgb(var(--brand-orange)/0.2)]">${totalSpent.toFixed(2)}</span>
+        <div className="flex flex-col items-start md:items-end w-full md:w-auto bg-text-main/5 dark:bg-white/5 md:bg-transparent p-4 md:p-0 rounded-2xl md:rounded-none">
+          <span className="text-[10px] sm:text-[11px] font-bold text-text-muted dark:text-text-primary/40 uppercase tracking-widest">Total Historical Value</span>
+          <span className="text-[24px] sm:text-[28px] font-black text-brand-orange drop-shadow-[0_2px_10px_rgb(var(--brand-orange)/0.2)]">${totalSpent.toFixed(2)}</span>
         </div>
       </div>
 
@@ -208,10 +208,10 @@ export default function HistoryPage() {
                 exit={{ scale: 0.95, opacity: 0, y: 20 }} 
                 className="relative w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
               >
-                <div className="bg-bg-surface dark:bg-[#2a252a] p-8 relative border border-white/20 dark:border-white/5">
+                <div className="bg-bg-surface dark:bg-[#2a252a] p-5 sm:p-6 md:p-8 relative border border-white/20 dark:border-white/5">
                   <div className="relative z-10">
                     <div className="flex justify-between items-center mb-6 pb-4 border-b border-text-main/10 dark:border-white/10">
-                      <h3 className="text-[26px] font-bold text-text-main dark:text-text-primary font-serif">{selectedBasket.name}</h3>
+                      <h3 className="text-[22px] sm:text-[26px] font-bold text-text-main dark:text-text-primary font-serif">{selectedBasket.name}</h3>
                       <button onClick={() => setSelectedBasket(null)} className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-text-muted hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
                       </button>

@@ -29,24 +29,34 @@ export default function LocationsPage() {
         <p className="text-[15px] font-medium tracking-[-0.5px] text-text-muted dark:text-text-primary/50">Manage your price-tracking zones for hyper-local deals.</p>
       </div>
 
-      <div className="group relative overflow-hidden flex items-center justify-between rounded-[32px] bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/5 p-6 md:p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] transition-all hover:border-brand-orange/20 dark:hover:border-brand-orange/20">
+      <div className="group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-0 rounded-[24px] sm:rounded-[32px] bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] transition-all hover:border-brand-orange/20 dark:hover:border-brand-orange/20">
         <div className="absolute -right-[10%] -top-[50%] w-[40%] h-[200%] rounded-full bg-brand-orange/10 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
         
-        <div className="relative z-10 flex items-center gap-5">
-          <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] transition-all duration-500 ${
+        <div className="relative z-10 flex items-center gap-4 sm:gap-5 w-full sm:w-auto">
+          <div className={`flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-[16px] sm:rounded-[18px] transition-all duration-500 ${
             isSmartLocationActive 
               ? 'bg-brand-orange text-white shadow-md' 
               : 'bg-black/5 dark:bg-black/40 text-text-main/40 dark:text-text-primary/40 shadow-inner dark:shadow-[2px_2px_1px_rgba(30,26,30,0.8)]'
           }`}>
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 sm:w-7 sm:h-7"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
           </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-[18px] font-bold text-text-main dark:text-text-primary uppercase tracking-[1px]">Smart Location</span>
-            <span className="text-[13px] font-medium tracking-[-0.5px] text-text-muted dark:text-text-primary/60">Use GPS to automatically fetch prices from the closest stores.</span>
+          <div className="flex flex-col gap-0.5 sm:gap-1 flex-1">
+            <span className="text-[16px] sm:text-[18px] font-bold text-text-main dark:text-text-primary uppercase tracking-[1px]">Smart Location</span>
+            <span className="text-[12px] sm:text-[13px] font-medium tracking-[-0.5px] text-text-muted dark:text-text-primary/60">Use GPS to automatically fetch prices.</span>
           </div>
+          
+          <button onClick={toggleSmartLocation} className={`sm:hidden relative z-10 flex h-[30px] w-[54px] shrink-0 items-center rounded-full transition-all duration-500 shadow-inner ${
+            isSmartLocationActive ? 'bg-brand-orange shadow-[0_0_15px_rgba(236,88,0,0.4)]' : 'bg-black/10 dark:bg-black/40'
+          }`}>
+            <motion.div 
+              className="h-[22px] w-[22px] rounded-full bg-white dark:bg-[#FFDEBA] shadow-sm ml-1"
+              animate={{ x: isSmartLocationActive ? 24 : 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            />
+          </button>
         </div>
         
-        <button onClick={toggleSmartLocation} className={`relative z-10 flex h-[34px] w-[60px] shrink-0 items-center rounded-full transition-all duration-500 shadow-inner ${
+        <button onClick={toggleSmartLocation} className={`hidden sm:flex relative z-10 h-[34px] w-[60px] shrink-0 items-center rounded-full transition-all duration-500 shadow-inner ${
           isSmartLocationActive ? 'bg-brand-orange shadow-[0_0_15px_rgba(236,88,0,0.4)]' : 'bg-black/10 dark:bg-black/40'
         }`}>
           <motion.div 
@@ -59,18 +69,18 @@ export default function LocationsPage() {
 
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
         {locations.map((loc) => (
-          <motion.div variants={item} key={loc.id} className="group relative flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 p-7 backdrop-blur-[10px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.2)] transition-all duration-500 hover:-translate-y-1 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 hover:border-brand-orange/20 dark:hover:border-white/10">
+          <motion.div variants={item} key={loc.id} className="group relative flex flex-col justify-between rounded-[24px] sm:rounded-[32px] bg-white/50 dark:bg-white/5 p-5 sm:p-7 backdrop-blur-[10px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.2)] transition-all duration-500 hover:-translate-y-1 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 hover:border-brand-orange/20 dark:hover:border-white/10">
             <div>
               {loc.isDefault && (
-                <div className="absolute top-6 right-6">
-                  <span className="rounded-[8px] bg-brand-orange/10 dark:bg-[rgba(45,40,45,0.7)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[1px] text-brand-orange dark:text-text-primary shadow-sm dark:shadow-[2px_2px_1px_#EC5800] backdrop-blur-md">
+                <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+                  <span className="rounded-[8px] bg-brand-orange/10 dark:bg-[rgba(45,40,45,0.7)] px-2 sm:px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-[1px] text-brand-orange dark:text-text-primary shadow-sm dark:shadow-[2px_2px_1px_#EC5800] backdrop-blur-md">
                     Active Zone
                   </span>
                 </div>
               )}
-              <h3 className="text-[20px] font-bold text-text-main dark:text-text-primary pr-24 mb-3">{loc.title}</h3>
-              <p className="text-[14px] font-medium tracking-[-0.2px] text-text-muted dark:text-text-primary/50 flex items-start gap-2.5">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px] mt-[1px] shrink-0 text-brand-orange"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <h3 className="text-[18px] sm:text-[20px] font-bold text-text-main dark:text-text-primary pr-0 sm:pr-24 mb-2 sm:mb-3 mt-8 sm:mt-0">{loc.title}</h3>
+              <p className="text-[13px] sm:text-[14px] font-medium tracking-[-0.2px] text-text-muted dark:text-text-primary/50 flex items-start gap-2 sm:gap-2.5">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] mt-[2px] sm:mt-[1px] shrink-0 text-brand-orange"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                 {loc.address}
               </p>
             </div>
@@ -88,7 +98,7 @@ export default function LocationsPage() {
           </motion.div>
         ))}
 
-        <motion.button variants={item} className="group flex min-h-[220px] flex-col items-center justify-center gap-4 rounded-[32px] border-2 border-dashed border-black/10 dark:border-[#FFDEBA]/10 bg-white/30 dark:bg-[rgba(30,26,30,0.1)] transition-all duration-500 hover:-translate-y-1 hover:border-brand-orange/40 hover:bg-brand-orange/5 hover:shadow-sm dark:hover:shadow-[0_15px_30px_rgba(236,88,0,0.1)]">
+        <motion.button variants={item} className="group flex min-h-[160px] sm:min-h-[220px] flex-col items-center justify-center gap-3 sm:gap-4 rounded-[24px] sm:rounded-[32px] border-2 border-dashed border-black/10 dark:border-[#FFDEBA]/10 bg-white/30 dark:bg-[rgba(30,26,30,0.1)] transition-all duration-500 hover:-translate-y-1 hover:border-brand-orange/40 hover:bg-brand-orange/5 hover:shadow-sm dark:hover:shadow-[0_15px_30px_rgba(236,88,0,0.1)]">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-black/5 dark:bg-[rgba(45,40,45,0.6)] shadow-sm dark:shadow-[2px_2px_1px_rgba(255,222,186,0.1)] text-text-main/50 dark:text-text-primary/70 transition-all duration-300 group-hover:bg-brand-orange group-hover:text-white dark:group-hover:shadow-[2px_2px_1px_rgba(236,88,0,0.4)] group-hover:scale-110">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
@@ -106,17 +116,17 @@ export default function LocationsPage() {
               <div className="h-3 w-3 rounded-full bg-white animate-pulse" />
             </div>
             
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-[24px] bg-white/80 dark:bg-[rgba(45,40,45,0.85)] backdrop-blur-xl border border-black/5 dark:border-[#FFDEBA]/10 p-5 shadow-lg dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange/20 text-brand-orange">
+            <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 rounded-[20px] sm:rounded-[24px] bg-white/80 dark:bg-[rgba(45,40,45,0.85)] backdrop-blur-xl border border-black/5 dark:border-[#FFDEBA]/10 p-4 sm:p-5 shadow-lg dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+              <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange/20 text-brand-orange">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[15px] font-bold text-text-main dark:text-text-primary uppercase tracking-[1px]">Active Zone: {locations.find(l => l.isDefault)?.title || "None"}</span>
-                  <span className="text-[13px] font-medium tracking-[-0.5px] text-[#4ADE80]">3 stores found within 1.5km</span>
+                <div className="flex flex-col text-center sm:text-left w-full sm:w-auto">
+                  <span className="text-[13px] sm:text-[15px] font-bold text-text-main dark:text-text-primary uppercase tracking-[1px] line-clamp-1">Active Zone: {locations.find(l => l.isDefault)?.title || "None"}</span>
+                  <span className="text-[11px] sm:text-[13px] font-medium tracking-[-0.5px] text-[#4ADE80]">3 stores found within 1.5km</span>
                 </div>
               </div>
-              <button className="group/scan relative flex h-[42px] items-center justify-center overflow-hidden rounded-[14px] bg-brand-orange px-6 text-[14px] font-bold text-white shadow-md transition-all duration-300 hover:brightness-110 active:scale-95"
+              <button className="group/scan relative flex w-full sm:w-auto h-[40px] sm:h-[42px] items-center justify-center overflow-hidden rounded-[12px] sm:rounded-[14px] bg-brand-orange px-6 text-[13px] sm:text-[14px] font-bold text-white shadow-md transition-all duration-300 hover:brightness-110 active:scale-95"
                 style={{ backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)" }}>
                 <span className="relative z-10">Scan Deals</span>
                 <div className="absolute -left-[150%] bottom-0 top-0 z-0 flex w-full justify-center transition-all duration-700 ease-out group-hover/scan:left-[150%]">
