@@ -22,7 +22,13 @@ const BackgroundGlowShape = ({ colorClass, size, position }: { colorClass: strin
   />
 );
 
-const CrazyOrangeSVG = ({ x, y, angle, id }: { x: number; y: number; angle: number; id: number }) => (
+const CrazyOrangeSVG = ({ x, y, angle, id, isMobile }: { x: number; y: number; angle: number; id: number; isMobile: boolean }) => {
+
+  const size = isMobile ? 42 : 60;
+  const offsetX = size / 2;
+  const offsetY = isMobile ? 25 : 36; 
+
+  return (
   <svg
     key={id}
     viewBox="0 0 61 72"
@@ -72,15 +78,16 @@ const CrazyOrangeSVG = ({ x, y, angle, id }: { x: number; y: number; angle: numb
     </defs>
   </svg>
 );
+};
 
-const BasketItem = ({ x, y }: { x: number; y: number }) => (
+const BasketItem = ({ x, y, isMobile }: { x: number; y: number; isMobile: boolean }) => (
   <div
     className="pointer-events-none absolute"
     style={{ 
-      width: 480,
-      height: 360, 
-      left: x - 240, 
-      top: y - 220, 
+      width: isMobile ? 330 : 480,
+      height: isMobile ? 250 : 360, 
+      left: isMobile ? x - 165 : x - 240, 
+      top: isMobile ? y - 150 : y - 220, 
     }} 
   >
     <Image 
@@ -100,11 +107,18 @@ export default function NotFound() {
   const runnerRef = useRef<Matter.Runner | null>(null);
   const mouseConstraintRef = useRef<Matter.MouseConstraint | null>(null);
   const wonRef = useRef(false);
-
+  const [isMobile, setIsMobile] = useState(false);
   const [orangePositions, setOrangePositions] = useState<{ x: number; y: number; angle: number; id: number }[]>([]);
   const [basketPos, setBasketPos] = useState({ x: 0, y: 0 });
   const [caughtCount, setCaughtCount] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile(); 
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -137,8 +151,10 @@ export default function NotFound() {
       Matter.Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height * 2, { isStatic: true, render: { visible: false } }),
     ];
 
-    const basketWidth = 260; 
-    const basketHeight = 150; 
+    const isMobile = width < 640;
+
+    const basketWidth = isMobile ? 180 : 260; 
+    const basketHeight = isMobile ? 100 : 150;
     const basketX = width / 2;
     const basketY = height - 70; 
     const basketWallThickness = 20;
@@ -151,7 +167,7 @@ export default function NotFound() {
       Matter.Bodies.rectangle(basketX + basketWidth / 2 - basketWallThickness / 2, basketY, basketWallThickness, basketHeight, { isStatic: true, render: { visible: false } }),
     ];
 
-    const orangeRadius = 28;
+    const orangeRadius = isMobile ? 20 : 28;
     const oranges: Matter.Body[] = [];
     const orangeCount = 7;
 
@@ -249,15 +265,15 @@ export default function NotFound() {
       <BackgroundGlowShape colorClass="bg-brand-orange" size="h-[400px] w-[400px]" position="left-[10%] top-[10%]" />
       <BackgroundGlowShape colorClass="bg-brand-store" size="h-[300px] w-[300px]" position="right-[10%] bottom-[20%]" />
 
-      <div ref={sceneRef} className="absolute inset-0 z-10" />
+      <div ref={sceneRef} className="absolute inset-0 z-10 touch-none" />
 
       <div className="pointer-events-none absolute inset-0 z-15">
-         <BasketItem x={basketPos.x} y={basketPos.y} />
+         <BasketItem x={basketPos.x} y={basketPos.y} isMobile={isMobile} />
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-20">
         {orangePositions.map((pos) => (
-          <CrazyOrangeSVG key={pos.id} {...pos} />
+          <CrazyOrangeSVG key={pos.id} {...pos} isMobile={isMobile} />
         ))}
       </div>
 
@@ -272,7 +288,7 @@ export default function NotFound() {
         <span className="text-sm text-text-main/40"> / 7</span>
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center pb-[15vh]">
+      <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-start pt-[10vh] sm:justify-center sm:pt-0 sm:pb-[15vh]">
         <div className="relative flex w-[calc(100%-2rem)] max-w-[500px] flex-col items-center">
           
           <AnimatePresence>
