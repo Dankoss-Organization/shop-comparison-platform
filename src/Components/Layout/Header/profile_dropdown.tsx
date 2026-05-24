@@ -7,7 +7,7 @@ import { useUserStore } from "@/Store/user_store";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 
-interface ProfileDropdownProps {
+export interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   isAuthenticated?: boolean; 
