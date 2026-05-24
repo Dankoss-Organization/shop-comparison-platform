@@ -83,7 +83,7 @@ export function CartDrawer() {
     worker.onmessage = (event) => {
       const { status, totalCost, itemsCost, deliveryCost } = event.data;
       if (status === "success") {
-        alert(`Optimization complete\n\nBest Items Price: $${itemsCost.toFixed(2)}\nDelivery Cost: $${deliveryCost.toFixed(2)}\n\nTotal Lowest Cost: $${totalCost.toFixed(2)}`);
+        alert(`Optimization complete\n\nBest Items Price: ₴${itemsCost.toFixed(2)}\nDelivery Cost: ₴${deliveryCost.toFixed(2)}\n\nTotal Lowest Cost: ₴${totalCost.toFixed(2)}`);
       } else {
         alert(event.data.message || "Optimization failed.");
       }
@@ -241,7 +241,7 @@ export function CartDrawer() {
                 <div className="mb-6 flex items-end justify-between px-2">
                   <span className="text-sm font-bold uppercase tracking-widest text-text-muted dark:text-text-primary/60">Total cost</span>
                   <span className="text-3xl font-black leading-none text-brand-orange drop-shadow-[0_0_15px_rgb(var(--brand-orange)/0.2)]">
-                    ${getTotalPrice().toFixed(2)}
+                    ₴{getTotalPrice().toFixed(2)}
                   </span>
                 </div>
 

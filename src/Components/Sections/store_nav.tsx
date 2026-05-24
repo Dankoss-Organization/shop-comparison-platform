@@ -1,14 +1,29 @@
 /**
  * @file StoreNav.tsx
- * @brief Component for displaying an animated carousel of store logos.
+ * @brief Component for displaying an animated, responsive carousel of store logos.
  */
 
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link"; 
+import Link from "next/link";
 
-const initialShops = [
+interface Shop {
+  name: string;
+  src: string;
+  active: boolean;
+}
+
+interface ArrowSquareProps {
+  onClick: () => void;
+  direction: "left" | "right";
+}
+
+interface ShopCardProps {
+  shop: Shop;
+}
+
+const initialShops: Shop[] = [
   { name: "Novus", src: "/novus_logo.svg", active: false },
   { name: "ATB", src: "/atb_logo.svg", active: false },
   { name: "Fora", src: "/fora_logo.svg", active: false },
@@ -17,7 +32,7 @@ const initialShops = [
 ];
 
 export default function StoreNav() {
-  const [shops, setShops] = useState(initialShops);
+  const [shops, setShops] = useState<Shop[]>(initialShops);
   const [isHovered, setIsHovered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -80,32 +95,28 @@ export default function StoreNav() {
   useEffect(() => {
     if (isHovered || isAnimating) return;
 
-    const timer = window.setInterval(() => {
-      nextShop();
-    }, 3500);
-
+    const timer = window.setInterval(nextShop, 3500);
     return () => window.clearInterval(timer);
   }, [isHovered, isAnimating, shops]);
 
-  const visibleShops = shops.length > 0 ? [...shops, shops[0]] : shops;
+  const visibleShops = shops.length > 0 ? [...shops, ...shops] : shops;
 
   return (
     <>
       <div
-        className="relative z-10 overflow-hidden border-t border-glass/10 bg-bg-darker px-[30px] py-[20px]"
+        className="relative z-10 overflow-hidden border-t border-glass/10 bg-bg-darker p-4 md:p-6"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="flex items-center gap-[16px]">
+        <div className="flex items-center gap-4">
           <ArrowSquare onClick={prevShop} direction="left" />
 
-          <div className="-mx-1 -my-2 flex-1 overflow-visible px-1 py-2 md:overflow-hidden">
-            <div ref={trackRef} className="flex w-full gap-[16px]">
+          <div className="-mx-1 -my-2 flex-1 overflow-hidden px-1 py-2">
+            <div ref={trackRef} className="flex w-full gap-4">
               {visibleShops.map((shop, index) => (
                 <div
                   key={`${shop.name}-${index}`}
-                  className="shrink-0"
-                  style={{ width: "calc((100% - 64px) / 5)" }}
+                  className="shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.3333%-10.66px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-12.8px)]"
                 >
                   <ShopCard shop={shop} />
                 </div>
@@ -122,20 +133,15 @@ export default function StoreNav() {
   );
 }
 
-export function ArrowSquare({
-  onClick,
-  direction,
-}: {
-  onClick: () => void;
-  direction: "left" | "right";
-}) {
+export function ArrowSquare({ onClick, direction }: ArrowSquareProps) {
   return (
     <button
       onClick={onClick}
       type="button"
-      className="group relative flex h-[68px] w-[42px] shrink-0 items-center justify-center transition-transform duration-150 active:scale-[0.85]"
+      className="group relative flex h-12 w-8 shrink-0 items-center justify-center transition-transform duration-150 active:scale-[0.85] md:h-[68px] md:w-[42px]"
+      aria-label={`Scroll ${direction}`}
     >
-      <div className="absolute inset-0 rounded-[20px] border border-glass/5 bg-bg-elevated/40 backdrop-blur-md transition-all duration-200 group-hover:border-brand-orange/40 group-hover:bg-brand-orange/20 group-hover:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.15)] group-active:border-brand-orange group-active:bg-brand-orange/40" />
+      <div className="absolute inset-0 rounded-[14px] border border-glass/5 bg-bg-elevated/40 backdrop-blur-md transition-all duration-200 group-hover:border-brand-orange/40 group-hover:bg-brand-orange/20 group-hover:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.15)] group-active:border-brand-orange group-active:bg-brand-orange/40 md:rounded-[20px]" />
 
       <div
         className={`relative z-10 transition-transform duration-300 ${
@@ -151,7 +157,7 @@ export function ArrowSquare({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-text-primary/60 transition-colors group-hover:text-brand-orange"
+          className="h-6 w-6 text-text-primary/60 transition-colors group-hover:text-brand-orange md:h-10 md:w-10"
         >
           {direction === "left" ? (
             <polyline points="15 18 9 12 15 6" />
@@ -164,26 +170,32 @@ export function ArrowSquare({
   );
 }
 
-export function ShopCard({ shop }: { shop: { name: string; src: string; active: boolean } }) {
+export function ShopCard({ shop }: ShopCardProps) {
   return (
     <Link
       href={`/store/${shop.name.toLowerCase()}`}
-      className={`group relative flex h-[68px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[22px] px-[24px] transition-all duration-300 ease-in-out ${
+      className={`group relative flex h-[56px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[16px] px-[16px] transition-all duration-300 ease-in-out md:h-[68px] md:rounded-[22px] md:px-[24px] ${
         shop.active
           ? "z-10 scale-100 border border-text-primary/20 bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--brand-orange)_/_0.2)]"
-          : "bg-gradient-to-r from-bg-elevated to-brand-store/60 shadow-xl hover:z-50 hover:scale-[1.05] hover:to-brand-store"
+          : "bg-gradient-to-r from-bg-elevated to-brand-store/60 shadow-md hover:z-50 hover:scale-[1.05] hover:to-brand-store md:shadow-xl"
       }`}
     >
-      <div className="pointer-events-none relative flex h-[40px] w-full max-w-[110px] items-center justify-center">
+      <div className="pointer-events-none relative flex h-[32px] w-full max-w-[90px] items-center justify-center md:h-[40px] md:max-w-[110px]">
         <div
-          className={`w-full h-full transition-all duration-300 ${
-            shop.active 
-              ? "bg-brand-orange opacity-100" 
-              : "bg-text-main opacity-30 dark:bg-text-primary dark:opacity-80 group-hover:opacity-100 group-hover:bg-brand-orange dark:group-hover:bg-brand-orange"
+          className={`h-full w-full transition-all duration-300 ${
+            shop.active
+              ? "bg-brand-orange opacity-100"
+              : "bg-text-main opacity-30 dark:bg-text-primary dark:opacity-80 group-hover:bg-brand-orange group-hover:opacity-100 dark:group-hover:bg-brand-orange"
           }`}
           style={{
-            WebkitMaskImage: `url(${shop.src})`, WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
-            maskImage: `url(${shop.src})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center'
+            WebkitMaskImage: `url(${shop.src})`,
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskImage: `url(${shop.src})`,
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
           }}
         />
       </div>

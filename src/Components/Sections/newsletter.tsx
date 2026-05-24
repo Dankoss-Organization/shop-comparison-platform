@@ -11,7 +11,7 @@ import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 
 const cardClassName =
-  "relative overflow-visible rounded-[1.75rem] bg-gradient-to-b from-bg-surface to-bg-deepest dark:from-bg-deep dark:to-bg-deepest px-5 pb-2 pt-10 shadow-lg dark:shadow-[0px_-3px_8px_rgb(var(--brand-orange)/0.34),0_24px_40px_rgba(0,0,0,0.4)] border border-text-main/5 dark:border-white/5 sm:px-7 sm:pb-3 sm:pt-12 lg:max-w-[1400px] lg:px-10 lg:pb-3 lg:pt-12 transition-colors duration-300";
+  "relative overflow-visible rounded-[1.75rem] bg-gradient-to-b from-bg-surface to-bg-deepest dark:from-bg-deep dark:to-bg-deepest px-4 pb-4 pt-10 shadow-lg dark:shadow-[0px_-3px_8px_rgb(var(--brand-orange)/0.34),0_24px_40px_rgba(0,0,0,0.4)] border border-text-main/5 dark:border-white/5 sm:px-7 sm:pb-3 sm:pt-12 lg:max-w-[1400px] lg:px-10 lg:pb-3 lg:pt-12 transition-colors duration-300";
 
 const glowLayerClassName =
   "pointer-events-none absolute inset-0 rounded-[1.75rem] bg-[radial-gradient(circle_at_16%_78%,rgb(var(--brand-orange)/0.15),transparent_24%),radial-gradient(circle_at_84%_26%,rgb(var(--brand-orange)/0.1),transparent_22%)] dark:bg-[radial-gradient(circle_at_16%_78%,rgb(var(--brand-orange)/0.5),transparent_24%),radial-gradient(circle_at_84%_26%,rgb(var(--brand-orange)/0.4),transparent_22%),radial-gradient(circle_at_62%_88%,rgb(var(--brand-orange)/0.35),transparent_20%),radial-gradient(circle_at_top_center,rgb(var(--text-primary)/0.05),transparent_18%)]";
@@ -23,7 +23,7 @@ const badgeInnerClassName =
   "flex h-full w-full items-center justify-center rounded-full bg-bg-elevated dark:bg-bg-deep shadow-[inset_0_0_0_2px_rgb(var(--text-main)/0.1)] dark:shadow-[inset_0_0_0_2px_rgb(var(--text-primary)/0.22)]";
 
 const subscribeButtonClassName =
-  "group relative inline-flex min-h-[46px] w-auto self-center items-center justify-center overflow-hidden rounded-[1rem] bg-brand-orange px-11 text-[0.94rem] font-bold text-white shadow-[0_5px_15px_rgb(var(--brand-orange)/0.2)] dark:shadow-[0_10px_16px_rgb(var(--brand-orange)/0.18),0_0_12px_rgb(var(--brand-orange)/0.14)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_10px_20px_rgb(var(--brand-orange)/0.3)] dark:hover:shadow-[0_0_16px_rgb(var(--brand-orange)/0.26),0_14px_18px_rgb(var(--brand-orange)/0.22)] active:scale-95 sm:min-w-[244px] lg:min-w-[188px] lg:px-7 lg:text-[1rem]";
+  "group relative inline-flex min-h-[46px] w-full items-center justify-center overflow-hidden rounded-[1rem] bg-brand-orange px-11 text-[0.94rem] font-bold text-white shadow-[0_5px_15px_rgb(var(--brand-orange)/0.2)] dark:shadow-[0_10px_16px_rgb(var(--brand-orange)/0.18),0_0_12px_rgb(var(--brand-orange)/0.14)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_10px_20px_rgb(var(--brand-orange)/0.3)] dark:hover:shadow-[0_0_16px_rgb(var(--brand-orange)/0.26),0_14px_18px_rgb(var(--brand-orange)/0.22)] active:scale-95 sm:min-w-[244px] lg:w-auto lg:min-w-[188px] lg:px-7 lg:text-[1rem]";
 
 const shineClassName =
   "h-full w-[36px] -skew-x-[30deg] bg-gradient-to-r from-transparent via-white/30 dark:via-text-primary/20 to-transparent";
@@ -141,14 +141,14 @@ export default function Newsletter() {
         <div className="relative z-10 mx-auto flex max-w-[980px] flex-col items-center text-center">
           <motion.h2 
             variants={itemVariants}
-            className="mt-1 max-w-[760px] text-[1.45rem] font-black leading-[0.96] tracking-[-0.05em] text-text-main sm:text-[1.75rem] lg:text-[2.15rem]"
+            className="mt-1 max-w-[760px] text-[1.2rem] font-black leading-[0.96] tracking-[-0.05em] text-text-main sm:text-[1.75rem] lg:text-[2.15rem]"
           >
             Subscribe Newsletter
           </motion.h2>
 
           <motion.p 
             variants={itemVariants}
-            className="mt-3 max-w-[860px] text-[0.78rem] leading-[1.3] text-text-muted dark:text-text-primary/80 sm:text-[0.86rem] lg:whitespace-nowrap lg:text-[0.94rem]"
+            className="mt-3 max-w-[860px] text-[0.78rem] leading-[1.3] text-text-muted dark:text-text-primary/80 sm:text-[0.86rem] lg:text-[0.94rem]"
           >
             You will never miss our updates, best discounts and product picks.
             We keep it useful, light and worth opening.
@@ -162,7 +162,7 @@ export default function Newsletter() {
             <div className="flex w-full flex-col items-stretch gap-3 overflow-visible lg:flex-row lg:items-center lg:justify-center">
               <div aria-hidden="true" className="hidden lg:block lg:w-[138px] lg:shrink-0" />
 
-              <div className="flex w-full overflow-hidden rounded-[1rem] lg:max-w-[640px] bg-black/5 dark:bg-[rgba(45,40,45,0.4)] border border-text-main/5 dark:border-transparent shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] dark:shadow-[2px_2px_1px_rgb(var(--brand-orange))] backdrop-blur-[5px]">
+              <div className="flex w-full overflow-hidden rounded-[1rem] lg:max-w-[480px] bg-black/5 dark:bg-[rgba(45,40,45,0.4)] border border-text-main/5 dark:border-transparent shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] dark:shadow-[2px_2px_1px_rgb(var(--brand-orange))] backdrop-blur-[5px]">
                 <label className="flex min-h-[46px] flex-1 items-center px-4 sm:px-5">
                   <input
                     type="email"
