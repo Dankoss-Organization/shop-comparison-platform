@@ -78,7 +78,7 @@ export default function AboutUsPage() {
             <motion.div 
               key={idx}
               variants={itemVariants}
-              className="group flex flex-col items-start rounded-[32px] border border-text-main/10 bg-bg-elevated/40 p-8 backdrop-blur-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:bg-bg-elevated/70 hover:border-brand-orange/30 hover:shadow-xl"
+              className="group flex flex-col h-full items-start rounded-[32px] border border-text-main/10 bg-bg-elevated/40 p-6 md:p-8 backdrop-blur-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:bg-bg-elevated/70 hover:border-brand-orange/30 hover:shadow-xl"
             >
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange border border-brand-orange/20 transition-all duration-300 group-hover:scale-110 group-hover:bg-brand-orange/20 group-hover:shadow-[0_0_20px_rgba(236,88,0,0.2)]">
                 {feature.icon}
@@ -102,7 +102,7 @@ export default function AboutUsPage() {
           <p className="mt-3 text-[14px] text-text-main/70">The principles that drive our code and our culture.</p>
         </motion.div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { 
               title: "Keep It Simple", 
@@ -120,7 +120,7 @@ export default function AboutUsPage() {
             <motion.div 
               key={idx} 
               variants={itemVariants} 
-              className="relative overflow-hidden rounded-[24px] border border-text-main/10 bg-bg-elevated/40 p-6 backdrop-blur-2xl shadow-soft"
+              className="relative overflow-hidden h-full rounded-[24px] border border-text-main/10 bg-bg-elevated/40 p-6 backdrop-blur-2xl shadow-soft"
             >
               <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-orange to-transparent opacity-60" />
               <h3 className="text-lg font-bold text-text-main mb-2">{val.title}</h3>
@@ -142,7 +142,7 @@ export default function AboutUsPage() {
           <p className="mt-3 text-[14px] text-text-main/70">The architects, engineers, and designers behind your savings.</p>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center">
           {[
             { name: "Denys Freiuk", role: "Team Lead", specialty: "Data Architecture & AI" },
             { name: "Natalia Marchenko", role: "Business Analyst", specialty: "Operations & Code Review" },
@@ -153,10 +153,10 @@ export default function AboutUsPage() {
             { name: "Anzhela Teslia", role: "UI/UX & Frontend", specialty: "Components & Interactions" }
           ].map((member, idx) => (
             <motion.div 
-              key={idx} 
-              variants={itemVariants} 
-              className="group relative flex w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] max-w-[260px] flex-col items-center rounded-[32px] border border-text-main/10 bg-bg-elevated/40 p-6 text-center backdrop-blur-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:bg-bg-elevated/70 hover:border-brand-orange/30 hover:shadow-xl"
-            >
+                key={idx} 
+                variants={itemVariants} 
+                className="group relative flex w-full max-w-[260px] h-full flex-col items-center rounded-[32px] border border-text-main/10 bg-bg-elevated/40 p-6 text-center backdrop-blur-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:bg-bg-elevated/70 hover:border-brand-orange/30 hover:shadow-xl"
+              >
               <div className="mb-4 h-20 w-20 overflow-hidden rounded-full border-2 border-text-main/10 bg-bg-main p-1 transition-transform duration-300 group-hover:border-brand-orange/50 group-hover:scale-105">
                 <div className="flex h-full w-full items-center justify-center rounded-full bg-brand-orange/10 text-2xl font-bold text-text-main">
                   {member.name.split(' ').map(n => n[0]).join('')}
