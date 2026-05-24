@@ -27,9 +27,9 @@ export default function Banner({
   dark?: boolean;
 }) {
   return (
-    <section className="mx-auto w-full px-6 py-10 lg:px-8">
+    <section className="mx-auto w-full px-3 py-6 lg:px-8 lg:py-10">
       <div
-        className={`rounded-[2rem] border border-text-primary/10 px-8 py-10 shadow-soft backdrop-blur-md ${
+        className={`rounded-[1.5rem] lg:rounded-[2rem] border border-text-primary/10 px-5 py-6 lg:px-8 lg:py-10 shadow-soft backdrop-blur-md ${
           dark
             ? "bg-bg-elevated"
             : "bg-gradient-to-br from-brand-orange/[0.22] to-glass/[0.04]"
@@ -37,16 +37,16 @@ export default function Banner({
       >
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-orange">
+            <p className="text-[10px] lg:text-xs font-semibold uppercase tracking-[0.24em] text-brand-orange">
               {eyebrow}
             </p>
-            <h2 className="mt-3 max-w-3xl text-3xl font-black text-text-main md:text-4xl">
+            <h2 className="mt-2 lg:mt-3 max-w-3xl text-xl font-black text-text-main md:text-2xl lg:text-4xl">
               {title}
             </h2>
           </div>
           <a
             href={href}
-            className="group relative flex h-14 w-[200px] shrink-0 items-center justify-center overflow-hidden rounded-full font-bold text-white transition-all hover:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.4)]"
+            className="group relative flex h-11 lg:h-14 w-full max-w-[280px] lg:w-[200px] lg:max-w-none shrink-0 items-center justify-center overflow-hidden rounded-full font-bold text-white transition-all hover:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.4)]"
           >
             <div className="absolute inset-0 bg-brand-orange transition-transform duration-300 group-hover:scale-105" />
             <span className="relative z-10 flex items-center gap-2">

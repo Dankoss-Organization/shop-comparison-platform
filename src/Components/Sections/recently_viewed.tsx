@@ -43,20 +43,16 @@ export default function RecentlyViewed() {
   }, []);
 
   return (
-    <section className="mx-auto flex w-full justify-center px-2 py-12 sm:px-3 lg:px-4">
+    <section className="mx-auto flex w-full justify-center px-2 py-12 sm:px-3 lg:px-4 lg:pb-20 xl:pb-28 overflow-hidden -mb-8 lg:-mb-8">
       <motion.div 
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }} 
-        className="grid shrink-0 grid-cols-1 justify-items-center gap-8 lg:gap-10 xl:gap-12 min-[1100px]:grid-cols-2"
+        className="flex flex-col min-[780px]:flex-row flex-wrap justify-center items-center gap-8 lg:gap-10 xl:gap-12"
       >
-        {recentProduct && (
-          <RecentlyViewedPanel 
-            item={recentProduct} 
-            accent="products" 
-            category="all" 
-          />
+        {(recentProduct ?? peopleLiked?.[1]) && (
+          <RecentlyViewedPanel item={recentProduct ?? peopleLiked[1]} accent="products" category="all" />
         )}
         
         {recentRecipe && (
@@ -92,9 +88,9 @@ export function RecentlyViewedPanel({
   return (
     <motion.div 
       variants={panelVariants}
-      className="relative h-[212px] w-[367px] sm:h-[242px] sm:w-[419px] md:h-[261px] md:w-[452px] lg:h-[282px] lg:w-[487px] xl:h-[335px] xl:w-[579px] 2xl:h-[390px] 2xl:w-[675px]"
+      className="relative h-[180px] w-[310px] sm:h-[205px] sm:w-[367px] md:h-[235px] md:w-[419px] lg:h-[255px] lg:w-[452px] xl:h-[305px] xl:w-[536px] 2xl:h-[380px] 2xl:w-[675px]"
     >
-      <div className="absolute left-0 top-0 h-[500px] w-[860px] origin-top-left scale-[0.427] sm:scale-[0.487] md:scale-[0.525] lg:scale-[0.566] xl:scale-[0.673] 2xl:scale-[0.785]">
+      <div className="absolute left-0 top-0 h-[500px] w-[860px] origin-top-left scale-[0.360] sm:scale-[0.427] md:scale-[0.487] lg:scale-[0.525] xl:scale-[0.623] 2xl:scale-[0.785]">
         <svg
           viewBox="0 0 860 500"
           className="absolute inset-0 h-full w-full [filter:drop-shadow(0px_-2px_5px_rgb(var(--brand-orange)))]"

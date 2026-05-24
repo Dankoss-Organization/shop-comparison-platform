@@ -82,7 +82,7 @@ export default function ProductCarousel({
           </Link>
         </div>
 
-        <div className="custom-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pt-3 pb-6">
+        <div className="custom-scrollbar flex snap-x snap-mandatory gap-3 md:gap-5 overflow-x-auto px-2 pt-3 pb-6">
           {items.map((item, idx) => (
             <DealCardFactory
               key={`${title}-${item.title}-${idx}`}

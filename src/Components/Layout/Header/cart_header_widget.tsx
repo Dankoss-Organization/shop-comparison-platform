@@ -41,16 +41,16 @@ export function CartHeaderWidget() {
     <>
       <button 
         onClick={() => setOpen(true)}
-        className="group/basket relative ml-8 flex h-[42px] min-w-[100px] shrink-0 cursor-pointer items-center justify-between rounded-full bg-bg-highest pl-[6px] pr-0 shadow-inner border border-transparent transition-all duration-300 hover:border-brand-orange/40 hover:bg-bg-elevated hover:shadow-[0_0_15px_rgb(var(--brand-orange)_/_0.2)] active:scale-95 xl:ml-[50px]"
+        className="group/basket relative ml-1 lg:ml-8 flex h-[42px] w-auto shrink-0 cursor-pointer items-center rounded-full bg-bg-highest pl-[6px] pr-[4px] shadow-inner border border-transparent transition-all duration-300 hover:border-brand-orange/40 hover:bg-bg-elevated hover:shadow-[0_0_15px_rgb(var(--brand-orange)_/_0.2)] active:scale-95 xl:ml-[50px]"
       >
-        <div className="relative flex h-[30px] w-[45px] shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover/basket:scale-[1.15]">
+        <div className="relative flex h-[30px] shrink-0 pl-3 pr-[52px] items-center justify-center whitespace-nowrap transition-transform duration-500 ease-out group-hover/basket:scale-[1.15]">
           <span 
             className={cn(
-              "absolute font-black text-brand-orange transition-all duration-300 text-sm tracking-tight",
-              (!isEmpty && !isAnimating) ? "scale-100 opacity-100" : "scale-50 opacity-0"
+              "font-black text-brand-orange transition-all duration-300 text-sm tracking-tight",
+              (!isEmpty && !isAnimating) ? "relative scale-100 opacity-100" : "absolute scale-50 opacity-0"
             )}
           >
-            ${safeTotalPrice % 1 === 0 ? safeTotalPrice.toFixed(0) : safeTotalPrice.toFixed(2)}
+            ₴{safeTotalPrice % 1 === 0 ? safeTotalPrice.toFixed(0) : safeTotalPrice.toFixed(2)}
           </span>
           <div 
             className={cn(

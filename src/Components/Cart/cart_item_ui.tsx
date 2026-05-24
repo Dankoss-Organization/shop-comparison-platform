@@ -58,7 +58,7 @@ export function CartItemUI({
         
         <div className="flex items-center justify-between mt-2">
           <p className="font-black text-brand-orange text-lg">
-            ${activeOffer ? activeOffer.pricing.current_price.toFixed(2) : "0.00"}
+            ₴{activeOffer ? activeOffer.pricing.current_price.toFixed(2) : "0.00"}
           </p>
           <div className="flex items-center gap-1.5 rounded-full border border-text-main/10 dark:border-white/10 bg-white dark:bg-black/20 p-1 shadow-sm dark:shadow-none">
             <button onClick={onDecrease} className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-main dark:bg-bg-deepest text-text-muted dark:text-text-primary/60 hover:text-text-main dark:hover:text-text-primary transition">-</button>
