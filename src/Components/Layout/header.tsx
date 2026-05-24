@@ -206,9 +206,11 @@ export function HeaderContent() {
 
             <Connection />
 
-            <ChainIcon>
-              <div className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100 [mask-image:url(/location.svg)] [-webkit-mask-image:url(/location.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
-            </ChainIcon>
+            <Link href="/locations">
+              <ChainIcon>
+                <div className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100 [mask-image:url(/location.svg)] [-webkit-mask-image:url(/location.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
+              </ChainIcon>
+            </Link>
 
             <Connection />
 
