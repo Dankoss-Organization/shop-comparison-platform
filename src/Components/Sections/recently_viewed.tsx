@@ -9,7 +9,7 @@ import { useId, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import DealCardView from "@/Components/UI/deal_card";
-import { productsApi } from "@/Lib/api/index";
+import { getProductsApi } from "@/Lib/api/index";
 import { mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
 import { peopleLiked, type DealCard } from "@/Data/home_data";
 
@@ -29,9 +29,9 @@ export default function RecentlyViewed() {
   useEffect(() => {
     async function fetchRecentProduct() {
       try {
-        const response = await productsApi.getProducts({ page: 1, limit: 1 });
+        const response = await getProductsApi().getProducts({ page: 1, limit: 1 });
         if (response?.items && response.items.length > 0) {
-          const cardData = await productsApi.getProductCard(response.items[0].productId);
+          const cardData = await getProductsApi().getProductCard(response.items[0].id);
           const dealCard = mapProductCardToDealCard(cardData);
           setRecentProduct(dealCard);
         }

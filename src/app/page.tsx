@@ -40,7 +40,7 @@ async function fetchProductSlice(options: {
     const data = await serverProductsApi.getProducts(options);
     
     const cards = await Promise.allSettled(
-      data.items.map((item) => serverProductsApi.getProductCard(item.productId))
+      data.items.map((item) => serverProductsApi.getProductCard(item.id))
     );
 
     return cards

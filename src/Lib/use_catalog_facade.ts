@@ -8,7 +8,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { strategies } from "./use_catalog_strategy";
-import type { CatalogCategory, StrategyFetchResult } from "./use_catalog_strategy";
+import type { StrategyFetchResult } from "./use_catalog_strategy";
 import type { DealCard } from "@/Data/home_data";
 
 export type CatalogSortKey =
@@ -53,6 +53,7 @@ function getLowestPrice(item: any): number {
   const prices: number[] = [];
   if (typeof item.price === "number" && item.price > 0) prices.push(item.price);
   if (typeof item.current_price === "number" && item.current_price > 0) prices.push(item.current_price);
+  if (typeof item.bestPrice === "number" && item.bestPrice > 0) prices.push(item.bestPrice);
   
   item.offers?.forEach((o: any) => {
     if (o.pricing?.current_price && o.pricing.current_price > 0) {
@@ -67,6 +68,7 @@ function getLowestPrice(item: any): number {
 function getHighestDiscount(item: any): number {
   const discounts: number[] = [];
   if (typeof item.discount_percent === "number") discounts.push(item.discount_percent);
+  if (typeof item.discountPercent === "number") discounts.push(item.discountPercent);
   
   item.offers?.forEach((o: any) => {
     if (o.pricing?.discount_percent) {
@@ -174,18 +176,16 @@ export function useCatalogFacade() {
     };
   }, [fetchResult.items]);
 
-  const effectiveMaxPrice = maxPrice > 0 ? maxPrice : Infinity;
-
-  let visibleItems = useMemo(() => {
+  const visibleItems = useMemo(() => {
     return fetchResult.items.filter((item) => {
       const itemRating = Number(item.rating) || 0;
-      if (itemRating < minRating) return false;
+      if (minRating > 0 && itemRating < minRating) return false;
 
       const currentPrice = getLowestPrice(item);
-      if (currentPrice > 0 && currentPrice > effectiveMaxPrice) return false;
+      if (maxPrice > 0 && currentPrice > maxPrice) return false;
 
       const itemDiscount = getHighestDiscount(item);
-      if (itemDiscount < minDiscount) return false;
+      if (minDiscount > 0 && itemDiscount < minDiscount) return false;
 
       if (selectedMarkets.length > 0) {
         const itemStores = getItemStores(item);
@@ -195,9 +195,9 @@ export function useCatalogFacade() {
 
       return true;
     });
-  }, [fetchResult.items, minRating, effectiveMaxPrice, minDiscount, selectedMarkets]);
+  }, [fetchResult.items, minRating, maxPrice, minDiscount, selectedMarkets]);
 
-  visibleItems = useMemo(() => {
+  const sortedItems = useMemo(() => {
     const sorted = [...visibleItems];
     switch (sortBy) {
       case "price-asc":
@@ -282,7 +282,7 @@ export function useCatalogFacade() {
       sortBy,
       sortOptions,
       totalPages: fetchResult.totalPages,
-      visibleItems,
+      visibleItems: sortedItems,
       totalItemsCount: fetchResult.total,
       hasMore,
       isLoading,

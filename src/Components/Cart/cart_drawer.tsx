@@ -15,8 +15,6 @@ import { CheckoutButton } from "./checkout_button";
 import { ProductModal } from "../UI/product_modal";
 import { type DealCard as DealCardType } from "@/Data/home_data";
 import { cn } from "@/Lib/utils";
-import { generateCombinations, splitIntoChunks } from "@/Lib/Workers/optimizer.utils";
-import type { CartProduct } from "@/Types/optimization";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function CartDrawer() {
@@ -26,7 +24,9 @@ export function CartDrawer() {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
 
-  useEffect(() => setIsMounted(true), []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -50,48 +50,58 @@ export function CartDrawer() {
     }, 10);
   };
 
-  const handleOptimize = () => {
+  const handleOptimize = async () => {
     setIsOptimizing(true);
-    const cartProducts: CartProduct[] = items.map((item: any) => {
-      const activeOffer = item.selectedStoreId 
-        ? item.offers?.find((o: any) => o.store_id === item.selectedStoreId) 
-        : item.offers ? [...item.offers].sort((a: any, b: any) => a.pricing.current_price - b.pricing.current_price)[0] : null;
-      const basePrice = activeOffer ? activeOffer.pricing.current_price : 0;
-      return {
-        product_id: item.title, id: item.id, canonical_name: item.title, brand: "Generic", category: "General", country: "UA",
-        media: { raw_main_image: item.image, raw_gallery: [], main_image: item.image, gallery: [] },
-        measurements: { value: 1, unit: "pc" }, pricing_logic: { sales_unit: "piece", unit_step: 1 }, specific_attributes: {},
-        quantity: item.cartQuantity, cartQuantity: item.cartQuantity,
-        offers: [
-          { store_id: "store_A", store_name: "Сільпо", url: "", is_in_stock: true, sku: "", scraped_at: "", store_rating: { rating: 5, reviews_count: 10 }, pricing: { regular_price: basePrice, current_price: basePrice * 0.9, discount_percent: 10, is_online_only: false, promo_end_date: null, bulk_discounts: [] }, price_history: [] },
-          { store_id: "store_B", store_name: "Фора", url: "", is_in_stock: true, sku: "", scraped_at: "", store_rating: { rating: 4, reviews_count: 5 }, pricing: { regular_price: basePrice, current_price: basePrice * 0.95, discount_percent: 5, is_online_only: false, promo_end_date: null, bulk_discounts: [] }, price_history: [] }
-        ]
-      };
-    });
-
-    const combinations = generateCombinations(cartProducts);
-    const chunks = splitIntoChunks(combinations, 10000);
-
-    if (chunks.length === 0) {
-      alert("No valid combinations found.");
-      setIsOptimizing(false);
-      return;
-    }
-
-    const worker = new Worker(new URL("../../Lib/Workers/optimizer.worker.ts", import.meta.url));
-
-    worker.onmessage = (event) => {
-      const { status, totalCost, itemsCost, deliveryCost } = event.data;
-      if (status === "success") {
-        alert(`Optimization complete\n\nBest Items Price: ₴${itemsCost.toFixed(2)}\nDelivery Cost: ₴${deliveryCost.toFixed(2)}\n\nTotal Lowest Cost: ₴${totalCost.toFixed(2)}`);
-      } else {
-        alert(event.data.message || "Optimization failed.");
+    try {
+      let userLocation = { lat: 50.4501, lng: 30.5234 };
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+        );
+        userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+      } catch {
       }
-      setIsOptimizing(false);
-      worker.terminate(); 
-    };
 
-    worker.postMessage({ type: "START_OPTIMIZATION", payload: { cartItems: cartProducts, combinationsChunk: chunks[0] } });
+      const cartItems = items.map((item: any) => {
+        const activeOffer = item.selectedStoreId
+          ? item.offers?.find((o: any) => o.store_id === item.selectedStoreId)
+          : item.offers?.sort((a: any, b: any) => a.pricing.current_price - b.pricing.current_price)[0];
+
+        return {
+          itemId: item.id,
+          productId: item.internalId ?? item.id,
+          quantity: item.cartQuantity,
+          selectedStoreId: activeOffer?.store_id ?? "unknown",
+          isLocked: false,
+        };
+      });
+
+      const res = await fetch("/api/v1/cart/optimize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userLocation, fulfillmentType: "delivery", cartItems }),
+      });
+
+      if (!res.ok) throw new Error("Optimization failed");
+      const data = await res.json();
+
+      const best = data.optimal?.isFeasible ? data.optimal : data.cheapest;
+      if (best?.isFeasible) {
+        alert(
+          `✅ Optimization complete\n\n` +
+          `Items: ₴${best.itemsCost.toFixed(2)}\n` +
+          `Delivery: ₴${best.deliveryCost.toFixed(2)}\n` +
+          `Total: ₴${best.totalCost.toFixed(2)}\n\n` +
+          `Stores: ${best.stores.map((s: any) => s.storeName ?? s.storeId).join(", ")}`
+        );
+      } else {
+        alert("Could not find an optimal split for your cart items.");
+      }
+    } catch (e) {
+      alert("Optimization failed. Please try again.");
+    } finally {
+      setIsOptimizing(false);
+    }
   };
 
   if (!isMounted) return null;
