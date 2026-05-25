@@ -15,6 +15,8 @@ import type {
   ProductOffersResponse,
   ProductPriceHistoryResponse,
   RelatedProductsResponse,
+  GetStoreProductsQuery,
+  GetStoreProductsResponse,
 } from "@/Lib/api/products_api.contracts";
 
 /**
@@ -66,6 +68,12 @@ export class ProductsApiClient {
   getRelatedProducts(id: string, query: GetRelatedProductsQuery = {}): Promise<RelatedProductsResponse> {
     return this.request<RelatedProductsResponse>(
       `/api/v1/products/${encodeURIComponent(id)}/related${toQueryString(query)}`
+    );
+  }
+
+  getStoreProducts(storeId: string, query: GetStoreProductsQuery = {}): Promise<GetStoreProductsResponse> {
+    return this.request<GetStoreProductsResponse>(
+      `/api/v1/stores/${encodeURIComponent(storeId)}/products${toQueryString(query)}`
     );
   }
 

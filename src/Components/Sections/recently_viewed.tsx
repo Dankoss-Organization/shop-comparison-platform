@@ -31,7 +31,7 @@ export default function RecentlyViewed() {
       try {
         const response = await productsApi.getProducts({ page: 1, limit: 1 });
         if (response?.items && response.items.length > 0) {
-          const cardData = await productsApi.getProductCard(response.items[0].productId);
+          const cardData = await productsApi.getProductCard(response.items[0].id);
           const dealCard = mapProductCardToDealCard(cardData);
           setRecentProduct(dealCard);
         }

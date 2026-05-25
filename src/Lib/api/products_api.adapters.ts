@@ -9,6 +9,7 @@ import type {
   ProductCatalogItem,
   ProductOfferItem,
   RelatedProductsResponse,
+  StoreProductItem,
 } from "@/Lib/api/products_api.contracts";
 import { parseQuantity } from "@/Lib/utils";
 
@@ -405,3 +406,38 @@ export function mapRelatedProductsToDealCards(response: RelatedProductsResponse)
 }
 
 export { mapOfferItemToStoreOffer };
+
+export function mapStoreProductToDealCard(
+  item: StoreProductItem,
+  storeId: string,
+  storeName: string
+): DealCard {
+  const storeOffer: StoreOffer = {
+    store_id: storeId,
+    store_name: storeName,
+    is_in_stock: item.availabilityStatus === "in_stock",
+    pricing: {
+      current_price: item.currentPrice,
+      regular_price: item.regularPrice,
+      discount_percent: item.discountPercent ?? 0,
+    },
+  };
+
+  return buildDealCardBase({
+    id: item.productId,
+    rawTitle: item.canonicalName,
+    brand: item.brand,
+    image: item.media,
+    description: "",
+    quantity: extractQuantitySegment(item.canonicalName) || "1 pcs",
+    offers: [storeOffer],
+    currency: item.currency,
+    availabilityStatus: item.availabilityStatus as "in_stock" | "out_of_stock",
+    pricingSummary: {
+      bestPrice: item.currentPrice,
+      oldPrice: item.regularPrice,
+      discountPercent: item.discountPercent,
+    },
+    notes: [],
+  });
+}

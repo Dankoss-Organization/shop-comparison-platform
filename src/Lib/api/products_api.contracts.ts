@@ -6,6 +6,7 @@
 export type OffersSort = "price" | "discount" | "updated";
 export type AvailabilityStatus = "in_stock" | "out_of_stock";
 export type PriceTrend = "up" | "down" | "stable";
+export type StoreProductsSort = "price_asc" | "discount" | "updated";
 
 export interface ApiErrorResponse {
   statusCode: number;
@@ -167,4 +168,36 @@ export interface CategoriesResponse {
     productCount: number;
     children: unknown[];
   }>;
+}
+
+export interface GetStoreProductsQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  categoryId?: string;
+  minDiscount?: number;
+  sort?: StoreProductsSort;
+}
+
+export interface StoreProductItem {
+  id: string;
+  productId: string;
+  canonicalName: string;
+  brand: string | null;
+  media: string;
+  currentPrice: number;
+  regularPrice: number;
+  discountPercent: number | null;
+  currency: string;
+  availabilityStatus: AvailabilityStatus;
+}
+
+export interface GetStoreProductsResponse {
+  storeId: string;
+  storeName: string;
+  items: StoreProductItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
