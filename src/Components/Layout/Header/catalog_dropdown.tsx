@@ -13,6 +13,14 @@ import { Category } from "@/Data/catalog_data";
 import { useCatalog } from "@/Context/catalog_context";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 
+const STORE_ID_MAP: Record<string, string> = {
+  novus: "z_novus",
+  atb: "a_atb",
+  fora: "f_fora",
+  silpo: "s_silpo",
+  varus: "v_varus",
+};
+
 export interface Props {
   categories: Category[];
 }
@@ -148,19 +156,22 @@ export default function CatalogDropdown({ categories }: Props) {
                 {activeCategoryData.subcategories.map((sub) => {
                   const isStoreCategory = currentActiveCategoryName === "Stores";
                   if (isStoreCategory) {
-                    return (
-                      <Link
-                        key={sub.name}
-                        href={`/store/${sub.name.toLowerCase()}`}
-                        onClick={closeCatalog}
-                        className="group/item flex cursor-pointer items-center px-3 py-2 rounded-2xl transition-all duration-300 hover:bg-text-primary/15 shadow-[0_0_20px_rgba(0,0,0,0.35)]"
-                      >
-                        <span className="text-[15px] font-medium text-text-primary/80 transition-colors group-hover/item:text-brand-orange">
-                          {sub.name}
-                        </span>
-                      </Link>
-                    );
-                  }
+                  const storeKey = sub.name.toLowerCase();
+                  const realStoreId = STORE_ID_MAP[storeKey] || storeKey;
+
+                  return (
+                    <Link
+                      key={sub.name}
+                      href={`/store/${realStoreId}`} 
+                      onClick={closeCatalog}
+                      className="group/item flex cursor-pointer items-center px-3 py-2 rounded-2xl transition-all duration-300 hover:bg-text-primary/15 shadow-[0_0_20px_rgba(0,0,0,0.35)]"
+                    >
+                      <span className="text-[15px] font-medium text-text-primary/80 transition-colors group-hover/item:text-brand-orange">
+                        {sub.name}
+                      </span>
+                    </Link>
+                  );
+                }
                   return (
                     <div
                       key={sub.name}

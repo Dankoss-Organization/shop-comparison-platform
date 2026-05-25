@@ -23,12 +23,19 @@ interface ShopCardProps {
   shop: Shop;
 }
 
+interface Shop {
+  id: string; 
+  name: string;
+  src: string;
+  active: boolean;
+}
+
 const initialShops: Shop[] = [
-  { name: "Novus", src: "/novus_logo.svg", active: false },
-  { name: "ATB", src: "/atb_logo.svg", active: false },
-  { name: "Fora", src: "/fora_logo.svg", active: false },
-  { name: "Silpo", src: "/silpo_logo.svg", active: false },
-  { name: "Varus", src: "/varus_logo.svg", active: false },
+  { id: "z_novus", name: "Novus", src: "/novus_logo.svg", active: false },
+  { id: "a_atb", name: "ATB", src: "/atb_logo.svg", active: false },
+  { id: "f_fora", name: "Fora", src: "/fora_logo.svg", active: false }, 
+  { id: "s_silpo", name: "Silpo", src: "/silpo_logo.svg", active: false },
+  { id: "v_varus", name: "Varus", src: "/varus_logo.svg", active: false },
 ];
 
 export default function StoreNav() {
@@ -173,7 +180,7 @@ export function ArrowSquare({ onClick, direction }: ArrowSquareProps) {
 export function ShopCard({ shop }: ShopCardProps) {
   return (
     <Link
-      href={`/store/${shop.name.toLowerCase()}`}
+      href={`/store/${shop.id}`} 
       className={`group relative flex h-[56px] w-full items-center justify-center gap-[12px] overflow-hidden rounded-[16px] px-[16px] transition-all duration-300 ease-in-out md:h-[68px] md:rounded-[22px] md:px-[24px] ${
         shop.active
           ? "z-10 scale-100 border border-text-primary/20 bg-bg-deep shadow-[inset_0_0_15px_rgb(var(--brand-orange)_/_0.2)]"
