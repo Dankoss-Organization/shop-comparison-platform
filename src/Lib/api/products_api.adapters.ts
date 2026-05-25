@@ -346,36 +346,39 @@ export function mapProductCardToDealCard(response: ProductCardResponse): DealCar
   });
 }
 
-export function mapCatalogItemToDealCard(item: ProductCatalogItem): DealCard {
+export function mapCatalogItemToDealCard(item: any): DealCard {
+  const firstOffer = item.offers?.[0];
+  const bestPrice = item.bestPrice ?? item.best_price ?? firstOffer?.price ?? null;
+  const oldPrice = item.oldPrice ?? item.old_price ?? firstOffer?.regularPrice ?? bestPrice ?? null;
+  const discountPercent = item.discountPercent ?? item.discount_percent ?? firstOffer?.discountPercent ?? null;
+  const canonicalName = item.canonicalName ?? item.canonical_name ?? "";
+  const availabilityStatus: "in_stock" | "out_of_stock" = "in_stock";
+
   const pseudoOffer: StoreOffer = {
-    store_id: `${item.id}-best`,
-    store_name: "Найкраща ціна",
-    is_in_stock: item.availabilityStatus === "in_stock",
+    store_id: firstOffer?.storeId ?? `${item.id}-best`,
+    store_name: firstOffer?.storeId ?? "Найкраща ціна",
+    is_in_stock: true,
     pricing: {
-      current_price: item.bestPrice ?? 0,
-      regular_price: item.oldPrice ?? item.bestPrice ?? 0,
-      discount_percent: item.discountPercent ?? 0,
+      current_price: bestPrice ?? 0,
+      regular_price: oldPrice ?? bestPrice ?? 0,
+      discount_percent: discountPercent ?? 0,
     },
   };
 
   return buildDealCardBase({
     id: item.id,
     internalId: item.id,
-    rawTitle: item.canonicalName,
+    rawTitle: canonicalName,
     brand: item.brand,
-    category: item.category?.name,
+    category: item.categoryId,
     image: item.media,
     description: item.description,
-    quantity: extractQuantitySegment(item.canonicalName) || "1 pcs",
+    quantity: extractQuantitySegment(canonicalName) || "1 pcs",
     offers: [pseudoOffer],
-    currency: item.currency,
-    availabilityStatus: item.availabilityStatus,
-    pricingSummary: {
-      bestPrice: item.bestPrice,
-      oldPrice: item.oldPrice,
-      discountPercent: item.discountPercent,
-    },
-    notes: item.offersCount ? [`${item.offersCount} store${item.offersCount === 1 ? "" : "s"} available`] : [],
+    currency: item.currency ?? "UAH",
+    availabilityStatus,
+    pricingSummary: { bestPrice, oldPrice, discountPercent },
+    notes: item.offers?.length ? [`${item.offers.length} store${item.offers.length === 1 ? "" : "s"} available`] : [],
   });
 }
 

@@ -87,7 +87,6 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
           const res = await searchApi.search(params.search.trim(), params.limit, (params.page - 1) * params.limit);
           const items = res.results.map((item, i) => {
             const dealCard = mapMeilisearchToDealCard(item);
-            // Використовуємо строго базовий id
             dealCard.id = item.id;
 
             return {
@@ -103,7 +102,6 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
         const isInStock = params.categoryId === "in-stock";
         const backendSortOrder: "name" | "updated" = params.sort === "name" ? "name" : "updated";
 
-        // Виклик API
         const response = await getProductsApi().getProducts({
           page:       params.page,
           limit:      params.limit,
@@ -118,7 +116,6 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
         const items = targetItems.map((catalogItem, i) => {
           const dealCard = mapCatalogItemToDealCard(catalogItem);
           
-          // Явно перезаписуємо id на значення з контракту (catalogItem.id)
           dealCard.id = catalogItem.id;
 
           return {
@@ -135,7 +132,7 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
         };
       } catch (error) {
         console.error("[CatalogStrategy] fetchData failed:", error);
-        return { items: [], total: 0, totalPages: 1 };
+        throw error;
       }
     },
   },

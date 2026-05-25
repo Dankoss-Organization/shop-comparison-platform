@@ -87,6 +87,12 @@ export function HeaderContent() {
     triggerAuthSuccessHint();
   };
 
+  function parseMedia(media: string): string {
+    if (!media) return "";
+    if (media.startsWith("http")) return media;
+    try { const p = JSON.parse(media); return p.main_image || p.gallery?.[0] || ""; } catch { return ""; }
+  }
+
   const renderSearchDropdown = () => (
     <AnimatePresence>
       {(showDrop || mobileShowDrop) && query.length >= 2 && (
@@ -99,27 +105,15 @@ export function HeaderContent() {
         >
           {loading ? (
             <div className="p-4 text-center text-[12px] text-text-primary/60">Searching...</div>
-          ) : results?.length > 0 || suggestions?.length > 0 ? (
+          ) : results?.length > 0 ? (
             <div className="flex max-h-[300px] flex-col overflow-y-auto py-2 [&::-webkit-scrollbar]:hidden">
-              {suggestions?.map((suggestion: any, idx: number) => (
-                <div
-                  key={`sug-${idx}`}
-                  className="cursor-pointer px-4 py-2 text-sm text-text-primary/80 transition-colors hover:bg-brand-orange/10 hover:text-brand-orange"
-                  onClick={() => {
-                    setQuery(suggestion.name || suggestion);
-                    router.push(`/catalog?search=${encodeURIComponent(suggestion.name || suggestion)}`);
-                  }}
-                >
-                  {suggestion.name || suggestion}
-                </div>
-              ))}
               {results?.map((item: any, idx: number) => (
                 <div
                   key={`res-${idx}`}
                   className="flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors hover:bg-brand-orange/5"
                   onMouseDown={(e) => { e.preventDefault(); router.push(`/product/${encodeURIComponent(item.productId || item.id)}`); setShowDrop(false); setMobileShowDrop(false); }}
                 >
-                  {item.media && <img src={item.media} alt={item.canonicalName} className="h-10 w-10 rounded-lg object-cover shrink-0" />}
+                  {item.media && <img src={parseMedia(item.media)} alt={item.canonicalName} className="h-10 w-10 rounded-lg object-cover shrink-0" />}
                   <div className="flex min-w-0 flex-col">
                     <span className="line-clamp-1 text-sm font-semibold text-text-primary">{item.canonicalName || item.name}</span>
                     <div className="flex items-center gap-2">
@@ -143,8 +137,6 @@ export function HeaderContent() {
   return (
     <header className="sticky top-0 z-[90] w-full border-b border-glass/10 bg-bg-surface font-sans shadow-sm dark:shadow-lg">
       <div className="relative flex w-full flex-wrap items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px] gap-y-3">
-        
-        {/* Left Side: Catalog Trigger + Logo */}
         <div className="flex items-center gap-4 sm:gap-8 xl:gap-[60px]">
           <div className="flex items-center">
             <button
@@ -166,11 +158,9 @@ export function HeaderContent() {
           <BrandLogo />
         </div>
 
-        {/* Right Side: Navigation, Search, User Icons */}
         <div className="flex flex-1 items-center justify-end">
           
           <div className="hidden lg:flex items-center gap-0">
-            {/* Desktop Search Input */}
             <div className="relative z-10 flex items-center group/search mr-0">
               <input
                 ref={searchInputRef}
@@ -218,14 +208,11 @@ export function HeaderContent() {
                   </ChainIcon>
                 </div>
               </div>
-
-              {/* Desktop Search Dropdown UI */}
               {renderSearchDropdown()}
             </div>
 
             <div className="ml-[-2px]"><Connection /></div>
 
-            {/* Favorites Widget */}
             <div className="relative">
               {isAuthenticated ? (
                 <Link href="/favorites" className="outline-none group/fav">
@@ -289,7 +276,6 @@ export function HeaderContent() {
 
             <Connection />
 
-            {/* Location */}
             <Link href="/locations">
               <ChainIcon>
                 <div className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100 [mask-image:url(/location.svg)] [-webkit-mask-image:url(/location.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
@@ -298,7 +284,6 @@ export function HeaderContent() {
 
             <Connection />
 
-            {/* Language Selector */}
             <div className="relative z-50 flex items-center justify-center h-[42px] w-[42px]">
               {isLangOpen && (
                 <div className="fixed inset-0 z-40" onClick={() => setIsLangOpen(false)} />
@@ -349,7 +334,6 @@ export function HeaderContent() {
           </div>
 
           <div className="flex items-center gap-0 lg:gap-1 lg:pl-0 relative z-50">
-            {/* User Profile */}
             <div className="relative flex items-center justify-center">
               <div
                 id="profile-trigger"
@@ -377,8 +361,6 @@ export function HeaderContent() {
             </div>
 
             <div className="hidden lg:block w-px h-5 bg-white/10 mx-2"></div>
-            
-            {/* Cart */}
             <div className="flex items-center justify-center shrink-0 min-w-fit">
               <CartHeaderWidget />
             </div>
@@ -386,7 +368,6 @@ export function HeaderContent() {
 
         </div>
 
-        {/* Mobile Search Input */}
         <div className="w-full mt-2 lg:hidden order-last">
           <div className="relative flex w-full items-center group/search">
             <input
@@ -434,7 +415,6 @@ export function HeaderContent() {
               </div>
             </div>
 
-            {/* Mobile Search Dropdown UI */}
             {renderSearchDropdown()}
           </div>
         </div>
