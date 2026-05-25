@@ -11,6 +11,7 @@ import type {
   RelatedProductsResponse,
 } from "@/Lib/api/products_api.contracts";
 import { parseQuantity } from "@/Lib/utils";
+import type { SearchProduct } from "@/Lib/api/search_api.client";
 
 const DETAIL_TOKENS = [
   "ж/б",
@@ -260,6 +261,7 @@ function buildDealCardBase(params: {
   offers: StoreOffer[];
   rating?: string;
   currency?: string;
+  internalId?: string;
   availabilityStatus?: "in_stock" | "out_of_stock";
   pricingSummary?: {
     bestPrice: number | null;
@@ -289,6 +291,7 @@ function buildDealCardBase(params: {
 
   return {
     id: params.id,
+    internalId: params.internalId,
     title: parsedName.title,
     detailsLine: detailsParts.length ? [...new Set(detailsParts)].join(" · ") : undefined,
     image: parseMediaUrl(params.image),
@@ -315,7 +318,8 @@ export function mapProductCardToDealCard(response: ProductCardResponse): DealCar
   const description = response.product.description ?? "";
 
   return buildDealCardBase({
-    id: response.product.productId,
+    id: response.product.id,
+    internalId: response.product.id,
     rawTitle: response.product.canonicalName,
     brand: response.product.brand,
     category: response.product.category,
@@ -343,7 +347,7 @@ export function mapProductCardToDealCard(response: ProductCardResponse): DealCar
 
 export function mapCatalogItemToDealCard(item: ProductCatalogItem): DealCard {
   const pseudoOffer: StoreOffer = {
-    store_id: `${item.productId}-best`,
+    store_id: `${item.id}-best`,
     store_name: "Найкраща ціна",
     is_in_stock: item.availabilityStatus === "in_stock",
     pricing: {
@@ -354,7 +358,8 @@ export function mapCatalogItemToDealCard(item: ProductCatalogItem): DealCard {
   };
 
   return buildDealCardBase({
-    id: item.productId,
+    id: item.id,
+    internalId: item.id,
     rawTitle: item.canonicalName,
     brand: item.brand,
     category: item.category?.name,
@@ -376,24 +381,23 @@ export function mapCatalogItemToDealCard(item: ProductCatalogItem): DealCard {
 export function mapRelatedProductsToDealCards(response: RelatedProductsResponse): DealCard[] {
   return response.related.map((item) =>
     buildDealCardBase({
-      id: item.productId,
+      id: item.id,
+      internalId: item.id,
       rawTitle: item.canonicalName,
       brand: item.brand,
       image: item.media,
       description: "",
       quantity: extractQuantitySegment(item.canonicalName) || "1 pcs",
-      offers: [
-        {
-          store_id: `${item.productId}-related`,
-          store_name: item.brand || "Suggested",
-          is_in_stock: true,
-          pricing: {
-            current_price: item.bestPrice ?? 0,
-            regular_price: item.bestPrice ?? 0,
-            discount_percent: 0,
-          },
+      offers: [{
+        store_id: `${item.id}-related`,
+        store_name: item.brand || "Suggested",
+        is_in_stock: true,
+        pricing: {
+          current_price: item.bestPrice ?? 0,
+          regular_price: item.bestPrice ?? 0,
+          discount_percent: 0,
         },
-      ],
+      }],
       pricingSummary: {
         bestPrice: item.bestPrice,
         oldPrice: item.bestPrice,
@@ -402,6 +406,36 @@ export function mapRelatedProductsToDealCards(response: RelatedProductsResponse)
       notes: item.offersCount ? [`${item.offersCount} store${item.offersCount === 1 ? "" : "s"} available`] : [],
     }),
   );
+}
+
+export function mapMeilisearchToDealCard(item: SearchProduct): DealCard {
+  return buildDealCardBase({
+    id: item.id,
+    internalId: item.id,
+    rawTitle: item.canonicalName,
+    brand: item.brand ?? undefined,
+    category: item.category,
+    image: item.media,
+    description: item.description,
+    quantity: extractQuantitySegment(item.canonicalName) || "1 pcs",
+    offers: [{
+      store_id: "search",
+      store_name: item.storeNames?.[0] ?? "",
+      is_in_stock: true,
+      pricing: {
+        current_price: item.bestPrice ?? 0,
+        regular_price: item.oldPrice ?? item.bestPrice ?? 0,
+        discount_percent: item.discountPercent ?? 0,
+      },
+    }],
+    currency: item.currency,
+    pricingSummary: {
+      bestPrice: item.bestPrice ?? null,
+      oldPrice: item.oldPrice ?? null,
+      discountPercent: item.discountPercent ?? null,
+    },
+    notes: item.offersCount ? [`${item.offersCount} store${item.offersCount === 1 ? "" : "s"} available`] : [],
+  });
 }
 
 export { mapOfferItemToStoreOffer };

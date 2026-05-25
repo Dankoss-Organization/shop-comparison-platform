@@ -13,7 +13,7 @@ import DealCardFactory from "@/Components/UI/deal_card";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useUserStore } from "@/Store/user_store";
 import { useUIStore } from "@/Store/use_ui_store";
-import { productsApi } from "@/Lib/api/index";
+import { getProductsApi } from "@/Lib/api";
 import { mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
 import type { DealCard } from "@/Data/home_data";
 
@@ -45,7 +45,7 @@ export default function FavoritesPage() {
       setIsFetching(true);
       try {
         const results = await Promise.allSettled(
-          favoriteIds.map((id) => productsApi.getProductCard(id))
+          favoriteIds.map((id) => getProductsApi().getProductCard(id))
         );
 
         if (isCancelled) return;

@@ -23,7 +23,7 @@ import {
   mapProductCardToDealCard,
   mapRelatedProductsToDealCards,
 } from "@/Lib/api/products_api.adapters";
-import { productsApi } from "@/Lib/api";
+import { getProductsApi } from "@/Lib/api";
 
 export interface HistoryItem {
   title: string;
@@ -111,26 +111,26 @@ export default function ProductPage() {
 
       try {
         const [cardResult, relatedResult] = await Promise.allSettled([
-          productsApi.getProductCard(backendProductId),
-          productsApi.getRelatedProducts(backendProductId, { limit: 10 }),
+          getProductsApi().getProductCard(backendProductId),
+          getProductsApi().getRelatedProducts(backendProductId, { limit: 10 }),
         ]);
 
         if (cancelled) return;
 
-        if (cardResult.status === "fulfilled") {
+        if (cardResult.status === "fulfilled" && cardResult.value) {
           const card = mapProductCardToDealCard(cardResult.value);
           setItem(card);
           applyHistory(card);
 
-          if (cardResult.value.product.category) {
-            const category = cardResult.value.product.category as any;
-            setCategoryTitle(category.name ?? String(category));
+          const productCategory = cardResult.value?.product?.category as any;
+          if (productCategory) {
+            setCategoryTitle(productCategory.name ?? String(productCategory));
           }
         } else {
           setError("Product not found or failed to load.");
         }
 
-        if (relatedResult.status === "fulfilled") {
+        if (relatedResult.status === "fulfilled" && relatedResult.value) {
           setSimilarItems(mapRelatedProductsToDealCards(relatedResult.value));
         }
       } catch {
@@ -148,30 +148,6 @@ export default function ProductPage() {
     };
   }, [backendProductId]);
 
-  if (!isReady) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-bg-main transition-colors duration-300">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
-      </div>
-    );
-  }
-
-  if (error || !item) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-bg-main text-text-main transition-colors duration-300">
-        <p className="text-xl font-semibold text-text-primary/60">
-          {error ?? "Product not found."}
-        </p>
-        <button
-          onClick={() => router.back()}
-          className="rounded-full bg-brand-orange px-6 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
-        >
-          Go back
-        </button>
-      </div>
-    );
-  }
-
   const handleBackToBrowsing = () => {
     sessionStorage.removeItem("productHistoryTrail");
 
@@ -188,13 +164,33 @@ export default function ProductPage() {
     }
   };
 
-  return (
-    <div className="flex min-h-screen flex-col bg-bg-main text-text-main transition-colors duration-300">
-      <div className="sticky top-0 z-50 w-full border-b border-text-main/5 bg-bg-elevated/95 backdrop-blur-md transition-colors duration-300 dark:border-text-primary/5">
-        <Header />
-      </div>
+  const renderContent = () => {
+    if (!isReady) {
+      return (
+        <div className="flex h-[60vh] items-center justify-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-orange border-t-transparent" />
+        </div>
+      );
+    }
 
-      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-8 md:px-8 lg:px-12 2xl:px-[60px]">
+    if (error || !item) {
+      return (
+        <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
+          <p className="text-xl font-semibold text-text-primary/60">
+            {error ?? "Product not found."}
+          </p>
+          <button
+            onClick={() => router.back()}
+            className="rounded-full bg-brand-orange px-6 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+          >
+            Go back
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <>
         <nav className="mb-4 mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-text-muted dark:text-text-primary/60">
           <button
             onClick={handleBackToBrowsing}
@@ -259,6 +255,18 @@ export default function ProductPage() {
             />
           </div>
         )}
+      </>
+    );
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-bg-main text-text-main transition-colors duration-300">
+      <div className="sticky top-0 z-50 w-full border-b border-text-main/5 bg-bg-elevated/95 backdrop-blur-md transition-colors duration-300 dark:border-text-primary/5">
+        <Header />
+      </div>
+
+      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-8 md:px-8 lg:px-12 2xl:px-[60px]">
+        {renderContent()}
       </main>
 
       <Footer />

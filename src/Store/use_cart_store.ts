@@ -12,6 +12,7 @@ import { DealCard as DealCardType } from '@/Data/home_data';
 export interface CartItem extends DealCardType {
   cartQuantity: number;
   selectedStoreId?: string;
+  internalId?: string;
 }
 
 export interface CartState {
@@ -21,10 +22,22 @@ export interface CartState {
   addItem: (product: DealCardType | CartItem) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, delta: number) => void;
+  updateSelectedStore: (itemId: string, storeId: string) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
 }
+
+/**
+ * Pure helper logic evaluating cross-store product footprint match.
+ * Prevents adding identical multi-store entities into separate isolated store rows.
+ */
+const isSameProduct = (a: CartItem | DealCardType, b: CartItem | DealCardType): boolean => {
+  if (a.internalId && b.internalId) {
+    return a.internalId === b.internalId;
+  }
+  return a.id === b.id;
+};
 
 export const useCartStore = create<CartState>()(
   persist(
@@ -35,26 +48,35 @@ export const useCartStore = create<CartState>()(
 
       addItem: (product) => {
         const { items } = get();
-        const existingItem = items.find((i) => i.id === product.id);
+        const existingItem = items.find((i) => isSameProduct(i, product));
 
         if (existingItem) {
           set({
             items: items.map((i) =>
-              i.id === product.id ? { ...i, cartQuantity: i.cartQuantity + 1 } : i
+              isSameProduct(i, product) ? { ...i, cartQuantity: i.cartQuantity + 1 } : i
             ),
           });
         } else {
-          set({ items: [...items, { ...product, cartQuantity: 1 } as CartItem] });
+          const initialStoreId = (product as any).selectedStoreId ?? (product as any).offers?.[0]?.store_id ?? "unknown";
+          set({ 
+            items: [...items, { ...product, selectedStoreId: initialStoreId, cartQuantity: 1 } as CartItem] 
+          });
         }
       },
 
       removeItem: (id) => set({
-        items: get().items.filter((i) => i.id !== id)
+        items: get().items.filter((i) => i.id !== id && i.internalId !== id)
       }),
 
       updateQuantity: (id, delta) => set({
         items: get().items.map((i) =>
-          i.id === id ? { ...i, cartQuantity: Math.max(1, i.cartQuantity + delta) } : i
+          (i.id === id || i.internalId === id) ? { ...i, cartQuantity: Math.max(1, i.cartQuantity + delta) } : i
+        )
+      }),
+
+      updateSelectedStore: (itemId, storeId) => set({
+        items: get().items.map((i) =>
+          (i.id === itemId || i.internalId === itemId) ? { ...i, selectedStoreId: storeId } : i
         )
       }),
 

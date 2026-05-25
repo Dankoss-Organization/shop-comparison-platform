@@ -6,21 +6,16 @@
 "use client";
 
 import { seasonalRecipes, peopleLiked, type DealCard } from "@/Data/home_data";
-import { productsApi } from "@/Lib/api/index";
-import { mapCatalogItemToDealCard, mapProductCardToDealCard } from "@/Lib/api/products_api.adapters";
+import { getProductsApi } from "@/Lib/api/index";
+import { mapCatalogItemToDealCard, mapMeilisearchToDealCard } from "@/Lib/api/products_api.adapters";
+import { searchApi } from "@/Lib/api/search_api.client";
 
-/**
- * @description Represents a specific navigation node category option within a catalog tab layout.
- */
 export interface CatalogCategory {
   id: string;
   label: string;
   slug: string;
 }
 
-/**
- * @description Unified criteria parameters used for executing paginated filter workflows.
- */
 export interface StrategyFetchParams {
   page: number;
   limit: number;
@@ -29,18 +24,12 @@ export interface StrategyFetchParams {
   sort?: string;
 }
 
-/**
- * @description Structural encapsulation detailing a resolved paginated segment slice data block.
- */
 export interface StrategyFetchResult {
   items: (DealCard & { _cat?: string; _uniqueId?: string })[];
   total: number;
   totalPages: number;
 }
 
-/**
- * @description Contract definition guaranteeing consistent layout and lookup structures across tab view domains.
- */
 export interface CatalogStrategy {
   categories: CatalogCategory[];
   fetchData: (params: StrategyFetchParams) => Promise<StrategyFetchResult>;
@@ -52,13 +41,10 @@ function truncate(str: string | undefined, length = 80) {
   return str.substring(0, length) + "...";
 }
 
-/**
- * @description Dictionary matching layout strategies mapped to structural navigation keys.
- */
 export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
   recipes: {
     categories: [
-      { id: "all",              label: "All Recipes",      slug: "/catalog?tab=recipes&category=all" },
+      { id: "all",              label: "All Recipes",       slug: "/catalog?tab=recipes&category=all" },
       { id: "seasonal-recipes", label: "Seasonal Recipes", slug: "/catalog?tab=recipes&category=seasonal-recipes" },
       { id: "people-liked",     label: "People Also Liked",slug: "/catalog?tab=recipes&category=people-liked" },
     ],
@@ -97,37 +83,48 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
 
     async fetchData(params) {
       try {
+        if (params.search?.trim()) {
+          const res = await searchApi.search(params.search.trim(), params.limit, (params.page - 1) * params.limit);
+          const items = res.results.map((item, i) => {
+            const dealCard = mapMeilisearchToDealCard(item);
+            // Використовуємо строго базовий id
+            dealCard.id = item.id;
+
+            return {
+              ...dealCard,
+              _cat: params.categoryId ?? "all",
+              _uniqueId: `${item.id}-s${params.page}-${i}`,
+            };
+          });
+          return { items, total: res.totalHits, totalPages: res.totalPages };
+        }
+        
         const isAll     = !params.categoryId || params.categoryId === "all";
         const isInStock = params.categoryId === "in-stock";
         const backendSortOrder: "name" | "updated" = params.sort === "name" ? "name" : "updated";
 
-        const response = await productsApi.getProducts({
+        // Виклик API
+        const response = await getProductsApi().getProducts({
           page:       params.page,
           limit:      params.limit,
           search:     params.search?.trim() || undefined,
-          sort:       backendSortOrder, 
+          sort:       backendSortOrder,
           categoryId: isAll || isInStock ? undefined : params.categoryId,
           inStock:    isInStock ? true : undefined,
         });
 
         const targetItems = response?.items || [];
 
-        const cardResults = await Promise.allSettled(
-          targetItems.map((item) => productsApi.getProductCard(item.productId)),
-        );
-
         const items = targetItems.map((catalogItem, i) => {
-          const cardResult = cardResults[i];
-
-          const dealCard =
-            cardResult.status === "fulfilled"
-              ? mapProductCardToDealCard(cardResult.value)
-              : mapCatalogItemToDealCard(catalogItem);
+          const dealCard = mapCatalogItemToDealCard(catalogItem);
+          
+          // Явно перезаписуємо id на значення з контракту (catalogItem.id)
+          dealCard.id = catalogItem.id;
 
           return {
             ...dealCard,
             _cat:      params.categoryId ?? "all",
-            _uniqueId: `${catalogItem.productId}-p${params.page}-${i}`,
+            _uniqueId: `${catalogItem.id}-p${params.page}-${i}`,
           };
         });
 
