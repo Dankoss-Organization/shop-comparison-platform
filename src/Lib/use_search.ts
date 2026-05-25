@@ -19,11 +19,7 @@ export function useSearch() {
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        const [sugg, res] = await Promise.all([
-          searchApi.suggestions(query),
-          searchApi.search(query, 6),
-        ]);
-        setSuggestions(sugg);
+        const res = await searchApi.search(query, 6);
         setResults(res.results);
       } catch {
       } finally {

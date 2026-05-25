@@ -34,7 +34,7 @@ export function CartItemUI({
         className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white dark:bg-bg-deep border border-text-main/5 dark:border-white/5 shadow-sm dark:shadow-inner cursor-pointer transition-transform hover:scale-105"
         onClick={onClick}
       >
-        <Image src={item.image} alt={item.title} fill className="object-cover" />
+        <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, 80px" />
       </div>
       
       <div className="flex flex-1 flex-col justify-between py-0.5">

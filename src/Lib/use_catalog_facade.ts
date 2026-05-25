@@ -111,51 +111,52 @@ export function useCatalogFacade() {
   const prevTabRef = useRef(activeTab);
   const prevCatRef = useRef(activeCategory);
 
-  const loadData = useCallback(async (page: number, append: boolean) => {
-    if (page === 1) setIsLoading(true);
-    else setIsLoadingMore(true);
+const loadData = useCallback(async (page: number, append: boolean) => {
+  if (page === 1) setIsLoading(true);
+  else setIsLoadingMore(true);
 
-    try {
-      const res = await strategy.fetchData({
-        page,
-        limit: 12, 
-        search: searchTerm,
-        categoryId: activeCategory,
-        sort: sortBy,
-      });
+  try {
+    const res = await strategy.fetchData({
+      page,
+      limit: 12,
+      search: searchTerm,
+      categoryId: activeCategory,
+      sort: sortBy,
+    });
+    setFetchResult((prev) => ({
+      items: append ? [...prev.items, ...res.items] : res.items,
+      total: res.total,
+      totalPages: res.totalPages,
+    }));
+  } catch (error) {
+    console.error("[Facade] Error fetching catalog data:", error);
+    setFetchResult({ items: [], total: 0, totalPages: 1 });
+  } finally {
+    setIsLoading(false);
+    setIsLoadingMore(false);
+  }
+}, [strategy, activeCategory, searchTerm, sortBy]);
 
-      setFetchResult((prev) => ({
-        items: append ? [...prev.items, ...res.items] : res.items,
-        total: res.total,
-        totalPages: res.totalPages,
-      }));
-    } catch (error) {
-      console.error("[Facade] Error fetching catalog data:", error);
-    } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  }, [strategy, activeCategory, searchTerm, sortBy]);
+useEffect(() => {
+  const tabChanged = prevTabRef.current !== activeTab;
+  const catChanged = prevCatRef.current !== activeCategory;
 
-  useEffect(() => {
-    let shouldResetPage = false;
-    if (prevTabRef.current !== activeTab) {
-      shouldResetPage = true;
-      prevTabRef.current = activeTab;
-    }
-    if (prevCatRef.current !== activeCategory) {
-      shouldResetPage = true;
-      prevCatRef.current = activeCategory;
-    }
+  if (tabChanged) prevTabRef.current = activeTab;
+  if (catChanged) prevCatRef.current = activeCategory;
 
-    if (shouldResetPage) setCurrentPage(1);
+  const shouldReset = tabChanged || catChanged;
 
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("lastCatalogUrl", window.location.pathname + window.location.search);
-    }
+  if (shouldReset) {
+    setCurrentPage(1);
+    loadData(1, false);
+  } else {
+    loadData(currentPage, currentPage > 1);
+  }
 
-    loadData(shouldResetPage ? 1 : currentPage, !shouldResetPage && currentPage > 1);
-  }, [activeTab, activeCategory, searchTerm, sortBy, currentPage, loadData]);
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem("lastCatalogUrl", window.location.pathname + window.location.search);
+  }
+}, [activeTab, activeCategory, searchTerm, sortBy, currentPage, loadData]);
 
   const { priceBounds, availableMarkets } = useMemo(() => {
     let pMin = Infinity, pMax = 0;
