@@ -1,12 +1,8 @@
-/**
- * @file catalog_header.tsx
- * @description Provides the catalog title area, sorting dropdown, filter toggle, and active filter chip display.
- */
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/Lib/utils";
+import { useRef } from "react";
 import type { useCatalogFacade } from "@/Lib/use_catalog_facade";
+import BaseSortDropdown from "@/Components/UI/base_sort_dropdown";
 
 type FacadeReturn = ReturnType<typeof useCatalogFacade>;
 
@@ -22,21 +18,12 @@ export interface CatalogHeaderProps {
  * @returns {JSX.Element} The catalog header controls.
  */
 export default function CatalogHeader({ state, actions, onOpenFilters }: CatalogHeaderProps) {
-  const [isSortOpen, setIsSortOpen] = useState(false);
   const controlsRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (!controlsRef.current?.contains(e.target as Node)) {
-        setIsSortOpen(false);
-      }
-    };
-    window.addEventListener("click", handleOutsideClick);
-    return () => window.removeEventListener("click", handleOutsideClick);
-  }, []);
-
-  const activeSortLabel =
-    state.sortOptions.find((opt) => opt.value === state.sortBy)?.label ?? "Featured";
+  const sortOptions = state.sortOptions.map(opt => ({
+    value: String(opt.value),
+    label: opt.label
+  }));
 
   return (
     <div className="mb-8 flex flex-col gap-6">
@@ -62,10 +49,7 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
           <div className="flex flex-wrap gap-2 md:justify-end">
             <button
               type="button"
-              onClick={() => {
-                onOpenFilters();
-                setIsSortOpen(false);
-              }}
+              onClick={onOpenFilters}
               className="group inline-flex items-center gap-3 rounded-[1rem] bg-bg-surface px-4 py-2.5 text-sm font-semibold text-text-primary border border-glass/10 shadow-sm transition-all duration-300 hover:bg-bg-elevated hover:text-text-main"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-orange">
@@ -84,75 +68,12 @@ export default function CatalogHeader({ state, actions, onOpenFilters }: Catalog
               ) : null}
             </button>
 
-            <button
-              type="button"
-              onClick={() => setIsSortOpen((prev) => !prev)}
-              className={cn(
-                "group inline-flex items-center justify-between gap-4 rounded-[1rem] px-4 py-2.5 text-left text-text-primary transition-all duration-300 md:min-w-[220px] border border-glass/10 shadow-sm",
-                isSortOpen
-                  ? "bg-bg-elevated border-brand-orange/40"
-                  : "bg-bg-surface hover:bg-bg-elevated hover:text-text-main",
-              )}
-            >
-              <span className="text-sm font-semibold">{activeSortLabel}</span>
-              <span
-                className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated text-text-primary/65 transition-all duration-300 group-hover:text-brand-orange",
-                  isSortOpen ? "rotate-180 text-brand-orange" : "",
-                )}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </button>
-          </div>
-
-          <div
-            className={cn(
-              "absolute right-0 top-full z-30 mt-3 w-full max-w-[320px] origin-top rounded-[1.2rem] bg-bg-surface p-1.5 shadow-xl border border-glass/10 transition-all duration-200 sm:min-w-[300px]",
-              isSortOpen
-                ? "pointer-events-auto translate-y-0 opacity-100"
-                : "pointer-events-none -translate-y-1 opacity-0",
-            )}
-          >
-            <div className="grid gap-1">
-              {state.sortOptions.map((option) => {
-                const isActive = state.sortBy === option.value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => {
-                      actions.handleSortChange(option.value);
-                      setIsSortOpen(false);
-                    }}
-                    className={cn(
-                      "flex items-center justify-between rounded-[0.9rem] px-3.5 py-2.5 text-sm font-medium transition-all duration-200",
-                      isActive
-                        ? "bg-brand-orange text-white shadow-md"
-                        : "text-text-primary hover:bg-bg-elevated hover:text-text-main",
-                    )}
-                  >
-                    <span>{option.label}</span>
-                    <span
-                      className={cn(
-                        "text-sm transition-opacity duration-200",
-                        isActive ? "opacity-100" : "opacity-0",
-                      )}
-                    >
-                      ✓
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <BaseSortDropdown 
+              options={sortOptions}
+              value={String(state.sortBy)}
+              onChange={(newVal) => actions.handleSortChange(newVal as any)}
+              fallbackLabel="Featured"
+            />
           </div>
         </div>
       </div>
