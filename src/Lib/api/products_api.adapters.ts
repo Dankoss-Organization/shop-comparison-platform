@@ -409,8 +409,6 @@ export function mapRelatedProductsToDealCards(response: RelatedProductsResponse)
   );
 }
 
-export { mapOfferItemToStoreOffer };
-
 export function mapStoreProductToDealCard(
   item: StoreProductItem,
   storeId: string,

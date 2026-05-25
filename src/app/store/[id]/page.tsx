@@ -85,7 +85,7 @@ export default function StorePage() {
             minDiscount: minDiscount > 0 ? minDiscount : undefined,
             maxPrice: maxPrice < priceBounds.max ? maxPrice : undefined,
             minRating: minRating > 0 ? minRating : undefined,
-          });
+          } as any);
           
           setStoreRealName(response.storeName);
           setTotalPages(response.totalPages); 
