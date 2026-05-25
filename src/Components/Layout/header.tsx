@@ -8,11 +8,13 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { CatalogProvider, useCatalog } from "@/Context/catalog_context";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useUserStore } from "@/Store/user_store";
 import { useUIStore } from "@/Store/use_ui_store";
+import { useSearch } from "@/Lib/use_search";
 import { ChainIcon, Connection } from "@/Components/UI/icon_ui";
 import CatalogDropdown from "@/Components/Layout/Header/catalog_dropdown";
 import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
@@ -28,15 +30,22 @@ export default function Header() {
 }
 
 export function HeaderContent() {
+  const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
+  
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");
   const [isMounted, setIsMounted] = useState(false);
+  
+  const { query, setQuery, suggestions, results, loading } = useSearch();
+  const [showDrop, setShowDrop] = useState(false);
+  const [mobileShowDrop, setMobileShowDrop] = useState(false);
 
   const { isCatalogOpen, setIsCatalogOpen, closeCatalog } = useCatalog();
   const favoriteCount = useFavoritesStore((state) => state.favoriteIds.length);
   const { isAuthenticated, login } = useUserStore();
+  
   const isProfileOpen = useUIStore((state) => state.isProfileOpen);
   const highlightLogin = useUIStore((state) => state.highlightLogin);
   const favoriteAuthHint = useUIStore((state) => state.favoriteAuthHint);
@@ -78,9 +87,64 @@ export function HeaderContent() {
     triggerAuthSuccessHint();
   };
 
+  const renderSearchDropdown = () => (
+    <AnimatePresence>
+      {(showDrop || mobileShowDrop) && query.length >= 2 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute left-0 top-[50px] z-50 w-full overflow-hidden rounded-2xl border border-glass/10 bg-bg-surface/95 shadow-[0_18px_40px_rgba(0,0,0,0.15)] backdrop-blur-xl"
+        >
+          {loading ? (
+            <div className="p-4 text-center text-[12px] text-text-primary/60">Searching...</div>
+          ) : results?.length > 0 || suggestions?.length > 0 ? (
+            <div className="flex max-h-[300px] flex-col overflow-y-auto py-2 [&::-webkit-scrollbar]:hidden">
+              {suggestions?.map((suggestion: any, idx: number) => (
+                <div
+                  key={`sug-${idx}`}
+                  className="cursor-pointer px-4 py-2 text-sm text-text-primary/80 transition-colors hover:bg-brand-orange/10 hover:text-brand-orange"
+                  onClick={() => {
+                    setQuery(suggestion.name || suggestion);
+                    router.push(`/catalog?search=${encodeURIComponent(suggestion.name || suggestion)}`);
+                  }}
+                >
+                  {suggestion.name || suggestion}
+                </div>
+              ))}
+              {results?.map((item: any, idx: number) => (
+                <div
+                  key={`res-${idx}`}
+                  className="flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors hover:bg-brand-orange/5"
+                  onMouseDown={(e) => { e.preventDefault(); router.push(`/product/${encodeURIComponent(item.productId || item.id)}`); setShowDrop(false); setMobileShowDrop(false); }}
+                >
+                  {item.media && <img src={item.media} alt={item.canonicalName} className="h-10 w-10 rounded-lg object-cover shrink-0" />}
+                  <div className="flex min-w-0 flex-col">
+                    <span className="line-clamp-1 text-sm font-semibold text-text-primary">{item.canonicalName || item.name}</span>
+                    <div className="flex items-center gap-2">
+                      {item.bestPrice && <span className="text-xs font-bold text-brand-orange">{item.bestPrice} ₴</span>}
+                      {item.storeNames?.[0] && <span className="text-[11px] text-text-primary/40">{item.storeNames[0]}</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 text-center text-[12px] text-text-primary/60">
+              No results found for "{query}"
+            </div>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <header className="sticky top-0 z-[90] w-full border-b border-glass/10 bg-bg-surface font-sans shadow-sm dark:shadow-lg">
       <div className="relative flex w-full flex-wrap items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px] gap-y-3">
+        
+        {/* Left Side: Catalog Trigger + Logo */}
         <div className="flex items-center gap-4 sm:gap-8 xl:gap-[60px]">
           <div className="flex items-center">
             <button
@@ -102,31 +166,46 @@ export function HeaderContent() {
           <BrandLogo />
         </div>
 
+        {/* Right Side: Navigation, Search, User Icons */}
         <div className="flex flex-1 items-center justify-end">
           
           <div className="hidden lg:flex items-center gap-0">
+            {/* Desktop Search Input */}
             <div className="relative z-10 flex items-center group/search mr-0">
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="SEARCH"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setShowDrop(true);
+                }}
+                onFocus={() => setShowDrop(true)}
+                onBlur={() => setTimeout(() => setShowDrop(false), 150)}
                 onKeyDown={(e) => {
-                  if (e.key === "Escape") searchInputRef.current?.blur();
-                  if (e.key === "Enter") {
-                    console.log("Searching for:", searchInputRef.current?.value);
+                  if (e.key === "Escape") {
+                    setShowDrop(false);
+                    searchInputRef.current?.blur();
+                  }
+                  if (e.key === "Enter" && query.trim()) {
+                    router.push(`/catalog?search=${encodeURIComponent(query)}`);
+                    setShowDrop(false);
                     searchInputRef.current?.blur();
                   }
                 }}
+                placeholder="SEARCH"
                 className="peer h-[42px] w-[180px] xl:w-[220px] rounded-full bg-bg-elevated border border-transparent pl-[20px] pr-[46px] text-[14px] tracking-[0.1em] text-text-primary shadow-sm dark:shadow-inner outline-none placeholder:text-text-primary/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-brand-orange/60 focus:bg-bg-surface focus:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.15)] focus:w-[260px] xl:focus:w-[320px] cursor-text"
               />
+              
               <div className="absolute right-0 top-0 z-20 flex h-[42px] items-center transition-transform duration-300 group-focus-within/search:scale-105">
                 <div
                   className="outline-none cursor-pointer rounded-full"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     if (document.activeElement === searchInputRef.current) {
-                      if (searchInputRef.current?.value.trim()) {
-                        console.log("Searching for:", searchInputRef.current?.value);
+                      if (query.trim()) {
+                        router.push(`/catalog?search=${encodeURIComponent(query)}`);
+                        setShowDrop(false);
                       }
                       searchInputRef.current?.blur();
                     } else {
@@ -139,10 +218,14 @@ export function HeaderContent() {
                   </ChainIcon>
                 </div>
               </div>
+
+              {/* Desktop Search Dropdown UI */}
+              {renderSearchDropdown()}
             </div>
 
             <div className="ml-[-2px]"><Connection /></div>
 
+            {/* Favorites Widget */}
             <div className="relative">
               {isAuthenticated ? (
                 <Link href="/favorites" className="outline-none group/fav">
@@ -206,12 +289,16 @@ export function HeaderContent() {
 
             <Connection />
 
-            <ChainIcon>
-              <div className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100 [mask-image:url(/location.svg)] [-webkit-mask-image:url(/location.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
-            </ChainIcon>
+            {/* Location */}
+            <Link href="/locations">
+              <ChainIcon>
+                <div className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100 [mask-image:url(/location.svg)] [-webkit-mask-image:url(/location.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
+              </ChainIcon>
+            </Link>
 
             <Connection />
 
+            {/* Language Selector */}
             <div className="relative z-50 flex items-center justify-center h-[42px] w-[42px]">
               {isLangOpen && (
                 <div className="fixed inset-0 z-40" onClick={() => setIsLangOpen(false)} />
@@ -262,6 +349,7 @@ export function HeaderContent() {
           </div>
 
           <div className="flex items-center gap-0 lg:gap-1 lg:pl-0 relative z-50">
+            {/* User Profile */}
             <div className="relative flex items-center justify-center">
               <div
                 id="profile-trigger"
@@ -289,6 +377,8 @@ export function HeaderContent() {
             </div>
 
             <div className="hidden lg:block w-px h-5 bg-white/10 mx-2"></div>
+            
+            {/* Cart */}
             <div className="flex items-center justify-center shrink-0 min-w-fit">
               <CartHeaderWidget />
             </div>
@@ -296,26 +386,56 @@ export function HeaderContent() {
 
         </div>
 
+        {/* Mobile Search Input */}
         <div className="w-full mt-2 lg:hidden order-last">
           <div className="relative flex w-full items-center group/search">
             <input
               ref={mobileSearchRef}
               type="text"
-              placeholder="SEARCH"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setMobileShowDrop(true);
+              }}
+              onFocus={() => setMobileShowDrop(true)}
+              onBlur={() => setTimeout(() => setMobileShowDrop(false), 150)}
               onKeyDown={(e) => {
-                if (e.key === "Escape") mobileSearchRef.current?.blur();
-                if (e.key === "Enter") {
-                  console.log("Searching for:", mobileSearchRef.current?.value);
+                if (e.key === "Escape") {
+                  setMobileShowDrop(false);
+                  mobileSearchRef.current?.blur();
+                }
+                if (e.key === "Enter" && query.trim()) {
+                  router.push(`/catalog?search=${encodeURIComponent(query)}`);
+                  setMobileShowDrop(false);
                   mobileSearchRef.current?.blur();
                 }
               }}
+              placeholder="SEARCH"
               className="peer h-[42px] w-full rounded-full bg-bg-elevated border border-transparent pl-[20px] pr-[46px] text-[14px] tracking-[0.1em] text-text-primary shadow-sm dark:shadow-inner outline-none placeholder:text-text-primary/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:border-brand-orange/60 focus:bg-bg-surface focus:shadow-[0_0_20px_rgb(var(--brand-orange)_/_0.15)] cursor-text"
             />
+            
             <div className="absolute right-0 top-0 z-20 flex h-[42px] items-center">
-              <div className="flex h-[42px] w-[42px] items-center justify-center">
+              <div
+                className="flex h-[42px] w-[42px] items-center justify-center cursor-pointer"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  if (document.activeElement === mobileSearchRef.current) {
+                    if (query.trim()) {
+                      router.push(`/catalog?search=${encodeURIComponent(query)}`);
+                      setMobileShowDrop(false);
+                    }
+                    mobileSearchRef.current?.blur();
+                  } else {
+                    mobileSearchRef.current?.focus();
+                  }
+                }}
+              >
                 <div className="w-[18px] h-[18px] bg-text-primary opacity-70 [mask-image:url(/search.svg)] [-webkit-mask-image:url(/search.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
               </div>
             </div>
+
+            {/* Mobile Search Dropdown UI */}
+            {renderSearchDropdown()}
           </div>
         </div>
 

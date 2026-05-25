@@ -328,10 +328,10 @@ export default function CatalogDropdown({ categories }: Props) {
               {favoriteCount > 0 && <span className="ml-auto flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-orange px-[4px] text-[9px] font-black text-white">{favoriteCount}</span>}
             </Link>
 
-            <button type="button" className="group flex flex-1 items-center gap-2.5 rounded-2xl bg-white/5 backdrop-blur-[20px] shadow-[inset_0_1px_0_rgb(var(--text-primary)_/_0.05),_0_4px_16px_rgba(0,0,0,0.25)] px-4 py-3 transition-all duration-300 hover:bg-brand-orange/10 active:scale-[0.97]">
+            <Link href="/locations" onClick={closeCatalog} className="group flex flex-1 items-center gap-2.5 rounded-2xl bg-white/5 backdrop-blur-[20px] shadow-[inset_0_1px_0_rgb(var(--text-primary)_/_0.05),_0_4px_16px_rgba(0,0,0,0.25)] px-4 py-3 transition-all duration-300 hover:bg-brand-orange/10 active:scale-[0.97]">
               <div className="w-[18px] h-[18px] shrink-0 bg-text-primary opacity-60 transition-all duration-300 group-hover:bg-brand-orange group-hover:opacity-100 [-webkit-mask-image:url(/location.svg)] [-webkit-mask-size:contain] [-webkit-mask-repeat:no-repeat] [-webkit-mask-position:center]" />
               <span className="text-[13px] font-semibold tracking-[0.06em] text-text-primary/70 transition-colors group-hover:text-brand-orange">Map</span>
-            </button>
+            </Link>
           </div>
 
           <div className="flex items-center justify-between rounded-2xl bg-white/5 backdrop-blur-[20px] shadow-[inset_0_1px_0_rgb(var(--text-primary)_/_0.05),_0_4px_16px_rgba(0,0,0,0.25)] px-4 py-3 shrink-0">

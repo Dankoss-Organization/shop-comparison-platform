@@ -28,6 +28,7 @@ export type StoreOffer = {
 
 export type DealCard = {
   id: string;
+  internalId?: string;
   title: string;
   detailsLine?: string;
   image: string;

@@ -57,7 +57,6 @@ export interface ProductOfferItem {
 export interface ProductCardResponse {
   product: {
     id: string;
-    productId: string;
     canonicalName: string;
     brand: string | null;
     category: string | null;
@@ -96,13 +95,11 @@ export interface ProductCardResponse {
 }
 
 export interface ProductOffersResponse {
-  productId: string;
   offers: ProductOfferItem[];
   total: number;
 }
 
 export interface ProductPriceHistoryResponse {
-  productId: string;
   period: string;
   points: Array<{
     date: string;
@@ -123,10 +120,8 @@ export interface ProductPriceHistoryResponse {
 }
 
 export interface RelatedProductsResponse {
-  productId: string;
   related: Array<{
     id: string;
-    productId: string;
     canonicalName: string;
     brand: string | null;
     media: string;
@@ -137,7 +132,6 @@ export interface RelatedProductsResponse {
 
 export interface ProductCatalogItem {
   id: string;
-  productId: string;
   canonicalName: string;
   brand: string | null;
   category: { id: string; name: string } | null;
