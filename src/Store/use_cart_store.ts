@@ -13,29 +13,28 @@ export interface CartItem extends DealCardType {
   cartQuantity: number;
   selectedStoreId?: string;
   internalId?: string;
+  isLocked?: boolean;
 }
 
 export interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  fulfillmentType: "delivery" | "pickup";
   setOpen: (open: boolean) => void;
+  setFulfillmentType: (type: "delivery" | "pickup") => void;
   addItem: (product: DealCardType | CartItem) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, delta: number) => void;
   updateSelectedStore: (itemId: string, storeId: string) => void;
+  toggleItemLock: (itemId: string) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
+  applyOptimizedCart: (optimizedItems: { itemId: string; storeId: string }[]) => void;
 }
 
-/**
- * Pure helper logic evaluating cross-store product footprint match.
- * Prevents adding identical multi-store entities into separate isolated store rows.
- */
 const isSameProduct = (a: CartItem | DealCardType, b: CartItem | DealCardType): boolean => {
-  if (a.internalId && b.internalId) {
-    return a.internalId === b.internalId;
-  }
+  if (a.internalId && b.internalId) return a.internalId === b.internalId;
   return a.id === b.id;
 };
 
@@ -44,7 +43,10 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       isOpen: false,
+      fulfillmentType: "delivery",
+      
       setOpen: (isOpen) => set({ isOpen }),
+      setFulfillmentType: (type) => set({ fulfillmentType: type }),
 
       addItem: (product) => {
         const { items } = get();
@@ -59,7 +61,7 @@ export const useCartStore = create<CartState>()(
         } else {
           const initialStoreId = (product as any).selectedStoreId ?? (product as any).offers?.[0]?.store_id ?? "unknown";
           set({ 
-            items: [...items, { ...product, selectedStoreId: initialStoreId, cartQuantity: 1 } as CartItem] 
+            items: [...items, { ...product, selectedStoreId: initialStoreId, cartQuantity: 1, isLocked: false } as CartItem] 
           });
         }
       },
@@ -76,8 +78,29 @@ export const useCartStore = create<CartState>()(
 
       updateSelectedStore: (itemId, storeId) => set({
         items: get().items.map((i) =>
-          (i.id === itemId || i.internalId === itemId) ? { ...i, selectedStoreId: storeId } : i
+          (i.id === itemId || i.internalId === itemId)
+            ? { ...i, selectedStoreId: storeId, isLocked: true } 
+            : i
         )
+      }),
+
+      toggleItemLock: (itemId) => set({
+        items: get().items.map((i) =>
+          (i.id === itemId || i.internalId === itemId) ? { ...i, isLocked: !i.isLocked } : i
+        )
+      }),
+
+      applyOptimizedCart: (optimizedItems) => set({
+        items: get().items.map((i) => {
+          const optItem = optimizedItems.find(o => o.itemId === i.id || o.itemId === i.internalId);
+          if (!optItem) return i;
+          
+          return { 
+            ...i, 
+            selectedStoreId: optItem.storeId,
+            isLocked: i.isLocked 
+          };
+        })
       }),
 
       clearCart: () => set({ items: [] }),
@@ -89,7 +112,6 @@ export const useCartStore = create<CartState>()(
             : item.offers?.sort((a: any, b: any) => a.pricing.current_price - b.pricing.current_price)[0];
             
           const price = activeOffer ? activeOffer.pricing.current_price : 0;
-          
           return acc + (price * item.cartQuantity);
         }, 0);
       },

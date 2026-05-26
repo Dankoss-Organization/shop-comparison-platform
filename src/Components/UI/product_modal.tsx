@@ -2,6 +2,7 @@
  * @file product_modal.tsx
  * @description Product modal using the same product structure as the full product page.
  */
+
 "use client";
 
 import {
@@ -22,6 +23,9 @@ import { cn, formatCurrency } from "@/Lib/utils";
 interface ProductModalContextType {
   item: DealCard;
   onClose: () => void;
+  selectedStoreId: string | null;
+  setSelectedStoreId: (id: string | null) => void;
+  activeOffer: StoreOffer | null;
 }
 
 const ProductModalContext = createContext<ProductModalContextType | undefined>(undefined);
@@ -32,11 +36,6 @@ function useProductModal() {
     throw new Error("ProductModal components must be used within <ProductModal>");
   }
   return ctx;
-}
-
-function getBestOffer(item: DealCard): StoreOffer | null {
-  if (!item.offers?.length) return null;
-  return [...item.offers].sort((a, b) => a.pricing.current_price - b.pricing.current_price)[0];
 }
 
 function getDescriptionSections(item: DealCard) {
@@ -52,6 +51,16 @@ export function ProductModal({
   onClose: () => void;
   children: ReactNode;
 }) {
+  const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
+
+  const activeOffer = useMemo(() => {
+    const sortedOffers = [...(item.offers ?? [])].sort((a, b) => a.pricing.current_price - b.pricing.current_price);
+    if (selectedStoreId) {
+      return sortedOffers.find((offer) => offer.store_id === selectedStoreId) ?? sortedOffers[0] ?? null;
+    }
+    return sortedOffers[0] ?? null;
+  }, [item.offers, selectedStoreId]);
+
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -67,7 +76,11 @@ export function ProductModal({
     };
   }, [onClose]);
 
-  return <ProductModalContext.Provider value={{ item, onClose }}>{children}</ProductModalContext.Provider>;
+  return (
+    <ProductModalContext.Provider value={{ item, onClose, selectedStoreId, setSelectedStoreId, activeOffer }}>
+      {children}
+    </ProductModalContext.Provider>
+  );
 }
 
 ProductModal.Window = function Window({ children }: { children: ReactNode }) {
@@ -135,7 +148,7 @@ ProductModal.RightColumn = function RightColumn({ children }: { children: ReactN
 };
 
 ProductModal.ImageGallery = function ImageGallery() {
-  const { item } = useProductModal();
+  const { item, activeOffer } = useProductModal();
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.id));
   const [isMounted, setIsMounted] = useState(false);
@@ -143,21 +156,20 @@ ProductModal.ImageGallery = function ImageGallery() {
   useEffect(() => setIsMounted(true), []);
 
   const favourite = isMounted ? isFavoriteGlobal : false;
-  const bestOffer = getBestOffer(item);
   const currency = item.currency ?? "UAH";
 
   return (
     <div className="relative overflow-hidden rounded-[1.7rem] border border-glass/10 bg-gradient-to-b from-bg-elevated to-bg-darker p-5 shadow-[0_20px_36px_rgba(0,0,0,0.15)]">
       <div className="absolute left-5 top-5 z-10 flex flex-wrap items-center gap-2">
-        {bestOffer && (
+        {activeOffer && (
           <span className="rounded-full bg-bg-deepest/90 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-text-primary">
-            {bestOffer.store_name}
-            {bestOffer.store_city ? ` · ${bestOffer.store_city}` : ""}
+            {activeOffer.store_name}
+            {activeOffer.store_city ? ` · ${activeOffer.store_city}` : ""}
           </span>
         )}
-        {bestOffer && bestOffer.pricing.discount_percent > 0 && (
+        {activeOffer && activeOffer.pricing.discount_percent > 0 && (
           <span className="rounded-full bg-brand-orange px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
-            -{bestOffer.pricing.discount_percent}%
+            -{activeOffer.pricing.discount_percent}%
           </span>
         )}
         {item.availabilityStatus === "in_stock" && (
@@ -205,12 +217,12 @@ ProductModal.ImageGallery = function ImageGallery() {
 };
 
 ProductModal.Reviews = function Reviews() {
-  const { item } = useProductModal();
+  const { item, activeOffer } = useProductModal();
   const [open, setOpen] = useState(true);
-  const bestOffer = getBestOffer(item);
+  
   const discountText =
-    (bestOffer?.pricing.discount_percent ?? 0) > 0
-      ? `-${bestOffer!.pricing.discount_percent}% discount`
+    (activeOffer?.pricing.discount_percent ?? 0) > 0
+      ? `-${activeOffer!.pricing.discount_percent}% discount`
       : "price";
 
   const reviewCards = useMemo(
@@ -262,14 +274,14 @@ ProductModal.Reviews = function Reviews() {
 };
 
 ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
-  const { item } = useProductModal();
-  const bestOffer = getBestOffer(item);
+  const { item, activeOffer } = useProductModal();
   const currency = item.currency ?? "UAH";
   const displayCategory = item.category ?? categoryTitle;
 
-  const currentPrice = bestOffer?.pricing.current_price ?? item.pricingSummary?.bestPrice;
-  const regularPrice = bestOffer?.pricing.regular_price ?? item.pricingSummary?.oldPrice;
+  const currentPrice = activeOffer?.pricing.current_price ?? item.pricingSummary?.bestPrice;
+  const regularPrice = activeOffer?.pricing.regular_price ?? item.pricingSummary?.oldPrice;
   const hasDiscount = regularPrice != null && currentPrice != null && regularPrice > currentPrice;
+  const discountPercent = activeOffer?.pricing.discount_percent ?? item.pricingSummary?.discountPercent ?? 0;
 
   return (
     <div>
@@ -302,9 +314,9 @@ ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string
             {formatCurrency(regularPrice, currency)}
           </span>
         )}
-        {(item.pricingSummary?.discountPercent ?? 0) > 0 && (
+        {discountPercent > 0 && (
           <span className="mb-1 rounded-full bg-brand-orange/10 px-3 py-1 text-sm font-bold text-brand-orange">
-            -{item.pricingSummary!.discountPercent}%
+            -{discountPercent}%
           </span>
         )}
       </div>
@@ -313,17 +325,15 @@ ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string
 };
 
 ProductModal.Actions = function Actions({ categoryTitle: _categoryTitle }: { categoryTitle?: string }) {
-  const { item } = useProductModal();
+  const { item, activeOffer, selectedStoreId, setSelectedStoreId } = useProductModal();
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
-  const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
 
   const currency = item.currency ?? "UAH";
   const sortedOffers = useMemo(
     () => [...(item.offers ?? [])].sort((a, b) => a.pricing.current_price - b.pricing.current_price),
     [item.offers],
   );
-  const activeOffer = sortedOffers.find((offer) => offer.store_id === selectedStoreId) ?? sortedOffers[0] ?? null;
 
   const parsedQuantity = useMemo(() => {
     const q = (item.quantity || "1 pcs").toLowerCase();
@@ -340,7 +350,11 @@ ProductModal.Actions = function Actions({ categoryTitle: _categoryTitle }: { cat
   const handleAddToCart = () => {
     const qty = parsedQuantity.isWeight ? Math.max(1, Math.floor(amount / 100)) : amount;
     for (let i = 0; i < qty; i += 1) {
-      addItem({ ...item, selectedStoreId: activeOffer?.store_id } as any);
+      addItem({ 
+        ...item, 
+        selectedStoreId: activeOffer?.store_id, 
+        store_name: activeOffer?.store_name 
+      } as any);
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -447,7 +461,7 @@ ProductModal.Actions = function Actions({ categoryTitle: _categoryTitle }: { cat
 };
 
 ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: string }) {
-  const { item } = useProductModal();
+  const { item, activeOffer } = useProductModal();
   const [expanded, setExpanded] = useState({
     description: true,
     stores: false,
@@ -458,7 +472,6 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
   const toggle = (key: keyof typeof expanded) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const currency = item.currency ?? "UAH";
-  const bestOffer = getBestOffer(item);
   const displayCategory = item.category ?? categoryTitle;
   const descriptionSections = getDescriptionSections(item);
 
@@ -482,12 +495,12 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
             <QuickFact label="Category" value={displayCategory} />
             <QuickFact label="Brand" value={item.brand ?? "-"} />
             <QuickFact label="Pack" value={item.quantity || "N/A"} />
-            <QuickFact label="Price" value={formatCurrency(bestOffer?.pricing.current_price, currency)} />
+            <QuickFact label="Price" value={formatCurrency(activeOffer?.pricing.current_price, currency)} />
             <QuickFact
               label="Previous price"
               value={
-                bestOffer && bestOffer.pricing.regular_price > bestOffer.pricing.current_price
-                  ? formatCurrency(bestOffer.pricing.regular_price, currency)
+                activeOffer && activeOffer.pricing.regular_price > activeOffer.pricing.current_price
+                  ? formatCurrency(activeOffer.pricing.regular_price, currency)
                   : "-"
               }
             />
