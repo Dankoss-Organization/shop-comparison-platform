@@ -6,10 +6,9 @@
 "use client";
 
 import { seasonalRecipes, peopleLiked, type DealCard } from "@/Data/home_data";
-import { getProductsApi, getRecipesApi } from "@/Lib/api/index";
+import { getProductsApi } from "@/Lib/api/index";
 import { mapCatalogItemToDealCard, mapMeilisearchToDealCard } from "@/Lib/api/products_api.adapters";
 import { searchApi } from "@/Lib/api/search_api.client";
-import type { RecipeListItem } from "@/Lib/api/recipes_api.contracts";
 
 export interface CatalogCategory {
   id: string;
@@ -42,78 +41,15 @@ function truncate(str: string | undefined, length = 80) {
   return str.substring(0, length) + "...";
 }
 
-function mapRecipeToDealCard(recipe: RecipeListItem): DealCard {
-  return {
-    id: recipe.id,
-    internalId: recipe.id,
-    title: recipe.name,
-    rawTitle: recipe.name,
-    category: recipe.categoryId,
-    brand: undefined,
-    image: recipe.imageUrl || "/fallback-recipe.jpg",
-    description: `${recipe.difficulty} • ${recipe.prepTime} min`,
-    quantity: `${recipe.servings} servings`,
-    rating: String(recipe.avgRating ?? 0),
-    nutrition: {
-      calories: "N/A",
-      carbs: "N/A",
-      fats: "N/A",
-      protein: "N/A",
-      fiber: "N/A", 
-      sugar: "N/A", 
-    },
-    offers: [
-      {
-        store_id: "recipe",
-        store_name: "Recipes",
-        is_in_stock: true,
-        pricing: { current_price: 0, regular_price: 0, discount_percent: 0 },
-      },
-    ],
-    pricingSummary: { bestPrice: 0, oldPrice: 0, discountPercent: 0 },
-    currency: "UAH",
-    availabilityStatus: "in_stock",
-    notes: [],
-  } as DealCard;
-}
-
 export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
   recipes: {
     categories: [
       { id: "all",              label: "All Recipes",       slug: "/catalog?tab=recipes&category=all" },
-      { id: "seasonal-recipes", label: "Seasonal Recipes",  slug: "/catalog?tab=recipes&category=seasonal-recipes" },
-      { id: "people-liked",     label: "People Also Liked", slug: "/catalog?tab=recipes&category=people-liked" },
+      { id: "seasonal-recipes", label: "Seasonal Recipes", slug: "/catalog?tab=recipes&category=seasonal-recipes" },
+      { id: "people-liked",     label: "People Also Liked",slug: "/catalog?tab=recipes&category=people-liked" },
     ],
 
     async fetchData(params) {
-      try {
-        const response = await getRecipesApi().getRecipes({
-          page: params.page,
-          limit: params.limit,
-          search: params.search?.trim() || undefined,
-          categoryId: params.categoryId === "all" ? undefined : params.categoryId,
-        });
-
-        if (response && response.items && response.items.length > 0) {
-          const items = response.items.map((recipe: RecipeListItem, i: number) => {
-            const dealCard = mapRecipeToDealCard(recipe);
-            return {
-              ...dealCard,
-              _cat: params.categoryId ?? "all",
-              _uniqueId: `${recipe.id}-r${params.page}-${i}`,
-            };
-          });
-
-          return {
-            items,
-            total: response.total,
-            totalPages: response.totalPages,
-          };
-        }
-      } catch (error) {
-        console.warn("[CatalogStrategy] Recipe API unavailable or failed, falling back to mock data.", error);
-      }
-
       const source =
         params.categoryId === "seasonal-recipes" ? seasonalRecipes
         : params.categoryId === "people-liked"   ? peopleLiked
@@ -142,7 +78,7 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
   products: {
     categories: [
       { id: "all",      label: "All Products", slug: "/catalog?tab=products&category=all" },
-      { id: "in-stock", label: "In Stock Now", slug: "/catalog?tab=products&category=in-stock" },
+      { id: "in-stock", label: "In Stock Now",  slug: "/catalog?tab=products&category=in-stock" },
     ],
 
     async fetchData(params) {

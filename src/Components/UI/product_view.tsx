@@ -21,7 +21,8 @@ function getDescriptionSections(item: DealCard) {
   return item.descriptionSections?.length ? item.descriptionSections : [item.description];
 }
 
-export function ImageGallery({ item }: { item: DealCard }) {
+export function ImageGallery({ item, activeOffer }: { item: DealCard; activeOffer?: StoreOffer | null }) {
+  const displayOffer = activeOffer ?? getBestOffer(item.offers);
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const isFavoriteGlobal = useFavoritesStore((state) => state.isFavorite(item.id));
   const [isMounted, setIsMounted] = useState(false);
@@ -35,15 +36,15 @@ export function ImageGallery({ item }: { item: DealCard }) {
   return (
     <div className="relative flex-1 overflow-hidden rounded-[1.5rem] border border-glass/10 bg-gradient-to-b from-bg-elevated to-bg-darker p-4 shadow-[0_15px_30px_rgba(0,0,0,0.4)]">
       <div className="absolute left-5 top-5 z-10 flex flex-wrap items-center gap-2">
-        {bestOffer && (
+        {displayOffer && (
           <span className="rounded-full bg-bg-deepest/90 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-text-primary">
-            {bestOffer.store_name}
-            {bestOffer.store_city ? ` · ${bestOffer.store_city}` : ""}
+            {displayOffer.store_name}
+            {displayOffer.store_city ? ` · ${displayOffer.store_city}` : ""}
           </span>
         )}
-        {bestOffer && bestOffer.pricing.discount_percent > 0 && (
+        {displayOffer && displayOffer.pricing.discount_percent > 0 && (
           <span className="rounded-full bg-brand-orange px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-            -{bestOffer.pricing.discount_percent}%
+            -{displayOffer.pricing.discount_percent}%
           </span>
         )}
         {item.availabilityStatus === "in_stock" && (
@@ -149,14 +150,15 @@ export function Reviews({ item }: { item: DealCard }) {
   );
 }
 
-export function ProductHeader({ item, categoryTitle }: { item: DealCard; categoryTitle: string }) {
-  const bestOffer = getBestOffer(item.offers);
-  const currency = item.currency ?? "UAH";
-  const displayCategory = item.category ?? item.brand ?? categoryTitle;
-
-  const currentPrice = bestOffer?.pricing.current_price ?? item.pricingSummary?.bestPrice;
-  const regularPrice = bestOffer?.pricing.regular_price ?? item.pricingSummary?.oldPrice;
-  const hasDiscount = regularPrice != null && currentPrice != null && regularPrice > currentPrice;
+export function ProductHeader({ item, categoryTitle, activeOffer }: { 
+    item: DealCard; categoryTitle: string; activeOffer?: StoreOffer | null 
+  }) {
+    const resolvedOffer = activeOffer ?? getBestOffer(item.offers);
+    const currency = item.currency ?? "UAH";
+    const displayCategory = item.category ?? item.brand ?? categoryTitle;
+    const currentPrice = resolvedOffer?.pricing.current_price ?? item.pricingSummary?.bestPrice;
+    const regularPrice = resolvedOffer?.pricing.regular_price ?? item.pricingSummary?.oldPrice;
+    const hasDiscount = regularPrice != null && currentPrice != null && regularPrice > currentPrice;
 
   return (
     <div>
@@ -204,7 +206,9 @@ export function ProductHeader({ item, categoryTitle }: { item: DealCard; categor
   );
 }
 
-export function ProductActions({ item }: { item: DealCard; categoryTitle: string }) {
+export function ProductActions({ item, onOfferChange }: { 
+    item: DealCard; categoryTitle: string; onOfferChange?: (offer: StoreOffer | null) => void 
+  }) {
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
   const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
@@ -243,6 +247,10 @@ export function ProductActions({ item }: { item: DealCard; categoryTitle: string
       ? `${(amount / 1000).toFixed(2)} kg`
       : `${amount} g`
     : `${amount} ${amount === 1 ? "pack" : "packs"}`;
+
+  useEffect(() => {
+    onOfferChange?.(activeOffer ?? null);
+  }, [activeOffer?.store_id]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -339,7 +347,9 @@ export function ProductActions({ item }: { item: DealCard; categoryTitle: string
   );
 }
 
-export function ProductDetails({ item, categoryTitle }: { item: DealCard; categoryTitle: string }) {
+export function ProductDetails({ item, categoryTitle, activeOffer }: { 
+    item: DealCard; categoryTitle: string; activeOffer?: StoreOffer | null 
+  }) {
   const [expanded, setExpanded] = useState({
     description: true,
     stores: true,
@@ -350,7 +360,7 @@ export function ProductDetails({ item, categoryTitle }: { item: DealCard; catego
   const toggle = (key: keyof typeof expanded) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const currency = item.currency ?? "UAH";
-  const bestOffer = getBestOffer(item.offers);
+  const bestOffer = activeOffer ?? getBestOffer(item.offers);
   const displayCategory = item.category ?? categoryTitle;
 
   const hasNutrition =

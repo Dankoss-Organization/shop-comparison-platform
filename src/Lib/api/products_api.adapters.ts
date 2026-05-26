@@ -392,22 +392,26 @@ export function mapRelatedProductsToDealCards(response: RelatedProductsResponse)
       image: item.media,
       description: "",
       quantity: extractQuantitySegment(item.canonicalName) || "1 pcs",
-      offers: [{
-        store_id: `${item.id}-related`,
-        store_name: item.brand || "Suggested",
-        is_in_stock: true,
-        pricing: {
-          current_price: item.bestPrice ?? 0,
-          regular_price: item.bestPrice ?? 0,
-          discount_percent: 0,
+      offers: [
+        {
+          store_id: `${item.id}-related`,
+          store_name: item.offersCount 
+            ? `${item.offersCount} store${item.offersCount === 1 ? "" : "s"}` 
+            : "Suggested",
+          is_in_stock: true,
+          pricing: {
+            current_price: item.bestPrice ?? 0,
+            regular_price: item.bestPrice ?? 0,
+            discount_percent: 0,
+          },
         },
-      }],
+      ],
       pricingSummary: {
         bestPrice: item.bestPrice,
         oldPrice: item.bestPrice,
         discountPercent: null,
       },
-      notes: item.offersCount ? [`${item.offersCount} store${item.offersCount === 1 ? "" : "s"} available`] : [],
+      notes: [], 
     }),
   );
 }
