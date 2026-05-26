@@ -151,31 +151,31 @@ export default function ProfileDropdown({ isOpen, onClose, isAuthenticated = fal
         </div>
         <span className="text-[15px] font-bold text-text-main dark:text-text-primary leading-tight mt-1">Welcome to DANKOSS</span>
         <div className="flex w-full flex-col gap-2 mt-2">
-          <motion.button 
-            onClick={(e) => {
-              e.preventDefault();
-              onClose();
-              setTimeout(() => { if (onLogin) onLogin(); }, 300);
-            }} 
-            animate={highlightLogin ? { 
-              y: [0, -8, 0, -6, 0],
-              scale: [1, 1.03, 1, 1.02, 1],
-              boxShadow: [
-                "0 0 15px rgb(var(--brand-orange)/0.4)", 
-                "0 0 30px rgb(var(--brand-orange)/0.95)", 
-                "0 0 15px rgb(var(--brand-orange)/0.4)"
-              ] 
-            } : {}}
-            transition={{ duration: 0.95, ease: "easeInOut" }}
-            className={`flex h-[38px] w-full items-center justify-center rounded-xl bg-brand-orange text-[13px] font-bold text-white shadow-[0_0_15px_rgb(var(--brand-orange)/0.4)] transition-all hover:bg-brand-orangeDark hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.6)] active:scale-95 ${
-              highlightLogin ? 'ring-[3px] ring-text-main/20 dark:ring-text-primary/45 ring-offset-2 ring-offset-bg-elevated' : ''
-            }`}
-          >
+          <Link 
+              href="/login" 
+              onClick={() => onClose()} 
+              className="block w-full"
+            >
+              <motion.div
+                animate={highlightLogin ? { 
+                  y: [0, -8, 0, -6, 0],
+                  scale: [1, 1.03, 1, 1.02, 1],
+                  boxShadow: [
+                    "0 0 15px rgb(var(--brand-orange)/0.4)", 
+                    "0 0 30px rgb(var(--brand-orange)/0.95)", 
+                    "0 0 15px rgb(var(--brand-orange)/0.4)"
+                  ] 
+                } : {}}
+                transition={{ duration: 0.95, ease: "easeInOut" }}
+                className={`flex h-[38px] w-full items-center justify-center rounded-xl bg-brand-orange text-[13px] font-bold text-white shadow-[0_0_15px_rgb(var(--brand-orange)/0.4)] transition-all hover:bg-brand-orangeDark hover:shadow-[0_0_20px_rgb(var(--brand-orange)/0.6)] active:scale-95 ${
+                  highlightLogin ? 'ring-[3px] ring-text-main/20 dark:ring-text-primary/45 ring-offset-2 ring-offset-bg-elevated' : ''
+                }`}
+              >
             Sign In / Register
-          </motion.button>
-        </div>
+          </motion.div>
+        </Link>
       </div>
-
+      </div>
       <div className="flex flex-col p-2.5 gap-1 relative">
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-text-main/5 dark:bg-white/10" />
         <span className="px-3 pt-1 pb-1 text-[11px] font-bold uppercase tracking-[1px] text-text-muted dark:text-text-primary/40">Registered User Features</span>

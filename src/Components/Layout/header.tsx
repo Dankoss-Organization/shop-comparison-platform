@@ -144,7 +144,6 @@ export function HeaderContent() {
     <header className="sticky top-0 z-[90] w-full border-b border-glass/10 bg-bg-surface font-sans shadow-sm dark:shadow-lg">
       <div className="relative flex w-full flex-wrap items-center justify-between px-4 py-[8px] md:px-8 xl:px-[40px] gap-y-3">
         
-        {/* Left Side: Catalog Trigger + Logo */}
         <div className="flex items-center gap-4 sm:gap-8 xl:gap-[60px]">
           <div className="flex items-center">
             <button
@@ -166,11 +165,9 @@ export function HeaderContent() {
           <BrandLogo />
         </div>
 
-        {/* Right Side: Navigation, Search, User Icons */}
         <div className="flex flex-1 items-center justify-end">
           
           <div className="hidden lg:flex items-center gap-0">
-            {/* Desktop Search Input */}
             <div className="relative z-10 flex items-center group/search mr-0">
               <input
                 ref={searchInputRef}
@@ -219,13 +216,11 @@ export function HeaderContent() {
                 </div>
               </div>
 
-              {/* Desktop Search Dropdown UI */}
               {renderSearchDropdown()}
             </div>
 
             <div className="ml-[-2px]"><Connection /></div>
 
-            {/* Favorites Widget */}
             <div className="relative">
               {isAuthenticated ? (
                 <Link href="/favorites" className="outline-none group/fav">
@@ -289,7 +284,6 @@ export function HeaderContent() {
 
             <Connection />
 
-            {/* Location */}
             <Link href="/locations">
               <ChainIcon>
                 <div className="w-[22px] h-[22px] bg-text-primary opacity-70 transition-all group-hover:bg-white group-hover:opacity-100 [mask-image:url(/location.svg)] [-webkit-mask-image:url(/location.svg)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]" />
@@ -298,7 +292,6 @@ export function HeaderContent() {
 
             <Connection />
 
-            {/* Language Selector */}
             <div className="relative z-50 flex items-center justify-center h-[42px] w-[42px]">
               {isLangOpen && (
                 <div className="fixed inset-0 z-40" onClick={() => setIsLangOpen(false)} />
@@ -349,7 +342,6 @@ export function HeaderContent() {
           </div>
 
           <div className="flex items-center gap-0 lg:gap-1 lg:pl-0 relative z-50">
-            {/* User Profile */}
             <div className="relative flex items-center justify-center">
               <div
                 id="profile-trigger"
@@ -378,7 +370,6 @@ export function HeaderContent() {
 
             <div className="hidden lg:block w-px h-5 bg-white/10 mx-2"></div>
             
-            {/* Cart */}
             <div className="flex items-center justify-center shrink-0 min-w-fit">
               <CartHeaderWidget />
             </div>
@@ -386,7 +377,6 @@ export function HeaderContent() {
 
         </div>
 
-        {/* Mobile Search Input */}
         <div className="w-full mt-2 lg:hidden order-last">
           <div className="relative flex w-full items-center group/search">
             <input
@@ -434,7 +424,6 @@ export function HeaderContent() {
               </div>
             </div>
 
-            {/* Mobile Search Dropdown UI */}
             {renderSearchDropdown()}
           </div>
         </div>

@@ -17,19 +17,30 @@ export const metadata: Metadata = {
 };
 
 /**
- * @description The highest-level wrapper for the Next.js application, enforcing the HTML language attribute and importing global styles.
- * * @param {Object} props - The layout properties.
+ * @description The highest-level wrapper for the Next.js application.
+ * @param {Object} props - The layout properties.
  * @param {React.ReactNode} props.children - The inner pages and components routed by Next.js.
+ * @param {React.ReactNode} props.authModal - The intercepted route slot for the authentication modal.
  * @returns {JSX.Element} The foundational `<html>` and `<body>` tags.
  */
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ 
+  children,
+  authModal 
+}: { 
+  children: React.ReactNode;
+  authModal: React.ReactNode; 
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <CartDrawer />
+          
           {children}
+          
+          {authModal}
+          
         </ThemeProvider>
       </body>
     </html>
