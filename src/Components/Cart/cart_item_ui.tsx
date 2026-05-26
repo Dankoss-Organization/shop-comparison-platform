@@ -25,8 +25,8 @@ export function CartItemUI({
   onIncrease: () => void; 
   onDecrease: () => void; 
   onRemove: () => void;
-  onToggleLock: () => void;
-  onStoreChange: (storeId: string) => void;
+  onToggleLock?: () => void;
+  onStoreChange?: (storeId: string) => void;
   onClick: () => void;
 }) {
   
@@ -61,7 +61,7 @@ export function CartItemUI({
 
                 <select 
                   value={activeOffer?.store_id || ""}
-                  onChange={(e) => onStoreChange(e.target.value)}
+                  onChange={(e) => onStoreChange?.(e.target.value)}
                   className="appearance-none bg-transparent text-[11px] font-bold uppercase tracking-wider text-text-main dark:text-text-primary outline-none cursor-pointer pr-5 w-full"
                 >
                   {offers.map((offer: any) => (
@@ -75,7 +75,7 @@ export function CartItemUI({
               </div>
 
               <button 
-                onClick={(e) => { e.stopPropagation(); onToggleLock(); }}
+                onClick={(e) => { e.stopPropagation(); onToggleLock?.(); }}
                 className={`p-1.5 rounded-lg flex items-center transition-all ${item.isLocked ? 'text-brand-orange bg-brand-orange/10 shadow-[0_0_10px_rgb(var(--brand-orange)/0.2)]' : 'text-text-muted dark:text-text-primary/30 hover:bg-black/5 dark:hover:bg-white/5'}`}
                 title={item.isLocked ? "Store locked" : "Allow algorithm to change store"}
               >
