@@ -46,6 +46,14 @@ const FALLBACK_NUTRITION: NutritionFacts = {
   sugar: "N/A",
 };
 
+const STORE_NAMES: Record<string, string> = {
+  s_silpo: "Сільпо",
+  s_novus: "Novus",
+  s_atb: "ATB",
+  s_fora: "Fora",
+  s_varus: "Varus",
+};
+
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80";
 
 function parseMediaUrl(media: string | null | undefined): string {
@@ -356,8 +364,9 @@ export function mapCatalogItemToDealCard(item: any): DealCard {
 
   const pseudoOffer: StoreOffer = {
     store_id: firstOffer?.storeId ?? `${item.id}-best`,
-    store_name: firstOffer?.storeId ?? "Найкраща ціна",
+    store_name: STORE_NAMES[firstOffer?.storeId] ?? firstOffer?.storeId ?? "Найкраща ціна",
     is_in_stock: true,
+    offerId: firstOffer?.id,
     pricing: {
       current_price: bestPrice ?? 0,
       regular_price: oldPrice ?? bestPrice ?? 0,

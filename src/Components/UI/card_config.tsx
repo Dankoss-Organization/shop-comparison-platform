@@ -1,8 +1,3 @@
-/**
- * @file card_config.ts
- * @description Centralized design tokens for flexible product card scales.
- */
-
 export interface CardSizeTokens {
   wrapper: string;
   image: string;
@@ -19,11 +14,11 @@ export interface CardSizeTokens {
 
 export const cardSizes: Record<"default" | "compact" | "recent", CardSizeTokens> = {
   default: {
-    wrapper: "w-full min-w-[230px] sm:min-w-[250px] md:min-w-[260px] lg:min-w-[320px] rounded-[1.5rem]",
-    image: "h-[160px] sm:h-[170px] md:h-[175px] lg:h-[220px]",
+    wrapper: "w-full rounded-[1.5rem]",
+    image: "h-[130px] sm:h-[150px] lg:h-[175px]",
     container: "p-3 md:p-4 lg:p-5",
     title: "text-[1rem] md:text-[1.05rem] lg:text-[1.3rem] tracking-tight",
-    description: "text-xs leading-5 min-h-[60px]",
+    description: "text-xs leading-5",
     meta: "text-xs",
     price: "text-[1.4rem] md:text-[1.5rem] lg:text-[2rem]",
     cta: "px-4 py-2 text-xs tracking-wide",
@@ -32,11 +27,11 @@ export const cardSizes: Record<"default" | "compact" | "recent", CardSizeTokens>
     iconSize: 16,
   },
   recent: {
-    wrapper: "w-full min-w-[200px] sm:min-w-[220px] md:min-w-[230px] lg:min-w-[290px] rounded-[1.35rem]",
-    image: "h-[140px] sm:h-[150px] md:h-[155px] lg:h-[185px]",
+    wrapper: "w-full min-w-[200px] sm:min-w-[220px] lg:min-w-[260px] rounded-[1.35rem]",
+    image: "h-[140px] sm:h-[155px] lg:h-[185px]",
     container: "p-3 md:p-3.5 lg:p-4",
     title: "text-[0.95rem] md:text-[1rem] lg:text-[1.2rem] tracking-tight",
-    description: "text-xs leading-5 min-h-[52px]",
+    description: "text-xs leading-5",
     meta: "text-xs",
     price: "text-[1.3rem] md:text-[1.4rem] lg:text-[1.8rem]",
     cta: "px-3 py-1.5 text-xs",
@@ -45,11 +40,11 @@ export const cardSizes: Record<"default" | "compact" | "recent", CardSizeTokens>
     iconSize: 16,
   },
   compact: {
-    wrapper: "w-full min-w-[180px] sm:min-w-[195px] md:min-w-[205px] lg:min-w-[260px] rounded-[1.2rem]",
-    image: "h-[120px] sm:h-[128px] md:h-[132px] lg:h-[150px]",
+    wrapper: "w-full min-w-[160px] sm:min-w-[180px] lg:min-w-[220px] rounded-[1.2rem]",
+    image: "h-[120px] sm:h-[132px] lg:h-[150px]",
     container: "p-2.5 md:p-3 lg:p-4",
     title: "text-[0.9rem] md:text-[0.95rem] lg:text-[1.1rem] tracking-tight",
-    description: "text-[11px] leading-4 min-h-[44px]",
+    description: "text-[11px] leading-4",
     meta: "text-[11px]",
     price: "text-[1.2rem] md:text-[1.25rem] lg:text-[1.6rem]",
     cta: "px-3 py-1.5 text-[11px]",

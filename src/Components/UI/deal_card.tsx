@@ -276,7 +276,7 @@ export function BaseDealCard({
       </div>
 
       <div className={cn("relative z-[1] -mt-px flex flex-1 flex-col rounded-b-[inherit] bg-bg-elevated", size.container)}>
-        <div className={cn("w-full flex-shrink-0 overflow-hidden", compact ? "h-[48px]" : "h-[90px] md:h-[120px]")}>
+        <div className={cn("w-full flex-shrink-0 overflow-hidden", compact ? "h-[48px]" : "h-[72px] md:h-[90px]")}>
           <h3 className={cn(size.title, "line-clamp-2 font-black text-text-main leading-tight")}>
             {item.title}
           </h3>
