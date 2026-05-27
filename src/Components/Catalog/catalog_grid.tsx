@@ -45,7 +45,7 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
   }
 
   return (
-    <div className="grid w-full grid-cols-1 place-items-center gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8 2xl:gap-9">
+    <div className="grid w-full grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8 2xl:gap-9">
       {items.map((item, idx) => (
         <motion.div
           key={item._uniqueId ?? `${item.title}-${idx}`}
@@ -58,7 +58,7 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
           <DealCardFactory
             item={item}
             context="grid"
-            className="flex h-full w-full max-w-[320px] flex-col items-stretch justify-between shadow-xl"
+            className="flex h-full w-full flex-col items-stretch justify-between shadow-xl"
             onClick={() => router.push(`/product/${encodeURIComponent(item.id)}`)}
           />
         </motion.div>

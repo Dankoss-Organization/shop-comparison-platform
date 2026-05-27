@@ -19,6 +19,7 @@ export type StoreOffer = {
   store_city?: string;
   store_address?: string;
   is_in_stock: boolean;
+  offerId?: string;
   pricing: {
     current_price: number;
     regular_price: number;

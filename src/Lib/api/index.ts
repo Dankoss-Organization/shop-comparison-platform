@@ -4,16 +4,38 @@
  */
 
 import { ProductsApiClient } from "@/Lib/api/products_api.client";
+import { RecipesApiClient } from "@/Lib/api/recipes_api.client";
 
+/**
+ * Resolves the correct base URL depending on the environment.
+ */
 export function getApiBaseUrl(): string {
   if (typeof window === "undefined") {
-    return process.env.API_INTERNAL_BASE_URL?.trim() || "http://localhost:3000";
+    return (
+      process.env.API_INTERNAL_BASE_URL?.trim() ||
+      "http://localhost:3000"
+    );
   }
-  return "";
+  return process.env.NEXT_PUBLIC_API_URL?.trim() || "";
 }
 
-export function getProductsApi() {
-  return new ProductsApiClient({ baseUrl: getApiBaseUrl() });
+/**
+ * Factory for Products API client.
+ */
+export function getProductsApi(): ProductsApiClient {
+  return new ProductsApiClient({
+    baseUrl: getApiBaseUrl(),
+  });
+}
+
+/**
+ * Factory for Recipes API client.
+ */
+export function getRecipesApi(): RecipesApiClient {
+  return new RecipesApiClient({
+    baseUrl: getApiBaseUrl(),
+  });
 }
 
 export * from "@/Lib/api/products_api.shared";
+export * from "@/Lib/api/recipes_api.shared";

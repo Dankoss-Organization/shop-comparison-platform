@@ -18,7 +18,7 @@ import {
   ProductHeader,
   Reviews,
 } from "@/Components/UI/product_view";
-import type { DealCard } from "@/Data/home_data";
+import type { DealCard, StoreOffer } from "@/Data/home_data";
 import {
   mapProductCardToDealCard,
   mapRelatedProductsToDealCards,
@@ -54,6 +54,7 @@ export default function ProductPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [activeOffer, setActiveOffer] = useState<StoreOffer | null>(null);
 
   const setOpen = useCartStore((state: CartState) => state.setOpen);
 
@@ -232,14 +233,14 @@ export default function ProductPage() {
 
         <div className="mb-16 flex flex-col gap-8 lg:flex-row lg:gap-10">
           <div className="flex w-full flex-col gap-4 lg:w-[45%] xl:w-1/2">
-            <ImageGallery item={item} />
+            <ImageGallery item={item} activeOffer={activeOffer} />
             <Reviews item={item} />
           </div>
 
           <div className="flex w-full flex-col gap-5 lg:w-[55%] xl:w-1/2">
-            <ProductHeader item={item} categoryTitle={categoryTitle} />
-            <ProductActions item={item} categoryTitle={categoryTitle} />
-            <ProductDetails item={item} categoryTitle={categoryTitle} />
+            <ProductHeader item={item} categoryTitle={categoryTitle} activeOffer={activeOffer} />
+            <ProductActions item={item} categoryTitle={categoryTitle} onOfferChange={setActiveOffer} />
+            <ProductDetails item={item} categoryTitle={categoryTitle} activeOffer={activeOffer} />
           </div>
         </div>
 
