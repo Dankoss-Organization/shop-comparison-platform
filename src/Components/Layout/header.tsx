@@ -19,17 +19,17 @@ import { ChainIcon, Connection } from "@/Components/UI/icon_ui";
 import CatalogDropdown from "@/Components/Layout/Header/catalog_dropdown";
 import { CartHeaderWidget } from "@/Components/Layout/Header/cart_header_widget";
 import ProfileDropdown from "@/Components/Layout/Header/profile_dropdown";
-import { categories } from "@/Data/catalog_data";
+import type { Category } from "@/Data/catalog_data";
 
-export default function Header() {
+export default function Header({ categories = [] }: { categories?: Category[] }) {
   return (
     <CatalogProvider>
-      <HeaderContent />
+      <HeaderContent categories={categories} />
     </CatalogProvider>
   );
 }
 
-export function HeaderContent() {
+export function HeaderContent({ categories = [] }: { categories?: Category[] }) {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchRef = useRef<HTMLInputElement>(null);

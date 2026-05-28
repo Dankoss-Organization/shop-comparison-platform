@@ -263,7 +263,7 @@ export default function ProductPage() {
   return (
     <div className="flex min-h-screen flex-col bg-bg-main text-text-main transition-colors duration-300">
       <div className="sticky top-0 z-50 w-full border-b border-text-main/5 bg-bg-elevated/95 backdrop-blur-md transition-colors duration-300 dark:border-text-primary/5">
-        <Header />
+        <Header categories={[]} />
       </div>
 
       <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-8 md:px-8 lg:px-12 2xl:px-[60px]">

@@ -328,7 +328,7 @@ export function mapCatalogItemToDealCard(item: any): DealCard {
     internalId: item.id,
     rawTitle: canonicalName,
     brand: item.brand,
-    category: item.categoryId,
+    category: item.category?.name ?? item.category ?? item.categoryId,
     image: item.media,
     description: item.description,
     quantity: extractQuantitySegment(canonicalName) || "1 pcs",
@@ -353,9 +353,9 @@ export function mapRelatedProductsToDealCards(response: RelatedProductsResponse)
       offers: [
         {
           store_id: `${item.id}-related`,
-          store_name: item.offersCount 
+          store_name: item.storeName ?? (item.offersCount 
             ? `${item.offersCount} store${item.offersCount === 1 ? "" : "s"}` 
-            : "Suggested",
+            : "Suggested"),
           is_in_stock: true,
           pricing: {
             current_price: item.bestPrice ?? 0,

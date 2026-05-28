@@ -53,7 +53,7 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
           initial={{ opacity: 0, y: 16, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="flex h-full w-full min-w-0 justify-center"
+          className="flex h-full w-full min-w-0 justify-center min-h-[400px]"
         >
           <DealCardFactory
             item={item}

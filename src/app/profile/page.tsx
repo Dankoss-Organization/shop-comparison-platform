@@ -82,9 +82,9 @@ export default function OverviewPage() {
                   <ProductModal.Reviews />
                 </ProductModal.LeftColumn>
                 <ProductModal.RightColumn>
-                  <ProductModal.Header categoryTitle="Historical Item" />
-                  <ProductModal.Actions categoryTitle="Historical Item" />
-                  <ProductModal.Details categoryTitle="Historical Item" />
+                  <ProductModal.Header categoryTitle={selectedProduct.category ?? "Unknown"} />
+                  <ProductModal.Actions categoryTitle={selectedProduct.category ?? "Unknown"} />
+                  <ProductModal.Details categoryTitle={selectedProduct.category ?? "Unknown"} />
                 </ProductModal.RightColumn>
               </ProductModal.Window>
             </ProductModal>

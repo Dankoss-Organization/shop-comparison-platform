@@ -195,9 +195,9 @@ export function ProductHeader({ item, categoryTitle, activeOffer }: {
             {formatCurrency(regularPrice, currency)}
           </span>
         )}
-        {item.pricingSummary?.discountPercent != null && item.pricingSummary.discountPercent > 0 && (
+        {resolvedOffer?.pricing.discount_percent != null && resolvedOffer.pricing.discount_percent > 0 && (
           <span className="mb-1.5 rounded-full bg-brand-orange/10 px-3 py-1 text-sm font-bold text-brand-orange">
-            -{item.pricingSummary.discountPercent}%
+            -{resolvedOffer.pricing.discount_percent}%
           </span>
         )}
       </div>

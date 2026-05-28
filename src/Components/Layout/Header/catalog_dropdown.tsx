@@ -280,7 +280,7 @@ export default function CatalogDropdown({ categories }: Props) {
         `}
       >
         <div className={`absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-orange to-transparent transition-all duration-700 ${isOpen ? "opacity-60 scale-x-100" : "opacity-0 scale-x-0"}`} />
-        <div className={`hidden lg:grid grid-cols-3 gap-5 h-[380px] px-8 py-5 transition-all duration-500 delay-150 ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+        <div className={`hidden lg:grid grid-cols-3 gap-5 h-[900px] px-8 py-5 transition-all duration-500 delay-150 ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
           <div className="col-span-2 rounded-[36px] p-6 flex bg-white/5 backdrop-blur-[20px] shadow-[inset_0_1px_0_rgb(var(--text-primary)_/_0.05),_0_8px_30px_rgba(0,0,0,0.3)]" onMouseLeave={() => { if (!lockedCategory) setActiveCategory(null); }}>
             <div className="relative flex w-[35%] flex-col pr-6">
               <div className="mb-3 pl-3 pb-2 text-[20px] font-bold tracking-[1px] text-text-primary uppercase">Catalog:</div>
