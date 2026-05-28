@@ -164,7 +164,8 @@ export const strategies: Record<"recipes" | "products", CatalogStrategy> = {
         
         const isAll     = !params.categoryId || params.categoryId === "all";
         const isInStock = params.categoryId === "in-stock";
-        const backendSortOrder: "name" | "updated" = params.sort === "name" ? "name" : "updated";
+        const backendSortOrder: "name" | "updated" =
+          params.sort === "name" ? "name" : "updated";
 
         const response = await getProductsApi().getProducts({
           page:       params.page,

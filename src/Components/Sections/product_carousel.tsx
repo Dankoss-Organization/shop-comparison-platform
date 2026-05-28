@@ -94,7 +94,7 @@ export default function ProductCarousel({
                   setSelectedItem(item);
                 }
               }}
-              className="snap-start"
+              className="snap-start shrink-0 w-[220px] sm:w-[240px] lg:w-[280px]"
             />
           ))}
         </div>

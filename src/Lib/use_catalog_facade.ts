@@ -108,9 +108,6 @@ export function useCatalogFacade() {
   const currentCats = strategy.categories;
   const currentCatLabel = currentCats.find((c) => c.id === activeCategory)?.label ?? "All Items";
 
-  const prevTabRef = useRef(activeTab);
-  const prevCatRef = useRef(activeCategory);
-
 const loadData = useCallback(async (page: number, append: boolean) => {
   if (page === 1) setIsLoading(true);
   else setIsLoadingMore(true);
@@ -118,7 +115,7 @@ const loadData = useCallback(async (page: number, append: boolean) => {
   try {
     const res = await strategy.fetchData({
       page,
-      limit: 12,
+      limit: 24,
       search: searchTerm,
       categoryId: activeCategory,
       sort: sortBy,
@@ -137,26 +134,23 @@ const loadData = useCallback(async (page: number, append: boolean) => {
   }
 }, [strategy, activeCategory, searchTerm, sortBy]);
 
+const isFirstRender = useRef(true);
+
 useEffect(() => {
-  const tabChanged = prevTabRef.current !== activeTab;
-  const catChanged = prevCatRef.current !== activeCategory;
-
-  if (tabChanged) prevTabRef.current = activeTab;
-  if (catChanged) prevCatRef.current = activeCategory;
-
-  const shouldReset = tabChanged || catChanged;
-
-  if (shouldReset) {
-    setCurrentPage(1);
+  if (isFirstRender.current) {
+    isFirstRender.current = false;
     loadData(1, false);
-  } else {
-    loadData(currentPage, currentPage > 1);
+    return;
   }
+  setCurrentPage(1);
+  setFetchResult({ items: [], total: 0, totalPages: 1 });
+  loadData(1, false);
+}, [activeTab, activeCategory, searchTerm, sortBy]);
 
-  if (typeof window !== "undefined") {
-    sessionStorage.setItem("lastCatalogUrl", window.location.pathname + window.location.search);
-  }
-}, [activeTab, activeCategory, searchTerm, sortBy, currentPage, loadData]);
+useEffect(() => {
+  if (currentPage === 1) return;
+  loadData(currentPage, isLoadMoreRef.current);
+}, [currentPage]);
 
   const { priceBounds, availableMarkets } = useMemo(() => {
     let pMin = Infinity, pMax = 0;
@@ -252,8 +246,18 @@ useEffect(() => {
     );
   };
 
-  const handlePageChange = (page: number) => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const handleLoadMore = () => setCurrentPage((p) => p + 1);
+const isLoadMoreRef = useRef(false);
+
+const handlePageChange = (page: number) => {
+  isLoadMoreRef.current = false;
+  setCurrentPage(page);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+const handleLoadMore = () => {
+  isLoadMoreRef.current = true;
+  setCurrentPage((p) => p + 1);
+};
 
   const handleResetFilters = () => {
     setSearchTerm("");
