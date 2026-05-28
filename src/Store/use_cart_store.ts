@@ -8,6 +8,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DealCard as DealCardType } from '@/Data/home_data';
+import { getCartApi, getProductsApi } from "@/Lib/api"
 
 export interface CartItem extends DealCardType {
   cartQuantity: number;
@@ -48,23 +49,37 @@ export const useCartStore = create<CartState>()(
       setOpen: (isOpen) => set({ isOpen }),
       setFulfillmentType: (type) => set({ fulfillmentType: type }),
 
-      addItem: (product) => {
-        const { items } = get();
-        const existingItem = items.find((i) => isSameProduct(i, product));
+    addItem: (product) => {
+      const { items } = get();
+      const existingItem = items.find((i) => isSameProduct(i, product));
+      const selectedOffer = (product as any).offers?.find(
+        (o: any) => o.store_id === (product as any).selectedStoreId
+      ) ?? (product as any).offers?.[0];
 
-        if (existingItem) {
-          set({
-            items: items.map((i) =>
-              isSameProduct(i, product) ? { ...i, cartQuantity: i.cartQuantity + 1 } : i
-            ),
-          });
-        } else {
-          const initialStoreId = (product as any).selectedStoreId ?? (product as any).offers?.[0]?.store_id ?? "unknown";
-          set({ 
-            items: [...items, { ...product, selectedStoreId: initialStoreId, cartQuantity: 1, isLocked: false } as CartItem] 
-          });
-        }
-      },
+      if (selectedOffer?.offerId) {
+        getCartApi().addCartItem({ offerId: selectedOffer.offerId, quantity: 1 }).catch(console.error);
+      } else if (product.id) {
+        getProductsApi().getProductCard(product.id).then(card => {
+          const firstOffer = card.topOffers[0];
+          if (firstOffer) {
+            getCartApi().addCartItem({ offerId: firstOffer.id, quantity: 1 }).catch(console.error);
+          }
+        }).catch(console.error);
+      }
+
+      if (existingItem) {
+        set({
+          items: items.map((i) =>
+            isSameProduct(i, product) ? { ...i, cartQuantity: i.cartQuantity + 1 } : i
+          ),
+        });
+      } else {
+        const initialStoreId = (product as any).selectedStoreId ?? (product as any).offers?.[0]?.store_id ?? "unknown";
+        set({ 
+          items: [...items, { ...product, selectedStoreId: initialStoreId, cartQuantity: 1, isLocked: false } as CartItem] 
+        });
+      }
+    },
 
       removeItem: (id) => set({
         items: get().items.filter((i) => i.id !== id && i.internalId !== id)

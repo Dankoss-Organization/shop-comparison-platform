@@ -5,6 +5,7 @@
 
 import { ProductsApiClient } from "@/Lib/api/products_api.client";
 import { RecipesApiClient } from "@/Lib/api/recipes_api.client";
+import { CartApiClient } from "@/Lib/api/cart_api.client";
 
 /**
  * Resolves the correct base URL depending on the environment.
@@ -37,5 +38,15 @@ export function getRecipesApi(): RecipesApiClient {
   });
 }
 
+/**
+ * Factory for Cart API client.
+ */
+export function getCartApi(): CartApiClient {
+  return new CartApiClient({
+    baseUrl: getApiBaseUrl(),
+  });
+}
+
 export * from "@/Lib/api/products_api.shared";
 export * from "@/Lib/api/recipes_api.shared";
+export * from "@/Lib/api/cart_api.shared";

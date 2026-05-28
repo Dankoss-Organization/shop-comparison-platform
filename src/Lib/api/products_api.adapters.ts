@@ -1,12 +1,12 @@
 /**
  * @file products_api.adapters.ts
  * @description Maps backend product payloads into the UI DealCard model.
+ * Includes defensive guard clauses to protect the UI from dirty database/search data.
  */
 
 import type { DealCard, NutritionFacts, StoreOffer } from "@/Data/home_data";
 import type {
   ProductCardResponse,
-  ProductCatalogItem,
   ProductOfferItem,
   RelatedProductsResponse,
   StoreProductItem,
@@ -15,35 +15,14 @@ import { parseQuantity } from "@/Lib/utils";
 import type { SearchProduct } from "@/Lib/api/search_api.client";
 
 const DETAIL_TOKENS = [
-  "ж/б",
-  "с/к",
-  "в/к",
-  "н/к",
-  "с/в",
-  "вар",
-  "вар.",
-  "копч",
-  "копч.",
-  "рафінована",
-  "нерафінована",
-  "ультрапастеризоване",
-  "пастеризоване",
-  "стерилізоване",
-  "безлактозне",
-  "незбиране",
-  "солодке",
-  "напівсолодке",
-  "сухе",
-  "напівсухе",
+  "ж/б", "с/к", "в/к", "н/к", "с/в", "вар", "вар.", "копч", "копч.",
+  "рафінована", "нерафінована", "ультрапастеризоване", "пастеризоване",
+  "стерилізоване", "безлактозне", "незбиране", "солодке", "напівсолодке",
+  "сухе", "напівсухе",
 ];
 
 const FALLBACK_NUTRITION: NutritionFacts = {
-  calories: "N/A",
-  carbs: "N/A",
-  fats: "N/A",
-  protein: "N/A",
-  fiber: "N/A",
-  sugar: "N/A",
+  calories: "N/A", carbs: "N/A", fats: "N/A", protein: "N/A", fiber: "N/A", sugar: "N/A",
 };
 
 const STORE_NAMES: Record<string, string> = {
@@ -56,7 +35,7 @@ const STORE_NAMES: Record<string, string> = {
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80";
 
-function parseMediaUrl(media: string | null | undefined): string {
+function parseMediaUrl(media?: string | null): string {
   if (!media) return FALLBACK_IMAGE;
 
   if (media.startsWith("%7B")) {
@@ -99,7 +78,20 @@ type ParsedDescription = {
   descriptionSections: string[];
 };
 
-function splitName(rawName: string, brand?: string | null): ParsedName {
+function normalizeWhitespace(value?: string | null): string {
+  if (!value) return "";
+  return value.replace(/\s+/g, " ").replace(/\s*·\s*/g, " · ").trim();
+}
+
+function extractQuantitySegment(value?: string | null): string {
+  if (!value) return "";
+  const match = value.match(/\b\d+(?:[.,]\d+)?\s*(?:г|кг|мл|л|шт|ml|kg|g|pcs)\b/i);
+  return match ? normalizeWhitespace(match[0]) : "";
+}
+
+function splitName(rawName?: string | null, brand?: string | null): ParsedName {
+  if (!rawName) return { title: brand ?? "Unknown Product" };
+  
   const title = normalizeWhitespace(rawName);
   const quantitySegment = extractQuantitySegment(title);
 
@@ -109,32 +101,6 @@ function splitName(rawName: string, brand?: string | null): ParsedName {
   };
 }
 
-function isDetailWord(word: string) {
-  const normalized = word.toLowerCase().replace(/[.,]$/, "");
-
-  return (
-    /^\d+(?:[.,]\d+)?%$/.test(normalized) ||
-    /^\d+(?:[.,]\d+)?(?:г|кг|мл|л|шт|ml|kg|g|pcs)$/.test(normalized) ||
-    DETAIL_TOKENS.includes(normalized)
-  );
-}
-
-function looksLikeTitleCore(value: string) {
-  const normalized = value.toLowerCase();
-  return /[а-яіїєґa-z]/i.test(normalized) && !DETAIL_TOKENS.includes(normalized);
-}
-
-function isEssentialTitleNoise(part: string, title: string) {
-  const normalizedPart = part.toLowerCase();
-  const normalizedTitle = title.toLowerCase();
-  return normalizedPart === normalizedTitle || normalizedPart.length <= 1;
-}
-
-function extractQuantitySegment(value: string) {
-  const match = value.match(/\b\d+(?:[.,]\d+)?\s*(?:г|кг|мл|л|шт|ml|kg|g|pcs)\b/i);
-  return match ? normalizeWhitespace(match[0]) : "";
-}
-
 function mapOfferItemToStoreOffer(offer: ProductOfferItem): StoreOffer {
   return {
     store_id: offer.store.id,
@@ -142,6 +108,7 @@ function mapOfferItemToStoreOffer(offer: ProductOfferItem): StoreOffer {
     store_city: offer.store.city,
     store_address: offer.store.address,
     is_in_stock: offer.availability === "in_stock",
+    offerId: offer.id,
     pricing: {
       current_price: offer.effectivePrice ?? offer.currentPrice,
       regular_price: offer.oldPrice ?? offer.currentPrice,
@@ -150,7 +117,7 @@ function mapOfferItemToStoreOffer(offer: ProductOfferItem): StoreOffer {
   };
 }
 
-function getQuantityLabel(measurements: Record<string, unknown> | undefined) {
+function getQuantityLabel(measurements?: Record<string, unknown> | null): string {
   if (!measurements) return "1 pcs";
 
   const candidates = [
@@ -171,29 +138,18 @@ function getQuantityLabel(measurements: Record<string, unknown> | undefined) {
   return "1 pcs";
 }
 
-function mapNutrition(product: ProductCardResponse["product"], description: string): NutritionFacts {
-  const parsed = parseNutritionFromText(description);
-
-  return {
-    calories: product.calories || parsed.calories || "N/A",
-    carbs:
-      product.carbohydrates_g != null
-        ? `${trimTrailingZeros(product.carbohydrates_g)} g`
-        : parsed.carbs || "N/A",
-    fats:
-      product.fats_g != null
-        ? `${trimTrailingZeros(product.fats_g)} g`
-        : parsed.fats || "N/A",
-    protein:
-      product.proteins_g != null
-        ? `${trimTrailingZeros(product.proteins_g)} g`
-        : parsed.protein || "N/A",
-    fiber: parsed.fiber || "N/A",
-    sugar: parsed.sugar || "N/A",
-  };
+function trimTrailingZeros(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, "");
 }
 
-function parseNutritionFromText(text: string) {
+function findNutritionValue(text: string, pattern: RegExp): string {
+  if (!text) return "";
+  const match = text.match(pattern);
+  return match?.[1] ? normalizeWhitespace(match[1]) : "";
+}
+
+function parseNutritionFromText(text?: string | null) {
+  if (!text) return FALLBACK_NUTRITION;
   const normalized = text.replace(/,/g, ".");
   return {
     calories: findNutritionValue(normalized, /(?:калор(?:ії|ійність)|kcal|ккал)\s*[:\-]?\s*(\d+(?:\.\d+)?\s*(?:ккал|kcal)?)/i),
@@ -205,12 +161,20 @@ function parseNutritionFromText(text: string) {
   };
 }
 
-function findNutritionValue(text: string, pattern: RegExp) {
-  const match = text.match(pattern);
-  return match?.[1] ? normalizeWhitespace(match[1]) : "";
+function mapNutrition(product: ProductCardResponse["product"], description?: string | null): NutritionFacts {
+  const parsed = parseNutritionFromText(description);
+
+  return {
+    calories: product.calories || parsed.calories || "N/A",
+    carbs: product.carbohydrates_g != null ? `${trimTrailingZeros(product.carbohydrates_g)} g` : (parsed.carbs || "N/A"),
+    fats: product.fats_g != null ? `${trimTrailingZeros(product.fats_g)} g` : (parsed.fats || "N/A"),
+    protein: product.proteins_g != null ? `${trimTrailingZeros(product.proteins_g)} g` : (parsed.protein || "N/A"),
+    fiber: parsed.fiber || "N/A",
+    sugar: parsed.sugar || "N/A",
+  };
 }
 
-function splitDescription(description: string): ParsedDescription {
+function splitDescription(description?: string | null): ParsedDescription {
   const normalized = normalizeWhitespace(description);
 
   if (!normalized) {
@@ -231,42 +195,28 @@ function splitDescription(description: string): ParsedDescription {
   };
 }
 
-function collectNotes(card: ProductCardResponse) {
+function collectNotes(card: ProductCardResponse): string[] {
   const notes = new Set<string>();
 
   if (card.badges?.length) {
-    for (const badge of card.badges) notes.add(badge);
+    card.badges.forEach(badge => notes.add(badge));
   }
 
-  if (card.stats) {
-    if (card.stats.minPrice30d != null && card.stats.maxPrice30d != null) {
-      notes.add(`30d range: ${card.stats.minPrice30d} - ${card.stats.maxPrice30d} UAH`);
-    }
+  if (card.stats?.minPrice30d != null && card.stats?.maxPrice30d != null) {
+    notes.add(`30d range: ${card.stats.minPrice30d} - ${card.stats.maxPrice30d} UAH`);
   }
 
-  return [...notes];
-}
-
-function normalizeWhitespace(value: string) {
-  return value.replace(/\s+/g, " ").replace(/\s*·\s*/g, " · ").trim();
-}
-
-function trimTrailingZeros(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, "");
-}
-
-function escapeForRegex(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return Array.from(notes);
 }
 
 function buildDealCardBase(params: {
   id: string;
-  rawTitle: string;
+  rawTitle?: string | null;
   brand?: string | null;
   category?: string | null;
   image?: string | null;
   description?: string | null;
-  quantity?: string;
+  quantity?: string | null;
   offers: StoreOffer[];
   rating?: string;
   currency?: string;
@@ -283,19 +233,19 @@ function buildDealCardBase(params: {
   notes?: string[];
 }): DealCard {
   const parsedName = splitName(params.rawTitle, params.brand);
-  const descriptionData = splitDescription(params.description ?? "");
+  const descriptionData = splitDescription(params.description);
   const quantity = params.quantity || "1 pcs";
   const parsedQuantity = parseQuantity(quantity);
-  const quantityLabel =
-    quantity && quantity !== "1 pcs"
-      ? quantity
-      : parsedQuantity.isWeight
-        ? `${parsedQuantity.baseValue}${parsedQuantity.baseUnit}`
-        : quantity;
+  
+  const quantityLabel = quantity !== "1 pcs" 
+    ? quantity 
+    : parsedQuantity.isWeight 
+      ? `${parsedQuantity.baseValue}${parsedQuantity.baseUnit}` 
+      : quantity;
 
   const detailsParts = [
     parsedName.detailsLine,
-    quantityLabel && quantityLabel !== "1 pcs" ? quantityLabel : undefined,
+    quantityLabel !== "1 pcs" ? quantityLabel : undefined,
   ].filter(Boolean) as string[];
 
   return {
@@ -336,19 +286,19 @@ export function mapProductCardToDealCard(response: ProductCardResponse): DealCar
     description,
     quantity,
     offers,
-    currency: response.pricingSummary.currency,
+    currency: response.pricingSummary?.currency || "UAH",
     availabilityStatus: response.availabilityStatus,
     pricingSummary: {
-      bestPrice: response.pricingSummary.bestPrice,
-      oldPrice: response.pricingSummary.oldPrice,
-      discountPercent: response.pricingSummary.discountPercent,
+      bestPrice: response.pricingSummary?.bestPrice ?? null,
+      oldPrice: response.pricingSummary?.oldPrice ?? null,
+      discountPercent: response.pricingSummary?.discountPercent ?? null,
     },
-    stats: {
+    stats: response.stats ? {
       priceTrend: response.stats.priceTrend,
       minPrice30d: response.stats.minPrice30d,
       maxPrice30d: response.stats.maxPrice30d,
       avgPrice30d: response.stats.avgPrice30d,
-    },
+    } : undefined,
     nutrition: mapNutrition(response.product, description),
     notes: collectNotes(response),
   });
@@ -360,8 +310,7 @@ export function mapCatalogItemToDealCard(item: any): DealCard {
   const oldPrice = item.oldPrice ?? item.old_price ?? firstOffer?.regularPrice ?? bestPrice ?? null;
   const discountPercent = item.discountPercent ?? item.discount_percent ?? firstOffer?.discountPercent ?? null;
   const canonicalName = item.canonicalName ?? item.canonical_name ?? "";
-  const availabilityStatus: "in_stock" | "out_of_stock" = "in_stock";
-
+  
   const pseudoOffer: StoreOffer = {
     store_id: firstOffer?.storeId ?? `${item.id}-best`,
     store_name: STORE_NAMES[firstOffer?.storeId] ?? firstOffer?.storeId ?? "Найкраща ціна",
@@ -385,7 +334,7 @@ export function mapCatalogItemToDealCard(item: any): DealCard {
     quantity: extractQuantitySegment(canonicalName) || "1 pcs",
     offers: [pseudoOffer],
     currency: item.currency ?? "UAH",
-    availabilityStatus,
+    availabilityStatus: "in_stock",
     pricingSummary: { bestPrice, oldPrice, discountPercent },
     notes: item.offers?.length ? [`${item.offers.length} store${item.offers.length === 1 ? "" : "s"} available`] : [],
   });
@@ -420,8 +369,8 @@ export function mapRelatedProductsToDealCards(response: RelatedProductsResponse)
         oldPrice: item.bestPrice,
         discountPercent: null,
       },
-      notes: [], 
-    }),
+      notes: item.offersCount ? [`${item.offersCount} store${item.offersCount === 1 ? "" : "s"} available`] : [],
+    })
   );
 }
 
@@ -459,6 +408,7 @@ export function mapStoreProductToDealCard(
     notes: [],
   });
 }
+
 export function mapMeilisearchToDealCard(item: SearchProduct): DealCard {
   return buildDealCardBase({
     id: item.id,
