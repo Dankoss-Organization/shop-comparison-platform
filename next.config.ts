@@ -48,6 +48,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.metro.ua",
       },
+      {
+        protocol: "https",
+        hostname: "assets.dankoss.ua",
+      },
     ],
   },
 };

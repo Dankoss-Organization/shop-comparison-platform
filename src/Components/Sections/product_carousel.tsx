@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import type { DealCard } from "@/Data/home_data";
 import DealCardFactory from "@/Components/UI/deal_card";
 import { ProductModal } from "@/Components/UI/product_modal";
+import { getProductsApi } from "@/Lib/api";
 
 export default function ProductCarousel({
   id,
@@ -35,6 +36,7 @@ export default function ProductCarousel({
 }) {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<DealCard | null>(null);
+  const [categoryTitle, setCategoryTitle] = useState<string>("");
 
   const lowTitle = title.toLowerCase();
   const lowEyebrow = eyebrow.toLowerCase();
@@ -56,6 +58,18 @@ export default function ProductCarousel({
       return "seasonal";
     }
     return "all";
+  };
+
+  const handleProductClick = async (item: DealCard) => {
+    setSelectedItem(item);
+    setCategoryTitle("");
+    try {
+      const card = await getProductsApi().getProductCard(item.id);
+      const cat = card.product.category as any;
+      setCategoryTitle(cat?.name ?? String(cat ?? ""));
+    } catch {
+      setCategoryTitle("");
+    }
   };
 
   const targetCategory = getAutoCategory();
@@ -91,7 +105,7 @@ export default function ProductCarousel({
                 if (directLink) {
                   router.push(`/product/${encodeURIComponent(item.id)}`);
                 } else {
-                  setSelectedItem(item);
+                  handleProductClick(item);
                 }
               }}
               className="snap-start shrink-0 w-[220px] sm:w-[240px] lg:w-[280px]"
@@ -108,9 +122,9 @@ export default function ProductCarousel({
               <ProductModal.Reviews />
             </ProductModal.LeftColumn>
             <ProductModal.RightColumn>
-              <ProductModal.Header categoryTitle={title} />
-              <ProductModal.Actions categoryTitle={title} />
-              <ProductModal.Details categoryTitle={title} />
+              <ProductModal.Header categoryTitle={categoryTitle || selectedItem.category || ""} />
+              <ProductModal.Actions categoryTitle={categoryTitle || selectedItem.category || ""} />
+              <ProductModal.Details categoryTitle={categoryTitle || selectedItem.category || ""} />
             </ProductModal.RightColumn>
           </ProductModal.Window>
         </ProductModal>

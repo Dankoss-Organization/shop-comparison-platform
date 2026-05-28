@@ -5,7 +5,7 @@
  * Recipe carousels keep static data until a dedicated /api/v1/recipes endpoint exists.
  */
 
-import Header from "@/Components/Layout/header";
+import HeaderWrapper from "@/Components/Layout/header_wrapper";
 import Footer from "@/Components/Layout/footer";
 import Banner from "@/Components/Sections/banner";
 import Hero from "@/Components/Sections/hero";
@@ -61,7 +61,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-bg-main text-text-main transition-colors duration-300">
-      <Header />
+      <HeaderWrapper />
 
       <section
         className="relative overflow-x-hidden overflow-y-visible border-b border-text-main/5 dark:border-white/5 transition-colors duration-300"

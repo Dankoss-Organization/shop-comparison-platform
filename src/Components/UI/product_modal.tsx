@@ -276,7 +276,7 @@ ProductModal.Reviews = function Reviews() {
 ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string }) {
   const { item, activeOffer } = useProductModal();
   const currency = item.currency ?? "UAH";
-  const displayCategory = item.category ?? categoryTitle;
+  const displayCategory = categoryTitle || item.category;
 
   const currentPrice = activeOffer?.pricing.current_price ?? item.pricingSummary?.bestPrice;
   const regularPrice = activeOffer?.pricing.regular_price ?? item.pricingSummary?.oldPrice;
@@ -324,7 +324,7 @@ ProductModal.Header = function Header({ categoryTitle }: { categoryTitle: string
   );
 };
 
-ProductModal.Actions = function Actions({ categoryTitle: _categoryTitle }: { categoryTitle?: string }) {
+ProductModal.Actions = function Actions({ categoryTitle }: { categoryTitle?: string }) {
   const { item, activeOffer, selectedStoreId, setSelectedStoreId } = useProductModal();
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
@@ -434,9 +434,10 @@ ProductModal.Actions = function Actions({ categoryTitle: _categoryTitle }: { cat
           label="Pack info"
           content={
             <div className="flex flex-wrap gap-2">
-              <SoftTag>{item.quantity || "1 pcs"}</SoftTag>
               {item.brand && <SoftTag>{item.brand}</SoftTag>}
-              {item.category && <SoftTag>{item.category}</SoftTag>}
+              {(categoryTitle || item.category) && (
+                <SoftTag>{categoryTitle || item.category}</SoftTag>
+              )}
             </div>
           }
         />
@@ -472,7 +473,7 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
   const toggle = (key: keyof typeof expanded) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const currency = item.currency ?? "UAH";
-  const displayCategory = item.category ?? categoryTitle;
+  const displayCategory = categoryTitle || item.category;
   const descriptionSections = getDescriptionSections(item);
 
   const hasNutrition =
@@ -492,7 +493,7 @@ ProductModal.Details = function Details({ categoryTitle }: { categoryTitle: stri
             ))}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <QuickFact label="Category" value={displayCategory} />
+            <QuickFact label="Category" value={displayCategory ?? "-"} />
             <QuickFact label="Brand" value={item.brand ?? "-"} />
             <QuickFact label="Pack" value={item.quantity || "N/A"} />
             <QuickFact label="Price" value={formatCurrency(activeOffer?.pricing.current_price, currency)} />

@@ -127,6 +127,7 @@ export interface RelatedProductsResponse {
     media: string;
     bestPrice: number | null;
     offersCount: number;
+    storeName?: string | null;
   }>;
 }
 
@@ -154,14 +155,18 @@ export interface ProductCatalogResponse {
   totalPages: number;
 }
 
+export interface CategoryTreeNode {
+  id: string;
+  name: string;
+  slug?: string;
+  parentId: string | null;
+  productCount: number;
+  thumbnailUrl?: string | null;
+  children: CategoryTreeNode[];
+}
+
 export interface CategoriesResponse {
-  categories: Array<{
-    id: string;
-    name: string;
-    parentId: string | null;
-    productCount: number;
-    children: unknown[];
-  }>;
+  categories: CategoryTreeNode[];
 }
 
 export interface GetStoreProductsQuery {
