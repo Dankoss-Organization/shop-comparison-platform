@@ -12,6 +12,7 @@ import { cardSizes, type CardSizeTokens } from "@/Components/UI/card_config";
 import SmartImage from "@/Components/UI/smart_image";
 import { useFavoritesStore } from "@/Store/use_favourite_store";
 import { useCartStore } from "@/Store/use_cart_store";
+import { usePriceAlertsStore } from "@/Store/use_price_alerts_store";
 import { cn, formatCurrency } from "@/Lib/utils";
 
 export type DealCardContext = "carousel" | "grid" | "sidebar";
@@ -87,11 +88,15 @@ export function BaseDealCard({
   preferredStore?: string;
 }) {
   const toggleFavorite = useFavoritesStore((state: FavoritesState) => state.toggleFavorite);
-  const isFavoriteGlobal = useFavoritesStore((state: FavoritesState) => state.isFavorite(item.id))
+  const isFavoriteGlobal = useFavoritesStore((state: FavoritesState) => state.isFavorite(item.id));
   const addItem = useCartStore((state: CartState) => state.addItem);
+  const subscribe = usePriceAlertsStore((s) => s.subscribe);
+  const isSubscribed = usePriceAlertsStore((s) => s.isSubscribed(item.id));
+
   const [isMounted, setIsMounted] = useState(false);
   const [isOffersOpen, setIsOffersOpen] = useState(false);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
+  const [showHeartPop, setShowHeartPop] = useState(false);
 
   useEffect(() => setIsMounted(true), []);
 
@@ -101,6 +106,22 @@ export function BaseDealCard({
   const handleFavourite = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     toggleFavorite(item.id);
+    if (!isFavourite) {
+      setShowHeartPop(true);
+      setTimeout(() => setShowHeartPop(false), 3000);
+    }
+  };
+
+  const handleEnablePriceAlert = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    subscribe({
+      id: item.id,
+      title: item.title,
+      image: item.image,
+      price: currentOffer?.pricing.current_price ?? 0,
+      currency: item.currency ?? "UAH",
+    });
+    setShowHeartPop(false);
   };
 
   const handleBadgeClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -115,7 +136,6 @@ export function BaseDealCard({
   };
 
   const bestOffer = getBestOffer(item.offers);
-
   const currency = item.currency ?? "UAH";
 
   let currentOffer = item.offers.find((offer) => offer.store_id === selectedOfferId);
@@ -152,7 +172,8 @@ export function BaseDealCard({
           <div className="absolute inset-0 bg-gradient-to-t from-bg-elevated to-transparent pointer-events-none" />
         </div>
 
-        <div className={cn("absolute z-50 flex items-start justify-between left-0 right-0 top-0 p-3", compact ? "p-3" : "p-4")}>
+        <div className={cn("absolute z-50 flex items-start justify-between left-0 right-0 top-0 overflow-visible", compact ? "p-3" : "p-4")}>
+
           <div className="relative">
             <button
               type="button"
@@ -167,14 +188,9 @@ export function BaseDealCard({
             >
               {currentOffer ? currentOffer.store_name : "N/A"}
               <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                width="10" height="10" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="3"
+                strokeLinecap="round" strokeLinejoin="round"
                 className={cn("transition-transform duration-300", isOffersOpen ? "rotate-180" : "rotate-0")}
               >
                 <path d="M6 9l6 6 6-6" />
@@ -194,7 +210,6 @@ export function BaseDealCard({
                   <div className="w-full border-b border-glass/10 px-2 py-2 text-center text-[8px] font-bold uppercase tracking-[0.2em] text-text-primary/80">
                     Available at
                   </div>
-
                   <div
                     className="flex max-h-[160px] w-full flex-col overflow-y-auto pb-1.5 pt-1 [&::-webkit-scrollbar]:hidden"
                     style={{
@@ -208,7 +223,6 @@ export function BaseDealCard({
                       .map((offer) => {
                         const isSelected = currentOffer?.store_id === offer.store_id;
                         const showOfferOldPrice = offer.pricing.regular_price > offer.pricing.current_price;
-
                         return (
                           <button
                             key={offer.store_id}
@@ -219,12 +233,10 @@ export function BaseDealCard({
                               isSelected ? "bg-brand-orange/10" : "hover:bg-glass/5"
                             )}
                           >
-                            <span
-                              className={cn(
-                                "text-[11px] font-bold tracking-wider transition-colors duration-300 truncate max-w-[70px]",
-                                isSelected ? "text-text-primary" : "text-text-primary/70 group-hover:text-text-primary"
-                              )}
-                            >
+                            <span className={cn(
+                              "uppercase text-[11px] font-bold tracking-wider transition-colors duration-300 truncate max-w-[70px]",
+                              isSelected ? "text-text-primary" : "text-text-primary/70 group-hover:text-text-primary"
+                            )}>
                               {offer.store_name}
                             </span>
                             <div className="flex flex-col items-end flex-shrink-0">
@@ -246,21 +258,51 @@ export function BaseDealCard({
             </AnimatePresence>
           </div>
 
-          <button
-            type="button"
-            onClick={handleFavourite}
-            className={cn(
-            "z-10 flex items-center justify-center rounded-full transition-all duration-300 outline-none focus:outline-none",
-              size.icon,
-              isFavourite
-                ? "border border-brand-orange bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))]"
-                : "border border-glass/10 bg-bg-deepest/40 text-text-main/90 backdrop-blur-sm hover:bg-bg-deepest/60"
-            )}
-          >
-            <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}>
-              <HeartIcon filled={isFavourite} size={size.iconSize || 20} />
-            </div>
-          </button>
+          <div className="relative">
+            <AnimatePresence>
+              {showHeartPop && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-[calc(100%+8px)] right-0 z-50 w-[190px] rounded-[14px] bg-bg-surface px-3 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.25)] border border-glass/10 backdrop-blur-md"
+                >
+                  <p className="text-[11px] font-semibold text-text-main leading-snug">
+                    Added to Favorites!{" "}
+                    {isSubscribed ? (
+                      <span className="text-brand-orange">Watching 🔔</span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleEnablePriceAlert}
+                        className="text-brand-orange hover:underline"
+                      >
+                        Enable Price Alerts 🔔
+                      </button>
+                    )}
+                  </p>
+                  <div className="absolute -top-[5px] right-[14px] h-[10px] w-[10px] rotate-45 rounded-[2px] bg-bg-surface border-l border-t border-glass/10" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button
+              type="button"
+              onClick={handleFavourite}
+              className={cn(
+                "z-10 flex items-center justify-center rounded-full transition-all duration-300 outline-none focus:outline-none",
+                size.icon,
+                isFavourite
+                  ? "border border-brand-orange bg-brand-orange text-white shadow-[0_0_15px_rgb(var(--brand-orange))]"
+                  : "border border-glass/10 bg-bg-deepest/40 text-text-main/90 backdrop-blur-sm hover:bg-bg-deepest/60"
+              )}
+            >
+              <div className={cn("transition-transform duration-300", isFavourite ? "scale-110" : "scale-100")}>
+                <HeartIcon filled={isFavourite} size={size.iconSize || 20} />
+              </div>
+            </button>
+          </div>
         </div>
 
         <div className={cn("absolute pointer-events-none z-20 left-0 right-0 bottom-0 p-3 flex items-center gap-2", compact ? "p-3 gap-1.5" : "p-4 gap-2")}>
@@ -280,7 +322,6 @@ export function BaseDealCard({
           <h3 className={cn(size.title, "line-clamp-2 font-black text-text-main leading-tight")}>
             {item.title}
           </h3>
-
           {item.detailsLine ? (
             <p className="mt-1 line-clamp-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-primary/45">
               {item.detailsLine}
@@ -295,22 +336,22 @@ export function BaseDealCard({
         </div>
 
         <div className={cn("mt-auto flex items-end justify-between gap-3 w-full", compact ? "pt-2" : "pt-4")}>
-          <div className="min-w-0 flex flex-col justify-end">
+          <div className="min-w-0 flex flex-col items-start justify-end">
             <p className={cn(size.price, "font-black text-brand-orange leading-none")}>
               {currentOffer ? formatCurrency(currentOffer.pricing.current_price, currency) : "Unavailable"}
             </p>
             {hasOldPrice && (
-              <p className="mt-1.5 text-[11px] font-medium text-text-main/35 line-through leading-none">
+              <p className="mt-1 text-[12px] font-medium text-zinc-500 line-through tracking-wide leading-none">
                 {formatCurrency(currentOffer!.pricing.regular_price, currency)}
               </p>
             )}
           </div>
 
-          <button 
-            type="button" 
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              addItem({ ...item, selectedStoreId: currentOffer?.store_id } as any); 
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              addItem({ ...item, selectedStoreId: currentOffer?.store_id } as any);
             }}
             className={cn(
               "rounded-full bg-text-primary font-semibold text-bg-main shadow-sm transition-all duration-300 hover:bg-brand-orange hover:text-white hover:shadow-[0_4px_12px_rgb(var(--brand-orange)_/_0.3)] active:scale-95 active:bg-brand-orange-dark flex-shrink-0",
@@ -328,17 +369,13 @@ export function BaseDealCard({
 export function HeartIcon({ filled, size }: { filled: boolean; size: number }) {
   return (
     <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
+      width={size} height={size} viewBox="0 0 24 24"
       fill={filled ? "currentColor" : "none"}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
+        stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"
       />
     </svg>
   );
