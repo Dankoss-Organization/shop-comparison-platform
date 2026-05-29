@@ -91,7 +91,7 @@ describe('Catalog Strategies', () => {
 
       expect(mockSearch).toHaveBeenCalledWith('apple', 10, 0); 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0].mappedFrom).toBe('meili');
+      expect((result.items[0] as any).mappedFrom).toBe('meili');
       expect(result.items[0]._uniqueId).toContain('m1-s1-0');
     });
 
@@ -114,7 +114,7 @@ describe('Catalog Strategies', () => {
       });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0].mappedFrom).toBe('catalog');
+      expect((result.items[0] as any).mappedFrom).toBe('catalog');
       expect(result.items[0]._uniqueId).toContain('p1-p1-0');
     });
 

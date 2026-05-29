@@ -6,8 +6,8 @@ describe('CartApiClient', () => {
   let mockFetch: any;
   let client: CartApiClient;
 
-  const baseUrl = 'https://api.example.com'; /
-  const baseUrlWithSlash = 'https://api.example.com/'; 
+  const baseUrl = 'https://api.example.com';
+  const baseUrlWithSlash = 'https://api.example.com/';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -67,7 +67,7 @@ describe('CartApiClient', () => {
 
   describe('addCartItem', () => {
     test('should make a POST request with correct body', async () => {
-      const requestData = { productId: 'prod-1', quantity: 2 };
+      const requestData = { offerId: 'prod-1', quantity: 2 };
       const responseData = { id: 'item-1', ...requestData };
       mockSuccessResponse(responseData);
 

@@ -31,20 +31,20 @@ describe('API Index Entrypoint', () => {
       global.window = originalWindow;
     } else {
 
-      delete global.window;
+      (global as any).window = undefined;
     }
   });
 
   describe('getApiBaseUrl', () => {
     test('should return API_INTERNAL_BASE_URL on server-side', () => {
-      delete global.window; 
+      (global as any).window = undefined;
       process.env.API_INTERNAL_BASE_URL = 'http://internal-api:8080';
       
       expect(getApiBaseUrl()).toBe('http://internal-api:8080');
     });
 
     test('should return default localhost on server-side if env var is missing', () => {
-      delete global.window;
+      (global as any).window = undefined;
       delete process.env.API_INTERNAL_BASE_URL;
       
       expect(getApiBaseUrl()).toBe('http://localhost:3000');

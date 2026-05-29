@@ -53,12 +53,14 @@ export default function CatalogGrid({ items }: CatalogGridProps) {
           initial={{ opacity: 0, y: 16, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="flex h-full w-full min-w-0 justify-center min-h-[400px]"
+          // Cleaned wrapper: acts as a centering container for the constrained card
+          className="flex w-full min-w-0 justify-center"
         >
           <DealCardFactory
             item={item}
             context="grid"
-            className="flex h-full w-full flex-col items-stretch justify-between shadow-xl"
+            // Applied constraints: max width for "less wide", min height for "higher"
+            className="w-full max-w-[360px] min-h-[460px] shadow-sm"
             onClick={() => router.push(`/product/${encodeURIComponent(item.id)}`)}
           />
         </motion.div>

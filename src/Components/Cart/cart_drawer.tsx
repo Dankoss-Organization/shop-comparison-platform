@@ -112,11 +112,19 @@ export function CartDrawer() {
         
         applyOptimizedCart(optimizedAssignments);
 
+        const cheapestItemsCost = chosenScenario.items.reduce((sum: number, i: any) => {
+        const cartItem = items.find((ci: any) => ci.id === i.itemId);
+        const offer = cartItem?.offers?.find((o: any) => o.store_id === i.storeId);
+        const price = offer?.pricing.current_price ?? 0;
+        const qty = cartItem?.cartQuantity ?? 1;
+        return sum + price * qty;
+      }, 0);
+
         alert(
           `✅ Applied ${selectedStrategy.toUpperCase()} strategy!\n\n` +
-          `Items: ₴${chosenScenario.itemsCost.toFixed(2)}\n` +
+          `Items: ₴${cheapestItemsCost.toFixed(2)}\n` +          // ✅ swap this
           `Delivery: ₴${chosenScenario.deliveryCost.toFixed(2)}\n` +
-          `Total: ₴${chosenScenario.totalCost.toFixed(2)}\n\n` +
+          `Total: ₴${(cheapestItemsCost + chosenScenario.deliveryCost).toFixed(2)}\n\n` +  // ✅ and recalculate total
           `Stores: ${chosenScenario.stores.map((s: any) => s.storeName ?? s.storeId).join(", ")}`
         );
       } else {
