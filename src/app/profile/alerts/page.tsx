@@ -1,6 +1,7 @@
 /**
  * @file page.tsx
- * @brief Unified Alerts Feed — Notifications tab + Watching Prices tab.
+ * @description A unified Alerts Feed page component featuring tabbed navigation 
+ * to seamlessly switch between system notifications and actively watched product prices.
  */
 
 "use client";
@@ -9,7 +10,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import AlertCard, { Alert } from "@/app/profile/_components/cards/alert_card";
 import PriceWatchingCard from "@/app/profile/_components/cards/price_watching_card";
-
+/**
+ * Initial static data representing the alert items for demonstration purposes.
+ * @type {Alert[]}
+ */
 const INITIAL_ALERTS: Alert[] = [
   {
     id: 1, type: "price_drop", unread: true,
@@ -40,17 +44,35 @@ const INITIAL_ALERTS: Alert[] = [
     action: "View Stats",
   },
 ];
-
+/**
+ * Defines the available tabs within the Alerts feed.
+ * @typedef {"alerts" | "watching"} Tab
+ */
 type Tab = "alerts" | "watching";
-
+/**
+ * Main Alerts Page component for viewing and managing user notifications and watched items.
+ * * * Features:
+ * - Tabbed Navigation: Allows users to seamlessly switch between general notifications and specific watched product prices.
+ * - Fluid Animations: Utilizes `framer-motion` for shared layout animations (the tab underline) and smooth content fading between tabs.
+ * - Hydration Safety: Uses an `isMounted` state check to ensure client-side rendering matches the server output, preventing hydration errors.
+ * - State Management: Handles reading, deleting, and tracking unread counts for local notifications.
+ * - Modular Composition: Delegates the actual rendering of individual alert rows and watched items to `AlertCard` and `PriceWatchingCard` components respectively.
+ * * @returns {JSX.Element | null} The rendered Alerts Feed or null until the component is mounted.
+ */
 export default function AlertsPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [alerts, setAlerts] = useState<Alert[]>(INITIAL_ALERTS);
   const [tab, setTab] = useState<Tab>("alerts");
-
+  // Ensure hydration match on client side
   useEffect(() => setIsMounted(true), []);
-
+  /**
+   * Updates all alert statuses to 'read'.
+   */
   const markAllAsRead = () => setAlerts(alerts.map((a) => ({ ...a, unread: false })));
+  /**
+   * Removes an alert from the local state by its ID.
+   * @param {number} id - The unique identifier of the alert to remove.
+   */
   const deleteAlert = (id: number) => setAlerts(alerts.filter((a) => a.id !== id));
 
   if (!isMounted) return null;
@@ -59,6 +81,7 @@ export default function AlertsPage() {
 
   return (
     <div className="relative flex flex-col gap-8 sm:gap-10 w-full pb-10 z-10">
+      {/* Header section containing title, description, and global actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-5 sm:gap-6">
         <div className="flex flex-col gap-1.5 sm:gap-2">
           <h2 className="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif drop-shadow-sm leading-tight">
@@ -68,7 +91,7 @@ export default function AlertsPage() {
             Stay updated on price drops, targets, and personal promos.
           </p>
         </div>
-
+        {/* Global Action: Mark all as read (conditionally rendered) */}
         {tab === "alerts" && unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
@@ -78,7 +101,7 @@ export default function AlertsPage() {
           </button>
         )}
       </div>
-
+      {/* Tab Navigation Menu */}
       <div className="flex items-center gap-1 border-b border-text-main/5 dark:border-white/5">
         {(["alerts", "watching"] as Tab[]).map((t) => (
           <button
@@ -89,11 +112,13 @@ export default function AlertsPage() {
             }`}
           >
             {t === "alerts" ? "Notifications" : "Watching Prices"}
+            {/* Unread Badge inside Tab */}
             {t === "alerts" && unreadCount > 0 && (
               <span className="ml-2 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-orange px-1.5 text-[10px] font-black text-white shadow-lg shadow-brand-orange/20">
                 {unreadCount}
               </span>
             )}
+            {/* Animated Tab Indicator */}
             {tab === t && (
               <motion.div
                 layoutId="tab-underline"
@@ -103,7 +128,7 @@ export default function AlertsPage() {
           </button>
         ))}
       </div>
-
+      {/* Tab Content Area with Transition Animations */}
       <AnimatePresence mode="wait">
         {tab === "alerts" ? (
           <motion.div

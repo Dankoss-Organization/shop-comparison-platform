@@ -1,6 +1,7 @@
 /**
  * @file page.tsx
- * @brief Personal Info and Settings page orchestrator.
+ * @description The main orchestrator for the Personal Info and Settings page, aggregating 
+ * user account details, loyalty card management, and general application preferences.
  */
 
 "use client";
@@ -10,10 +11,20 @@ import { useState, useEffect } from "react";
 import PersonalInfoForm from "@/app/profile/_components/sections/personal_info_form";
 import LoyaltyCardsSection from "@/app/profile/_components/sections/loyalty_cards_section";
 import GeneralPreferencesSection from "@/app/profile/_components/sections/general_preferences_section";
-
+/**
+ * A layout component that structures the personal settings interface.
+ * 
+ * * Features:
+ * - Hydration Safety: Uses a local `isMounted` state to ensure the component only renders on the client, avoiding server-side rendering (SSR) hydration mismatches.
+ * - Component Composition: Aggregates modular sections (`PersonalInfoForm`, `LoyaltyCardsSection`, `GeneralPreferencesSection`) into a unified two-column layout on large screens.
+ * - Background Aesthetics: Includes a subtle, decorative background dot grid using a CSS radial gradient that adapts to both light and dark themes.
+ * - Responsive Grid: Utilizes CSS Grid (`grid-cols-1 xl:grid-cols-2`) to smoothly transition from a stacked mobile view to a side-by-side desktop view.
+ * 
+ * @returns {JSX.Element | null} The rendered settings page, or null if the component has not yet mounted on the client.
+ */
 export default function SettingsPage() {
   const [isMounted, setIsMounted] = useState(false);
-
+  // Ensure component is fully mounted before rendering to prevent SSR hydration errors
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -22,11 +33,12 @@ export default function SettingsPage() {
 
   return (
     <div className="relative flex flex-col gap-8 sm:gap-10 w-full pb-10 z-10">
+      {/* Decorative Background Grid */}
       <div
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[40px] opacity-[0.03] dark:opacity-[0.02] text-text-main dark:text-text-primary"
         style={{ backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)", backgroundSize: "30px 30px" }}
       />
-
+      {/* Page Header */}
       <div className="flex flex-col gap-1.5 sm:gap-2 relative">
         <h2 className="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary leading-tight font-serif drop-shadow-sm">
           Personal Info
@@ -35,16 +47,16 @@ export default function SettingsPage() {
           Manage your account details, connected loyalty cards, and notification preferences.
         </p>
       </div>
-
+    {/* Main Content Grid Layout */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 sm:gap-10">
-        
+        {/* Left Column: Core Account Details */}
         <div className="flex flex-col gap-4 sm:gap-5">
           <h3 className="text-[18px] sm:text-[20px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif pl-1">
             Account Details
           </h3>
           <PersonalInfoForm />
         </div>
-
+        {/* Right Column: Secondary Settings & Integrations */}
         <div className="flex flex-col gap-8 sm:gap-10">
           <LoyaltyCardsSection />
           <GeneralPreferencesSection />

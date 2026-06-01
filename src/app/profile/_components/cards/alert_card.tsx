@@ -1,5 +1,21 @@
+/**
+ * @file alert_card.tsx
+ * @description A customizable UI component for displaying system or product alerts (e.g., price drops, promos).
+ */
 "use client";
-
+/**
+ * Defines the structure of an Alert object used within the application.
+ * * @interface Alert
+ * @property {number} id - Unique identifier for the alert.
+ * @property {'price_drop' | 'target_reached' | 'promo' | 'system'} type - The category/type of the alert.
+ * @property {boolean} unread - Indicates whether the user has read the alert.
+ * @property {string} icon - Emoji or icon string representing the alert visually.
+ * @property {string} store - The store associated with the alert (e.g., "Silpo", "ATB").
+ * @property {string} time - Formatted string indicating when the alert was generated.
+ * @property {string} title - The main heading of the alert.
+ * @property {string} message - The detailed description or content of the alert.
+ * @property {string} action - The call-to-action text for the alert button.
+ */
 import { motion } from "framer-motion";
 
 export type AlertType = 'price_drop' | 'target_reached' | 'promo' | 'system';
@@ -15,12 +31,27 @@ export interface Alert {
   message: string;
   action: string;
 }
-
+/**
+ * Properties for the AlertCard component.
+ * * @interface AlertCardProps
+ * @property {Alert} alert - The alert data object to display.
+ * @property {(id: number) => void} onDelete - Callback function triggered to remove/delete the alert.
+ */
 interface AlertCardProps {
   alert: Alert;
   onDelete: (id: number) => void;
 }
-
+/**
+ * A presentational card component used to display a single notification or alert.
+ * * Features:
+ * - Differentiates styling based on the `unread` state (highlighted left border, bolder text).
+ * - Utilizes `framer-motion` for smooth enter/exit animations and layout shifts.
+ * - Responsive design (adjusts padding, font sizes, and gap spacing for mobile/desktop).
+ * - The "Dismiss" button is hidden on desktop until hover for a cleaner UI, but always visible on mobile or focus.
+ *
+ * @param {AlertCardProps} props - The component properties.
+ * @returns {JSX.Element} The animated alert card component.
+ */
 export default function AlertCard({ alert, onDelete }: AlertCardProps) {
   return (
     <motion.div

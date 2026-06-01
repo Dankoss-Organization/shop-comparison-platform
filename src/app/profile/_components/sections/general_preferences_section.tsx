@@ -1,3 +1,8 @@
+/**
+ * @file general_preferences_section.tsx
+ * @description A settings section that allows users to manage global application preferences,
+ * including UI theme (Light/Dark mode) and email notification opt-ins.
+ */
 "use client";
 
 import { motion } from "framer-motion";
@@ -5,9 +10,16 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import ProfileGlassCard from "@/app/profile/_components/ui/profile_glass_card";
 import ProfileToggle from "@/app/profile/_components/ui/profile_toggle";
-
+/**
+ * Reusable CSS class string for consistent row styling across preference toggles.
+ */
 const rowClassName = "group flex items-center justify-between p-4 sm:p-5 rounded-[1.25rem] bg-black/[0.03] dark:bg-[rgba(45,40,45,0.6)] border border-text-main/5 dark:border-white/5 hover:shadow-md transition-all gap-2 backdrop-blur-[4px] cursor-pointer";
-
+/**
+ * Animated icon component that transitions between sun (Light Mode) and moon (Dark Mode) graphics.
+ * * @param {object} props
+ * @param {boolean} props.isDark - Determines which icon to display based on the current theme state.
+ * @returns {JSX.Element} The animated SVG icon.
+ */
 function ThemeIcon({ isDark }: { isDark: boolean }) {
   return (
     <div className="relative w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]">
@@ -35,14 +47,26 @@ function ThemeIcon({ isDark }: { isDark: boolean }) {
     </div>
   );
 }
-
+/**
+ * Static SVG icon for the email alerts setting.
+ * @returns {JSX.Element}
+ */
 const EmailIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]">
     <rect width="20" height="16" x="2" y="4" rx="2"/>
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
   </svg>
 );
-
+/**
+ * A reusable UI row component representing a single preference setting with an interactive toggle switch.
+ * * @param {object} props
+ * @param {React.ReactNode} props.icon - The visual icon representing the setting.
+ * @param {string} props.title - The primary name of the setting.
+ * @param {string} props.description - A brief explanation of what the setting does.
+ * @param {boolean} props.isActive - The current boolean state of the setting.
+ * @param {() => void} props.onToggle - Callback executed when the user clicks the row or toggle component.
+ * @returns {JSX.Element} The rendered settings row.
+ */
 function SettingsToggle({ icon, title, description, isActive, onToggle }: {
   icon: React.ReactNode;
   title: string;
@@ -65,12 +89,21 @@ function SettingsToggle({ icon, title, description, isActive, onToggle }: {
     </div>
   );
 }
-
+/**
+ * The main General Preferences section component.
+ * * * Features:
+ * - Theme Management: Integrates with `next-themes` to handle global Light/Dark mode switching.
+ * - Hydration Safety: Uses a `mounted` state to prevent SSR mismatch errors when evaluating the active theme.
+ * - Animated UI: Employs `framer-motion` inside `ThemeIcon` for playful, spring-based transitions.
+ * - Reusable Architecture: Abstracts individual settings into a `SettingsToggle` component for easy expansion.
+ * * @returns {JSX.Element} The rendered preferences section.
+ */
 export default function GeneralPreferencesSection() {
   const [emailAlerts, setEmailAlerts] = useState(true);
 
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // Ensure the component is mounted on the client before reading the theme to avoid hydration mismatch
   useEffect(() => setMounted(true), []);
   const isDarkMode = mounted ? resolvedTheme === "dark" : true;
 

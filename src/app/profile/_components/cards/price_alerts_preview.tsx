@@ -1,5 +1,17 @@
+/**
+ * @file price_alerts_preview.tsx
+ * @description A dashboard preview widget displaying a summary of the user's active and reached price alerts.
+ */
 "use client";
-
+/**
+ * A presentational UI component that renders a "Price Alerts Feed" preview card.
+ * * Features:
+ * - Displays a header with the sync status and a "Manage" action button.
+ * - Uses a glassmorphic design (`backdrop-blur`, semi-transparent backgrounds) adapted for both light and dark modes.
+ * - Currently displays static mockup data (e.g., "Hass Avocados" and "Jacobs Monarch") to illustrate pending and reached alert states.
+ * - Includes an inline SVG sparkline to represent price trends visually.
+ * * @returns {JSX.Element} The styled price alerts preview widget.
+ */
 export default function PriceAlertsPreview() {
   return (
     <div className="flex flex-col gap-4">
@@ -13,7 +25,6 @@ export default function PriceAlertsPreview() {
         </div>
         <button className="text-[12px] font-bold text-brand-orange uppercase tracking-wide hover:brightness-110 transition-all drop-shadow-sm">Manage</button>
       </div>
-      
       <div className="flex h-full flex-col justify-center rounded-[24px] sm:rounded-[32px] md:rounded-[36px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-8">
         <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-5">
           <div className="flex items-center gap-4">

@@ -1,18 +1,47 @@
+/**
+ * @file location_card.tsx
+ * @description Presentational UI component for displaying saved delivery or pickup addresses.
+ */
 "use client";
-
+/**
+ * Defines the structure of a saved location object.
+ *
+ * @interface LocationData
+ * @property {string} id - Unique identifier for the location.
+ * @property {string} title - A descriptive name for the location (e.g., "Home", "Office").
+ * @property {string} address - The full formatted physical address.
+ * @property {boolean} isDefault - Indicates if this is the currently active/default location for orders.
+ */
 interface LocationData {
   id: string;
   title: string;
   address: string;
   isDefault: boolean;
 }
-
+/**
+ * Properties for the LocationCard component.
+ *
+ * @interface LocationCardProps
+ * @property {LocationData} location - The location data object to display.
+ * @property {() => void} onSetDefault - Callback triggered when the user clicks "Set as Active".
+ * @property {() => void} onDelete - Callback triggered when the user clicks the delete (trash bin) icon.
+ */
 interface LocationCardProps {
   location: LocationData;
   onSetDefault: () => void;
   onDelete: () => void;
 }
-
+/**
+ * A presentational card displaying a saved address.
+ * * Features:
+ * - Visually highlights the default/active location with a badge ("Active Zone").
+ * - Hides the "Set as Active" button if the location is already default.
+ * - Action buttons are faded (`opacity-50`) until the user hovers over the card.
+ * - Fully responsive with dynamic hover and dark mode styling.
+ *
+ * @param {LocationCardProps} props - The component properties.
+ * @returns {JSX.Element} The styled location card component.
+ */
 export default function LocationCard({ location, onSetDefault, onDelete }: LocationCardProps) {
   return (
     <div className="group relative h-full flex flex-col justify-between rounded-[24px] sm:rounded-[32px] bg-white/50 dark:bg-white/5 p-5 sm:p-7 backdrop-blur-[10px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_10px_20px_rgba(0,0,0,0.2)] transition-all duration-500 hover:-translate-y-1 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-md dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-black/5 dark:border-white/5 hover:border-brand-orange/20 dark:hover:border-white/10">

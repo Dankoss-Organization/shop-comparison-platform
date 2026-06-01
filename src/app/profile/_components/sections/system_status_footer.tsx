@@ -1,5 +1,18 @@
+/**
+ * @file system_status_footer.tsx
+ * @description A persistent footer component that displays application version information, 
+ * current system operational status, and session identifiers.
+ */
 "use client";
-
+/**
+ * A purely presentational component rendering the system status footer.
+ * * * Features:
+ * - Technical Typography: Uses a monospace font (`font-mono`) and uppercase tracking to achieve a technical, dashboard-like aesthetic.
+ * - Live Status Indicator: Implements a pulsing "live" dot using Tailwind's `animate-ping` utility to indicate operational status.
+ * - Responsive Design: Intelligently hides non-critical information (like the session ID and separator dots) on mobile viewports (`sm:block`, `hidden`) to prevent clutter.
+ * - Absolute Positioning: Anchors to the bottom of its relative parent container to ensure consistent placement at the end of the page or section.
+ * * @returns {JSX.Element} The rendered system status footer.
+ */
 export default function SystemStatusFooter() {
   return (
     <div className="absolute bottom-2 sm:bottom-0 left-0 right-0 flex justify-center mt-auto pt-6 sm:pt-10">

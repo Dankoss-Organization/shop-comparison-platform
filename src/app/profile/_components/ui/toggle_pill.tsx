@@ -1,5 +1,17 @@
+/**
+ * @file toggle_pill.tsx
+ * @description A reusable, interactive pill-shaped button component generally used for filtering, category selection, or toggling binary states.
+ */
 "use client";
-
+/**
+ * Properties for the TogglePill component.
+ *
+ * @interface TogglePillProps
+ * @property {string} label - The text displayed inside the pill.
+ * @property {boolean} isActive - Determines if the pill is currently in its selected/active state.
+ * @property {() => void} onClick - Callback function executed when the user clicks the pill.
+ * @property {string} [className=""] - Optional Tailwind CSS classes to extend or override default styles.
+ */
 interface TogglePillProps {
   label: string;
   isActive: boolean;
@@ -7,7 +19,16 @@ interface TogglePillProps {
 
   className?: string;
 }
-
+/**
+ * A highly visual, glassmorphic toggle button with integrated micro-interactions.
+ * * * Features:
+ * - State-Driven UI: Distinctly transitions between an active (solid brand color with a sharp shadow) and inactive (translucent background, muted text) visual state based on `isActive`.
+ * - Tactile Feedback: Incorporates subtle upward translation on hover and a scale-down effect on active click (`active:scale-95`).
+ * - Ambient Animations: When active, features a continuous CSS-driven gradient sweep (`animate-[shine...]`) that plays across the background for an engaging, polished feel.
+ * - Responsive Layout: Automatically scales internal padding and typography for mobile (`sm:` breakpoints) to ensure comfortable touch targets.
+ * * @param {TogglePillProps} props - The component properties.
+ * @returns {JSX.Element} The rendered toggle pill button.
+ */
 export default function TogglePill({
   label,
   isActive,

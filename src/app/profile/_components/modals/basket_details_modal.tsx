@@ -1,17 +1,40 @@
+/**
+ * @file basket_details_modal.tsx
+ * @description A modal component that displays the detailed contents of a historical or saved basket,
+ * allowing users to review individual items, inspect products, or reorder the entire basket.
+ */
 "use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/Lib/utils";
 import { Basket } from "@/Store/user_store";
-
+/**
+ * Properties for the BasketDetailsModal component.
+ *
+ * @interface BasketDetailsModalProps
+ * @property {Basket} basket - The basket data object containing its name, items, and metadata.
+ * @property {() => void} onClose - Callback function to close and unmount the modal.
+ * @property {(e: React.MouseEvent) => void} onReorder - Callback function triggered when the "Reorder Basket" button is clicked.
+ * @property {(item: any) => void} onProductClick - Callback function triggered when a specific product item is clicked for deeper inspection.
+ */
 interface BasketDetailsModalProps {
   basket: Basket;
   onClose: () => void;
   onReorder: (e: React.MouseEvent) => void;
   onProductClick: (item: any) => void;
 }
-
+/**
+ * An animated modal overlay that presents the itemized breakdown of a specific shopping basket.
+ * * * Features:
+ * - Fluid Animations: Uses `framer-motion` for a smooth scale-in and backdrop fade effect.
+ * - Scrollable List: Handles large baskets with a custom scrollable container (`max-h-[400px]`).
+ * - Item Breakdown: Displays product images, names, individual quantities, cart multipliers, and calculated total prices.
+ * - Interactive Elements: Supports individual product clicking for detailed views and a primary action button for full basket reordering.
+ * - Thematic Adaptability: Fully integrates with light/dark mode design tokens via Tailwind CSS.
+ * * @param {BasketDetailsModalProps} props - The component properties.
+ * @returns {JSX.Element} The rendered modal overlay and content window.
+ */
 export default function BasketDetailsModal({ basket, onClose, onReorder, onProductClick }: BasketDetailsModalProps) {
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">

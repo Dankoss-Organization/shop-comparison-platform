@@ -1,14 +1,40 @@
+/**
+ * @file recent_basket_card.tsx
+ * @description A dashboard widget that displays a summary of the user's most recent shopping basket.
+ */
 "use client";
 
 import Link from "next/link";
 import { Basket } from "@/Store/user_store";
-
+/**
+ * Properties for the RecentBasketCard component.
+ *
+ * @interface RecentBasketCardProps
+ * @property {Basket | null} basket - The most recent basket data object. If null, an empty state is displayed.
+ * @property {() => void} onClick - Callback function triggered when the active basket card is clicked.
+ */
 interface RecentBasketCardProps {
   basket: Basket | null;
   onClick: () => void;
 }
-
+/**
+ * A presentational UI component rendering a preview of the most recent saved basket.
+ * * Features:
+ * - Extracts and displays the unique stores the basket is optimized across (showing up to 2, plus a remaining count).
+ * - Displays a sleek, glassmorphic card with an interactive hover state if a basket exists.
+ * - Renders a stylized empty state ("No recent baskets yet") if the user has no history.
+ * - Includes a "View All" link directing to the full basket history page.
+ *
+ * @param {RecentBasketCardProps} props - The component properties.
+ * @returns {JSX.Element} The rendered widget.
+ */
 export default function RecentBasketCard({ basket, onClick }: RecentBasketCardProps) {
+  /**
+   * Extracts a unique list of store names from the basket's items to show where the basket is fulfilled.
+   * Checks explicit `selectedStoreId` first, then falls back to the lowest price offer, and finally to top-level stores.
+   * * @param {any} basketData - The basket object to analyze.
+   * @returns {string[]} An array of unique store names.
+   */
   const getUniqueStores = (basketData: any) => {
     const stores = new Set<string>();
     basketData.items?.forEach((item: any) => {

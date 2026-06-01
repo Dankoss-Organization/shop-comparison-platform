@@ -1,6 +1,7 @@
 /**
- * @file SupportPage.tsx
- * @description Help and Support page orchestrator.
+ * @file support_page.tsx
+ * @description The main orchestrator for the Help and Support page, aggregating contact channels, 
+ * frequently asked questions, and system status indicators.
  */
 
 "use client";
@@ -12,7 +13,11 @@ import { containerVariants, itemVariants } from "@/app/profile/_components/ui/an
 import SupportChannelCard from "@/app/profile/_components/cards/support_channel_card";
 import FaqSection from "@/app/profile/_components/sections/faq_section";
 import SystemStatusFooter from "@/app/profile/_components/sections/system_status_footer";
-
+/**
+ * Static configuration array for the available support channels.
+ * Contains metadata for rendering the contact cards including labels, SVG icons, and theme-specific Tailwind classes.
+ * @type {Array<{name: string, desc: string, icon: React.ReactNode, color: string, bg: string, shadow: string}>}
+ */
 const SUPPORT_CHANNELS = [
   { 
     name: "Telegram Bot", 
@@ -39,10 +44,18 @@ const SUPPORT_CHANNELS = [
     shadow: "shadow-[2px_2px_1px_rgba(236,88,0,0.3)] dark:shadow-[2px_2px_1px_rgba(236,88,0,0.5)]" 
   },
 ];
-
+/**
+ * The layout and organizational component for the application's support hub.
+ * * * Features:
+ * - Fluid Grid Layout: Maps over `SUPPORT_CHANNELS` to render responsive contact cards that stack on mobile and sit in a 3-column grid on desktop.
+ * - Staggered Animations: Uses shared `framer-motion` variants to smoothly animate the entrance of the support channel cards upon component mount.
+ * - Component Composition: Encapsulates complex secondary features into `FaqSection` and `SystemStatusFooter` to maintain readability.
+ * * @returns {JSX.Element} The rendered Help & Support page.
+ */
 export default function SupportPage() {
   return (
     <div className="flex flex-col h-full gap-8 sm:gap-10 max-w-[1000px] mx-auto relative pb-16 sm:pb-10">
+      {/* Page Header */}
       <div className="flex flex-col gap-1.5 sm:gap-2">
         <h1 className="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif drop-shadow-md leading-tight">
           Help & Support
@@ -51,7 +64,7 @@ export default function SupportPage() {
           Need help linking your loyalty cards or tracking a price? We are here for you.
         </p>
       </div>
-      
+      {/* Support Channels Grid */}
       <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {SUPPORT_CHANNELS.map((channel) => (
           <SupportChannelCard 
@@ -61,6 +74,7 @@ export default function SupportPage() {
           />
         ))}
       </motion.div>
+      {/* FAQ & Technical Footer */}
       <FaqSection />
       <SystemStatusFooter />
       

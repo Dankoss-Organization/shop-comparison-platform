@@ -1,15 +1,37 @@
+/**
+ * @file profile_glass_card.tsx
+ * @description A highly reusable UI wrapper component that provides consistent glassmorphic styling, 
+ * ambient glows, and variant-based themes for profile dashboard cards.
+ */
 "use client";
 
 const CARD_RADIUS = "rounded-[1.75rem]";
 const WRAPPER_RADIUS = "rounded-[1.85rem]"; 
-
+/**
+ * Properties for the ProfileGlassCard component.
+ *
+ * @interface ProfileGlassCardProps
+ * @property {React.ReactNode} children - The nested content to be rendered inside the glass card.
+ * @property {string} [className=""] - Optional Tailwind CSS classes for custom layout or styling overrides.
+ * @property {"default" | "gradient"} [variant="default"] - Specifies the visual theme of the card. `"default"` applies a standard glass look, while `"gradient"` applies deeper shadows and a premium bordered wrapper.
+ * @property {boolean} [glow=false] - If true, enables decorative ambient radial background gradients inside the card.
+ */
 interface ProfileGlassCardProps {
   children: React.ReactNode;
   className?: string;
   variant?: "default" | "gradient";
   glow?: boolean;
 }
-
+/**
+ * A foundational structural component for creating premium, glass-like UI cards.
+ * * * Features:
+ * - Variant System: Dynamically switches base styles based on the `variant` prop. The `gradient` variant wraps the card in an extra div to simulate a gradient border.
+ * - Ambient Effects: Uses the `glow` prop to conditionally inject tailored radial gradients, enhancing depth without cluttering the content.
+ * - Theme Adaptability: Heavily utilizes Tailwind's `dark:` modifier to ensure shadows, border opacities, and background colors look perfect in both Light and Dark modes.
+ * - Layer Management: Cleanly isolates the background visual effects from the content layer (using `relative z-10`), preventing text readability issues.
+ * * @param {ProfileGlassCardProps} props - The component properties.
+ * @returns {JSX.Element} The rendered glassmorphic card wrapper.
+ */
 export default function ProfileGlassCard({
   children,
   className = "",

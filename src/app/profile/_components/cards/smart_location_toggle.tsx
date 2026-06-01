@@ -1,12 +1,34 @@
+/**
+ * @file smart_location_toggle.tsx
+ * @description A glassmorphic card component featuring an animated toggle switch, 
+ * allowing users to enable or disable GPS-based "Smart Location" tracking.
+ */
 "use client";
 
 import { motion } from "framer-motion";
-
+/**
+ * Properties for the SmartLocationToggle component.
+ *
+ * @interface SmartLocationToggleProps
+ * @property {boolean} isActive - The current state of the smart location feature (true if enabled).
+ * @property {() => void} onToggle - Callback function executed when the toggle switch is clicked.
+ */
 interface SmartLocationToggleProps {
   isActive: boolean;
   onToggle: () => void;
 }
-
+/**
+ * A responsive, interactive toggle card for location settings.
+ * * * Features:
+ * - Fluid Animations: Utilizes `framer-motion` with spring physics for the toggle switch movement.
+ * - Responsive Layout: Adapts its flex layout and toggle dimensions for mobile vs. desktop (using `sm:` breakpoints).
+ * - Visual Feedback: The icon background and text colors dynamically react to the `isActive` state.
+ * - Ambient Hover Effects: Includes a subtle, delayed radial gradient glow on hover.
+ * - Glassmorphism: Features a backdrop blur and semi-transparent backgrounds compatible with both Light and Dark themes.
+ *
+ * @param {SmartLocationToggleProps} props - The component properties.
+ * @returns {JSX.Element} The rendered smart location toggle card.
+ */
 export default function SmartLocationToggle({ isActive, onToggle }: SmartLocationToggleProps) {
   return (
     <div className="group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-0 rounded-[24px] sm:rounded-[32px] bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] transition-all hover:border-brand-orange/20 dark:hover:border-brand-orange/20">

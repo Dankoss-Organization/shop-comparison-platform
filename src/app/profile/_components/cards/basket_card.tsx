@@ -1,17 +1,39 @@
+/**
+ * @file basket_card.tsx
+ * @description Presentational component for displaying a historical or saved basket (cart) summary.
+ */
 "use client";
 
 import { motion } from "framer-motion";
 import { Basket } from "@/Store/user_store";
-
+/**
+ * Properties for the BasketCard component.
+ *
+ * @interface BasketCardProps
+ * @property {Basket} basket - The basket data object containing items, price, date, etc.
+ * @property {number} index - The index of the card in a list, used for staggered entrance animations.
+ * @property {() => void} onSelect - Callback triggered when the entire card is clicked.
+ * @property {(e: React.MouseEvent) => void} onReorder - Callback triggered when the "Reorder" button is clicked.
+ */
 interface BasketCardProps {
   basket: Basket;
   index: number;
   onSelect: () => void;
   onReorder: (e: React.MouseEvent) => void;
 }
-
+/**
+ * Renders a summary card for a specific shopping basket.
+ * Displays the basket's name, completion date, color indicator, unique stores involved, and total price.
+ * * @param {BasketCardProps} props - The component properties.
+ * @returns {JSX.Element} The animated basket card component.
+ */
 export default function BasketCard({ basket, index, onSelect, onReorder }: BasketCardProps) {
-  
+  /**
+   * Extracts a unique list of store names from the basket's items.
+   * Falls back to the basket's default stores array or a generic name if no stores are found.
+   * * @param {Basket} basketData - The basket object to analyze.
+   * @returns {string[]} An array of unique store names.
+   */
   const getUniqueStores = (basketData: Basket) => {
     const stores = new Set<string>();
     basketData.items.forEach((item: any) => {

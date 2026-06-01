@@ -1,12 +1,34 @@
+/**
+ * @file session_card.tsx
+ * @description A UI component that displays information about a user's active or past login session.
+ */
 "use client";
-
+/**
+ * Properties for the SessionCard component.
+ *
+ * @interface SessionCardProps
+ * @property {string} device - The name of the device or browser used for the session (e.g., "MacBook Pro - Chrome").
+ * @property {string} location - The geographical location or IP-based location of the session (e.g., "Kyiv, Ukraine").
+ * @property {string} status - A descriptive text of the session's status (e.g., "Active now", "Last seen 2 hours ago").
+ * @property {boolean} [active] - Optional flag indicating if this is the currently active session. Changes the styling to green.
+ */
 interface SessionCardProps {
   device: string;
   location: string;
   status: string;
   active?: boolean;
 }
-
+/**
+ * A presentational card component showing security session details.
+ * * Features:
+ * - Visually differentiates between active and inactive sessions using color coding (green for active, muted gray for inactive).
+ * - Displays a stylized lock/device SVG icon.
+ * - Fully responsive layout using Tailwind CSS, adapting padding, icon size, and text sizing for mobile and desktop.
+ * - Supports dark and light modes seamlessly.
+ *
+ * @param {SessionCardProps} props - The component properties.
+ * @returns {JSX.Element} The rendered session card.
+ */
 export default function SessionCard({
   device,
   location,

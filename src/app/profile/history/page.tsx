@@ -1,6 +1,7 @@
 /**
- * @file HistoryPage.tsx
- * @description Past purchases history orchestrator.
+ * @file history_page.tsx
+ * @description Past purchases history orchestrator. Manages the display of historical baskets, 
+ * handles reordering logic into the active cart, and orchestrates nested modals for basket and product details.
  */
 
 "use client";
@@ -14,7 +15,14 @@ import { ProductModal } from "@/Components/UI/product_modal";
 import { type DealCard as DealCardType } from "@/Data/home_data";
 import BasketCard from "@/app/profile/_components/cards/basket_card";
 import BasketDetailsModal from "@/app/profile/_components/modals/basket_details_modal";
-
+/**
+ * A utility component that safely mounts its children into the document body using a React Portal.
+ * * * Features:
+ * - SSR Compatibility: Uses a local `mounted` state to ensure the portal is only created on the client side, preventing hydration mismatches.
+ * * @param {object} props
+ * @param {React.ReactNode} props.children - The elements to render inside the portal.
+ * @returns {React.ReactPortal | null} The rendered portal, or null if rendering on the server.
+ */
 export function PortalWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -23,20 +31,34 @@ export function PortalWrapper({ children }: { children: React.ReactNode }) {
   }, []);
   return mounted ? createPortal(children, document.body) : null;
 }
-
+/**
+ * Main page component for viewing and managing past purchases.
+ * * * Features:
+ * - Reorder Logic: Allows users to clone an entire historical basket into their active cart. Prevents mixing by validating that the current cart is empty first.
+ * - Modal Orchestration: Manages state for viewing deeper details (opening a `BasketDetailsModal` for a specific basket, and subsequently a `ProductModal` for individual items).
+ * - Portal Usage: Wraps floating UI elements (error toasts, modals) in `PortalWrapper` to ensure they break out of localized DOM stacking contexts.
+ * - Financial Summary: Dynamically calculates and displays the total historical value of all past purchases.
+ * * @returns {JSX.Element | null} The rendered history page or null during SSR.
+ */
 export default function HistoryPage() {
   const [isMounted, setIsMounted] = useState(false);
+  // Global Stores
   const { baskets } = useUserStore(); 
   const { items: cartItems, addItem, setOpen } = useCartStore(); 
-
+  // Local UI State
   const [error, setError] = useState<string | null>(null);
   const [selectedBasket, setSelectedBasket] = useState<Basket | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<DealCardType | null>(null);
-
+  // Ensure client-side hydration
   useEffect(() => setIsMounted(true), []);
 
   const totalSpent = baskets.reduce((sum, basket) => sum + basket.price, 0);
-
+  /**
+   * Handles the workflow of transferring a historical basket into the active cart.
+   * Enforces a rule that the current cart must be empty before reordering.
+   * * @param {React.MouseEvent} e - The click event.
+   * @param {number} id - The unique ID of the historical basket to reorder.
+   */
   const handleReorder = (e: React.MouseEvent, id: number) => {
     e.stopPropagation(); 
     
@@ -50,6 +72,7 @@ export default function HistoryPage() {
     
     if (historicalBasket && historicalBasket.items.length > 0) {
       historicalBasket.items.forEach((item: any) => {
+        // Reconstruct the item payload to match the active cart schema
         const reorderedItem = {
           id: item.id || `reorder_${Date.now()}_${Math.random()}`, 
           title: item.title || item.name,
@@ -87,7 +110,7 @@ export default function HistoryPage() {
 
   return (
     <div className="relative flex flex-col gap-10 w-full pb-10 z-10">
-      
+      {/* Toast Notification for Validation Errors */}
       <PortalWrapper>
         <AnimatePresence>
           {error && (
@@ -105,7 +128,7 @@ export default function HistoryPage() {
           )}
         </AnimatePresence>
       </PortalWrapper>
-
+        {/* Header and Financial Summary */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-text-main/5 dark:border-white/5 pb-5 md:pb-6">
         <div className="flex flex-col gap-1.5 md:gap-2">
           <h2 className="text-[28px] sm:text-[32px] md:text-[40px] font-bold tracking-[1px] text-text-main dark:text-text-primary font-serif drop-shadow-sm leading-tight">Basket History</h2>
@@ -116,7 +139,7 @@ export default function HistoryPage() {
           <span className="text-[24px] sm:text-[28px] font-black text-brand-orange drop-shadow-[0_2px_10px_rgb(var(--brand-orange)/0.2)]">${totalSpent.toFixed(2)}</span>
         </div>
       </div>
-
+      {/* Basket Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <AnimatePresence>
           {baskets.map((basket, idx) => (
@@ -130,7 +153,7 @@ export default function HistoryPage() {
           ))}
         </AnimatePresence>
       </div>
-
+      {/* Selected Basket Details Modal */}
       <PortalWrapper>
         <AnimatePresence>
           {selectedBasket && (
@@ -143,7 +166,7 @@ export default function HistoryPage() {
           )}
         </AnimatePresence>
       </PortalWrapper>
-
+      {/* Individual Historical Product View Modal */}
       <PortalWrapper>
         <AnimatePresence>
           {selectedProduct && (

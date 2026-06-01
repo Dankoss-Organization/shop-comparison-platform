@@ -1,3 +1,8 @@
+/**
+ * @file personal_info_form.tsx
+ * @description A profile settings form component that enables users to update their core personal details, 
+ * featuring animated feedback and custom dropdowns.
+ */
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -5,33 +10,46 @@ import { useState, useEffect, useRef } from "react";
 import { useUserStore } from "@/Store/user_store";
 import ProfileGlassCard from "@/app/profile/_components/ui/profile_glass_card";
 import ProfileInput from "@/app/profile/_components/ui/profile_input";
-
+/**
+ * A static array of major Ukrainian cities used to populate the custom auto-complete dropdown.
+ * @type {string[]}
+ */
 const UKRAINIAN_CITIES = [
   "Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia",
   "Vinnytsia", "Poltava", "Chernihiv", "Chernivtsi", "Ivano-Frankivsk",
   "Ternopil", "Lutsk", "Rivne", "Zhytomyr", "Sumy", "Cherkasy",
   "Kropyvnytskyi", "Mykolaiv", "Kherson", "Uzhhorod", "Khmelnytskyi",
 ];
-
+/**
+ * The main component for editing user personal information.
+ * * * Features:
+ * - State Management: Synchronizes local form state with the global `useUserStore`, allowing users to discard or save changes safely.
+ * - Custom Dropdown: Implements an animated, filterable city selection menu with click-outside detection (`useRef` and `useEffect`).
+ * - Dynamic Validation UI: Displays an animated "Verified" or "Pending Verification" badge based on email state comparisons.
+ * - Micro-interactions: The save button utilizes `framer-motion` to transition smoothly between "Idle", "Saving" (bouncing dots), and "Saved" (success checkmark) states.
+ * - Glassmorphism Integration: Encapsulates the form within a `ProfileGlassCard` to match the application's premium design system.
+ * * @returns {JSX.Element} The rendered personal info form.
+ */
 export default function PersonalInfoForm() {
+  // Global state bindings
   const { displayName: globalName, email: globalEmail, primaryCity: globalCity, setDisplayName, setEmail, setPrimaryCity } = useUserStore();
-
+  // Local state for controlled inputs
   const [localName, setLocalName] = useState(globalName);
   const [localEmail, setLocalEmail] = useState(globalEmail);
   const [localCity, setLocalCity] = useState(globalCity);
-
+  // Dropdown management
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const cityRef = useRef<HTMLDivElement>(null);
-
+  // Form submission state
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-
+  // Sync local state when global state updates
   useEffect(() => {
     setLocalName(globalName);
     setLocalEmail(globalEmail);
     setLocalCity(globalCity);
   }, [globalName, globalEmail, globalCity]);
-
+  // Handle outside clicks to close the city dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cityRef.current && !cityRef.current.contains(event.target as Node)) {
@@ -41,20 +59,26 @@ export default function PersonalInfoForm() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
+  // Filter cities based on current input
   const filteredCities = UKRAINIAN_CITIES.filter((city) =>
     city.toLowerCase().includes(localCity.toLowerCase())
   );
-
+/**
+   * Handles the form submission by simulating a network request and updating the global store.
+   * @param {React.FormEvent} e - The form submission event.
+   */
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    // Simulate API delay
     setTimeout(() => {
       setIsSaving(false);
       setIsSaved(true);
+      // Commit changes to global store
       setDisplayName(localName);
       setEmail(localEmail);
       setPrimaryCity(localCity);
+      // Reset success state after delay
       setTimeout(() => setIsSaved(false), 3000);
     }, 1000);
   };
@@ -65,7 +89,7 @@ export default function PersonalInfoForm() {
   return (
     <ProfileGlassCard variant="gradient" glow className="p-5 sm:p-6 md:p-8 h-full">
       <form onSubmit={handleSave} className="relative z-10 flex flex-col gap-5 sm:gap-7">
-        
+        {/* Display Name Input */}
         <ProfileInput
           label="Display Name"
           labelClassName={customLabelClass}
@@ -74,7 +98,7 @@ export default function PersonalInfoForm() {
           onChange={(e) => setLocalName(e.target.value)}
           placeholder="Enter your display name..."
         />
-
+        {/* Email Address Input with Animated Verification Badge */}
         <ProfileInput
           label="Email Address"
           labelClassName={customLabelClass}
@@ -97,7 +121,7 @@ export default function PersonalInfoForm() {
             </AnimatePresence>
           }
         />
-
+        {/* Primary City Autocomplete Input */}
         <div className="relative" ref={cityRef}>
           <ProfileInput
             label="Primary City"
@@ -131,7 +155,7 @@ export default function PersonalInfoForm() {
             )}
           </AnimatePresence>
         </div>
-
+        {/* Submit Action Area */}
         <div className="mt-2 flex justify-end pt-5 sm:pt-6 border-t border-text-main/5 dark:border-white/5">
           <button
             type="submit"
