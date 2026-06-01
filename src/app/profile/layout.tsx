@@ -1,6 +1,7 @@
 /**
  * @file profile_layout.tsx
- * @brief Dashboard Layout with adaptive glassmorphism for both Light and Dark themes.
+ * @description The main layout wrapper for the authenticated user dashboard. 
+ * Implements a responsive navigation sidebar, dynamic routing indicators, and adaptive glassmorphic styling.
  */
 
 "use client";
@@ -11,7 +12,18 @@ import { motion } from "framer-motion";
 import Header from "@/Components/Layout/header"; 
 import Footer from "@/Components/Layout/footer";
 import { useUserStore } from "@/Store/user_store";
-
+/**
+ * A persistent layout component that wraps all pages within the `/profile` route group.
+ * * * Features:
+ * - Responsive Navigation: Renders a horizontal, scrollable navigation bar on mobile devices and a fixed vertical sidebar on desktop screens (`lg:` breakpoints).
+ * - Animated Indicators: Utilizes `framer-motion`'s `layoutId` to smoothly animate an active state indicator between sidebar navigation items.
+ * - Global State Integration: Connects to `useUserStore` to handle user session termination via the `logout` action.
+ * - Glassmorphic Aesthetics: Features ambient background blurs, nested gradient borders, and heavy backdrop filters to maintain the application's premium UI language across themes.
+ * - Scroll Management: Confines the page content (`children`) within a dedicated, custom-scrollable main container to keep the sidebar and header accessible at all times.
+ * * @param {Object} props
+ * @param {React.ReactNode} props.children - The specific profile page content to be rendered within the main content area.
+ * @returns {JSX.Element} The rendered dashboard layout framework.
+ */
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -43,7 +55,9 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
     )}
   ];
-
+  /**
+   * Executes the user logout sequence, clearing session data and navigating back to the homepage.
+   */
   const handleLogout = () => {
     logout();
     router.push("/");
@@ -52,14 +66,14 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-
+      
       <div className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col lg:flex-row gap-6 lg:gap-8 p-4 md:p-8 xl:p-10">
-        
+        {/* Ambient Background Glows */}
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex justify-center">
           <div className="absolute top-[-10%] left-[10%] h-[600px] w-[600px] rounded-full bg-brand-orange/15 blur-[150px]" />
           <div className="absolute bottom-[-10%] right-[5%] h-[500px] w-[500px] rounded-full bg-brand-orange/10 blur-[130px]" />
         </div>
-
+        {/* Mobile Navigation Header (Visible only on < lg screens) */}
         <div className="flex w-full flex-col gap-4 lg:hidden z-20">
           <div className="flex items-center justify-between px-2">
             <div>
@@ -75,6 +89,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
           </div>
 
           <div className="relative w-full">
+            {/* Scroll Shadows */}
             <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-bg-main to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-bg-main to-transparent z-10 pointer-events-none" />
             
@@ -104,7 +119,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             </div>
           </div>
         </div>
-
+        {/* Desktop Sidebar Navigation (Visible only on >= lg screens) */}
         <aside className="hidden w-[280px] shrink-0 flex-col gap-6 lg:flex z-10">
           <div className="flex flex-col gap-1 px-2">
             <h1 className="text-[24px] font-bold tracking-[1px] text-text-main dark:text-text-primary uppercase">Dashboard</h1>

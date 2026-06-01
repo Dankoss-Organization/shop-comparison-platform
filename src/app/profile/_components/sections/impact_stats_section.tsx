@@ -1,8 +1,20 @@
+/**
+ * @file impact_stats_section.tsx
+ * @description A dashboard widget section that visualizes the user's total savings, 
+ * active tracking alerts, and favorite store statistics using animated counters.
+ */
 "use client";
 
 import { useState, useEffect } from "react";
 import { animate } from "framer-motion";
-
+/**
+ * A helper component that animates a numeric value from a starting point to an end point.
+ * * @param {object} props
+ * @param {number} [props.from=0] - The starting value of the counter.
+ * @param {number} props.to - The target value to animate to.
+ * @param {number} [props.duration=1.5] - The duration of the animation in seconds.
+ * @returns {JSX.Element} A span element containing the animated current value.
+ */
 function Counter({ from = 0, to, duration = 1.5 }: { from: number, to: number, duration?: number }) {
   const [current, setCurrent] = useState(from);
 
@@ -18,7 +30,15 @@ function Counter({ from = 0, to, duration = 1.5 }: { from: number, to: number, d
 
   return <span>{current}</span>;
 }
-
+/**
+ * A presentational component rendering the user's "Impact" metrics.
+ * * * Features:
+ * - Animated Statistics: Utilizes the `Counter` helper to smoothly animate numerical data on mount.
+ * - Glassmorphism UI: Applies backdrop blurs, semi-transparent backgrounds, and subtle borders for a modern look.
+ * - Hover Effects: Features smooth upward translation (`hover:-translate-y-1`) and background brightening on hover.
+ * - Responsive Grid: Adapts from a single column on mobile to three columns on large screens.
+ * * @returns {JSX.Element} The rendered impact statistics section.
+ */
 export default function ImpactStatsSection() {
   return (
     <div className="flex flex-col gap-4 z-10">
@@ -26,6 +46,7 @@ export default function ImpactStatsSection() {
         Your Impact
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        {/* Total Savings Card */}
         <div className="group flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
           <span className="text-[13px] font-bold text-text-muted uppercase tracking-[1.5px] cursor-default select-none">Total Savings</span>
           <div className="mt-4 flex flex-col cursor-default select-none">
@@ -41,7 +62,7 @@ export default function ImpactStatsSection() {
             </span>
           </div>
         </div>
-
+        {/* Active Alerts Card */}
         <div className="group flex flex-col justify-between rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
           <span className="text-[13px] font-bold text-text-muted uppercase tracking-[1.5px] cursor-default select-none">Active Alerts</span>
           <div className="mt-4 flex flex-col cursor-default select-none">
@@ -53,7 +74,7 @@ export default function ImpactStatsSection() {
             </span>
           </div>
         </div>
-
+        {/* Top Store Card */}
         <div className="group relative flex flex-col justify-between overflow-hidden rounded-[32px] bg-white/50 dark:bg-white/5 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),_0_15px_35px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/5 p-5 sm:p-6 md:p-7 transition-all duration-500 hover:bg-white/70 dark:hover:bg-white/10 hover:-translate-y-1">
           <div className="relative z-10 flex flex-col cursor-default select-none">
             <span className="text-[13px] font-bold text-text-muted uppercase tracking-[1.5px]">Top Store</span>

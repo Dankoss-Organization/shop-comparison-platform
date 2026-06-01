@@ -1,13 +1,31 @@
+/**
+ * @file profile_header_section.tsx
+ * @description A header component for the user profile, displaying user credentials, an interactive avatar with upload/resize capabilities, and a profile completion progress bar.
+ */
 "use client";
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import { useUserStore } from "@/Store/user_store";
-
+/**
+ * The main profile header section.
+ * * * Features:
+ * - Client-Side Image Processing: Utilizes the HTML5 Canvas API to automatically resize uploaded avatars (maintaining aspect ratio up to a maximum of 400x400 pixels) and compresses them to high-quality base64 strings before saving.
+ * - State Management: Integrates directly with `useUserStore` to globally manage and persist the user's `displayName`, `email`, and `avatarUrl`.
+ * - Interactive Avatar UI: Features hover overlays for the upload action, a dedicated "remove" button for custom photos, and a decorative edit badge.
+ * - Visual Polish: Includes a "Savvy Shopper" tag, glassmorphic styling, and an animated profile setup progress bar powered by `framer-motion`.
+ * * @returns {JSX.Element} The rendered profile header component.
+ */
 export default function ProfileHeaderSection() {
   const { displayName, email, avatarUrl, setAvatarUrl } = useUserStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  /**
+   * Handles the selection and processing of a new profile image.
+   * Reads the file, paints it onto a hidden canvas to constrain its dimensions, 
+   * and updates the global store with the new base64 image data.
+   * 
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
+   */
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -21,7 +39,7 @@ export default function ProfileHeaderSection() {
         
         let width = img.width;
         let height = img.height;
-
+        // Maintain aspect ratio while scaling down to MAX_SIZE
         if (width > height) {
           if (width > MAX_SIZE) {
             height *= MAX_SIZE / width;
@@ -51,7 +69,11 @@ export default function ProfileHeaderSection() {
     };
     reader.readAsDataURL(file);
   };
-
+/**
+   * Removes the custom uploaded photo and resets the avatar to the default SVG.
+   * 
+   * @param {React.MouseEvent} e - The mouse click event.
+   */
   const handleRemovePhoto = (e: React.MouseEvent) => {
     e.stopPropagation();
     setAvatarUrl("/user.svg");

@@ -1,13 +1,29 @@
+/**
+ * @file faq_section.tsx
+ * @description A section component that displays a list of Frequently Asked Questions (FAQs) 
+ * with interactive hover states and glassmorphic styling.
+ */
 "use client";
 
 import { motion } from "framer-motion";
-
+/**
+ * Static list of frequently asked questions.
+ * @type {string[]}
+ */
 const FAQ_ITEMS = [
   "How do I link my Silpo card?", 
   "Why is the price different in the store?", 
   "How do Smart Baskets calculate macros?"
 ];
-
+/**
+ * A presentational component rendering the FAQ list.
+ * * * Features:
+ * - Animated Entrance: Utilizes `framer-motion` to smoothly fade and slide the section into view upon mounting.
+ * - Interactive UI: Features group-hover effects where the text changes color and the arrow icon container highlights to indicate clickability.
+ * - Glassmorphism Design: Uses complex background gradients, backdrop blurs, and responsive padding tailored for Light and Dark themes.
+ * - Responsive Typography: Adjusts font sizes and icon dimensions seamlessly between mobile and desktop viewports.
+ * * @returns {JSX.Element} The rendered Frequently Asked Questions section.
+ */
 export default function FaqSection() {
   return (
     <motion.div 

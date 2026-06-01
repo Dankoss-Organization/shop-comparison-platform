@@ -1,9 +1,28 @@
+/**
+ * @file add_location_button.tsx
+ * @description A styled, interactive button component formatted as a placeholder card 
+ * used to trigger the addition of a new user address or location.
+ */
 "use client";
-
+/**
+ * Properties for the AddLocationButton component.
+ *
+ * @interface AddLocationButtonProps
+ * @property {() => void} [onClick] - Optional callback function triggered when the user clicks the button.
+ */
 interface AddLocationButtonProps {
   onClick?: () => void;
 }
-
+/**
+ * A presentational component that renders a large, dashed-border "add" button.
+ * * * Features:
+ * - Visual Affordance: Uses a dashed border and a prominent "+" icon to clearly indicate an "add" action.
+ * - Interactive Hover States: Implements complex `group-hover` interactions, transitioning background colors, border colors, and scaling the icon to provide engaging user feedback.
+ * - Responsive Design: Adjusts minimum heights and border radii between mobile and desktop viewports (`sm:` breakpoints).
+ * - Theme Adaptability: Fully supports dark mode with adaptive backdrop opacities and subtle shadow transitions.
+ * * @param {AddLocationButtonProps} props - The component properties.
+ * @returns {JSX.Element} The rendered "Add New Address" card button.
+ */
 export default function AddLocationButton({ onClick }: AddLocationButtonProps) {
   return (
     <button 

@@ -1,19 +1,35 @@
 /**
- * @file PreferencesPage.tsx
+ * @file preferences_page.tsx
  * @description User lifestyle and dietary preferences page with adaptive colors for Light/Dark themes.
+ * Integrates with the global store to manage allergies, diets, health goals, and ethical lifestyle choices.
  */
 
 "use client";
 
 import { useUserStore } from "@/Store/user_store";
 import { motion, Variants } from "framer-motion";
-
+/**
+ * Properties for the internal TogglePill component.
+ *
+ * @interface TogglePillProps
+ * @property {string} label - The display text for the preference option.
+ * @property {boolean} isActive - Determines if the preference is currently selected.
+ * @property {() => void} onClick - Callback executed when the user toggles the pill.
+ */
 interface TogglePillProps {
   label: string;
   isActive: boolean;
   onClick: () => void;
 }
-
+/**
+ * Main Preferences Page component.
+ * * * Features:
+ * - State Management: Connects directly to `useUserStore` to persist user lifestyle choices across the application.
+ * - Thematic Categorization: Groups preferences into distinct cards (Allergies, Fitness Goals, Medical, Lifestyle), each featuring a unique icon and color-coded ambient glow (red, green, blue, orange).
+ * - Staggered Animations: Utilizes `framer-motion` to orchestrate a fluid, cascading entrance for all preference cards upon mount.
+ * - Glassmorphic UI: Leverages intense backdrop blurs, semi-transparent backgrounds, and inner shadows to create a premium, depth-rich interface in both Light and Dark modes.
+ * * @returns {JSX.Element} The rendered lifestyle profile configuration page.
+ */
 export default function PreferencesPage() {
   const { preferences, toggleAllergy, toggleHealthGoal, setDiet, toggleLifestyle } = useUserStore();
 
@@ -21,7 +37,10 @@ export default function PreferencesPage() {
   const healthList = ["Low Sugar (Diabetes)", "Low Sodium", "Heart Healthy"];
   const dietList = ["Keto", "Vegan", "High Protein", "Vegetarian"];
   const lifestyleList = ["Eco-Packaging", "Local Farmers", "Organic"];
-
+/**
+   * Internal component rendering a selectable pill for individual preferences.
+   * Features a hover translation and an animated continuous shine effect when active.
+   */
   const TogglePill = ({ label, isActive, onClick }: TogglePillProps) => (
     <button
       onClick={onClick}
@@ -55,13 +74,14 @@ const item: Variants = {
 };
   return (
     <div className="flex flex-col gap-8 max-w-[1000px] mx-auto pb-10">
+      {/* Page Header */}
       <div className="flex flex-col gap-2">
         <h1 className="text-[28px] font-bold text-text-main dark:text-text-primary uppercase tracking-[1px]">Lifestyle Profile</h1>
         <p className="text-[15px] font-medium tracking-[-0.5px] text-text-muted dark:text-text-primary/50">Shape your personal DANKOSS ecosystem.</p>
       </div>
-
+    {/* Animated Grid Container */}
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+        {/* Allergies & Intolerances Card (Span 2) */}
         <motion.div variants={item} className="group relative col-span-1 md:col-span-2 overflow-hidden rounded-[36px] bg-white/50 dark:bg-white/5 p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,222,186,0.05),_0_8px_30px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/10 transition-all hover:shadow-md">
           <div className="absolute -bottom-[50%] -right-[10%] w-[60%] h-[100%] rounded-full bg-red-500/5 dark:bg-red-500/10 blur-[60px] pointer-events-none" />
           <div className="relative z-10 flex flex-col gap-5">
@@ -79,7 +99,7 @@ const item: Variants = {
             </div>
           </div>
         </motion.div>
-
+        {/* Fitness Goals Card (Span 1) */}
         <motion.div variants={item} className="group relative col-span-1 overflow-hidden rounded-[36px] bg-white/50 dark:bg-white/5 p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,222,186,0.05),_0_8px_30px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/10 transition-all hover:shadow-md">
           <div className="absolute -top-[20%] -right-[20%] w-[80%] h-[80%] rounded-full bg-green-500/5 dark:bg-green-400/10 blur-[50px] pointer-events-none" />
           <div className="relative z-10 flex flex-col gap-5 h-full">
@@ -94,7 +114,7 @@ const item: Variants = {
             </div>
           </div>
         </motion.div>
-
+        {/* Medical Card (Span 1) */}
         <motion.div variants={item} className="group relative col-span-1 overflow-hidden rounded-[36px] bg-white/50 dark:bg-white/5 p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,222,186,0.05),_0_8px_30px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/10 transition-all hover:shadow-md">
            <div className="absolute -bottom-[20%] -left-[20%] w-[90%] h-[90%] rounded-full bg-blue-500/5 dark:bg-blue-500/10 blur-[50px] pointer-events-none" />
            <div className="relative z-10 flex flex-col gap-5 h-full">
@@ -109,7 +129,7 @@ const item: Variants = {
             </div>
           </div>
         </motion.div>
-
+        {/* Lifestyle & Ethics Card (Span 2) */}
         <motion.div variants={item} className="group relative col-span-1 md:col-span-2 overflow-hidden rounded-[36px] bg-white/50 dark:bg-white/5 p-8 backdrop-blur-[20px] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,222,186,0.05),_0_8px_30px_rgba(0,0,0,0.3)] border border-black/5 dark:border-white/10 transition-all hover:shadow-md">
            <div className="absolute -top-[50%] -left-[10%] w-[50%] h-[150%] rounded-full bg-brand-orange/5 dark:bg-brand-orange/10 blur-[60px] pointer-events-none" />
            <div className="relative z-10 flex flex-col gap-5">

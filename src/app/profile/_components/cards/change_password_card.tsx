@@ -1,10 +1,22 @@
+/**
+ * @file change_password_card.tsx
+ * @description A profile section component that provides a user interface for changing the account password.
+ */
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import ProfileGlassCard from "@/app/profile/_components/ui/profile_glass_card";
 import ProfileInput from "@/app/profile/_components/ui/profile_input";
-
+/**
+ * A self-contained form component for updating a user's password.
+ * * Features:
+ * - Local state management for current, new, and confirmation passwords.
+ * - Real-time validation: checks for a minimum length of 8 characters and ensures passwords match.
+ * - Interactive UI feedback: provides loading (saving) and success (saved) states with framer-motion animations.
+ * - Hydration safe (uses `isMounted` pattern).
+ * * @returns {JSX.Element | null} The password change card component, or null during server-side rendering.
+ */
 export default function ChangePasswordCard() {
   const [isMounted, setIsMounted] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -13,23 +25,30 @@ export default function ChangePasswordCard() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+// Prevent hydration mismatch by only rendering the form after the component has mounted on the client.
   useEffect(() => setIsMounted(true), []);
 
   const isLengthValid = newPassword.length >= 8 || newPassword.length === 0;
   const passwordsMatch = newPassword === confirmPassword;
+  // The form can only be submitted if all fields are filled correctly and it's not currently saving.
   const canSubmit = currentPassword.length > 0 && newPassword.length >= 8 && passwordsMatch && !isSaving;
-
+/**
+   * Handles the password form submission.
+   * Currently simulates a network request with a timeout, then resets the form and displays a success state.
+   * * @param {React.FormEvent} e - The form submission event.
+   */
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
     setIsSaving(true);
+    // Simulate API call for password update
     setTimeout(() => {
       setIsSaving(false);
       setIsSaved(true);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      // Reset success message after 3 seconds
       setTimeout(() => setIsSaved(false), 3000);
     }, 1000);
   };

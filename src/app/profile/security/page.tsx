@@ -1,6 +1,6 @@
 /**
  * @file page.tsx
- * @brief Security settings page orchestrator.
+ * @description The main orchestrator for the user's security settings page, composing together password management, two-factor authentication, and session tracking components.
  */
 
 "use client";
@@ -8,7 +8,15 @@
 import ChangePasswordCard from "@/app/profile/_components/cards/change_password_card";
 import TwoFactorCard from "@/app/profile/_components/cards/two_factor_card";
 import ActiveSessionsSection from "@/app/profile/_components/sections/active_sessions_section";
-
+/**
+ * A layout component that structures the security settings interface.
+ * * * Features:
+ * - Component Composition: Aggregates modular security components (`ChangePasswordCard`, `TwoFactorCard`, `ActiveSessionsSection`) into a unified dashboard view.
+ * - Responsive Grid: Utilizes CSS Grid (`grid-cols-1 xl:grid-cols-2`) to provide a stacked layout on mobile/tablet and a side-by-side layout on large desktop screens.
+ * - Thematic Typography: Applies consistent serif fonts for section headers and maintains readable contrast ratios across light and dark modes.
+ * - Maximum Width Constraint: Centers the content and prevents it from stretching too wide on ultra-wide monitors (`max-w-[1000px] mx-auto`).
+ * * @returns {JSX.Element} The rendered security settings page.
+ */
 export default function SecurityPage() {
   return (
     <div className="relative flex flex-col gap-8 sm:gap-10 w-full pb-10 z-10 max-w-[1000px] mx-auto">

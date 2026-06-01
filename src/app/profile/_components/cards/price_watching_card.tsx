@@ -9,7 +9,15 @@
 import { usePriceAlertsStore } from "@/Store/use_price_alerts_store";
 import SmartImage from "@/Components/UI/smart_image";
 import { formatCurrency } from "@/Lib/utils";
-
+/**
+ * The Price Watching Card component.
+ * * * Features:
+ * - State Management: Retrieves tracked products and unsubscribe functionality directly from the `usePriceAlertsStore` global state.
+ * - Empty State Handling: Displays a helpful placeholder with an icon and instructions if the user isn't tracking any products yet.
+ * - Dynamic List: Renders a structured list of tracked items, utilizing `SmartImage` for optimized product images and `formatCurrency` for locale-aware price formatting.
+ * - User Interaction: Allows users to actively stop tracking an item via the "Unsubscribe" button, which instantly updates the global state.
+ * * @returns {JSX.Element} The rendered list of watched products or an empty state placeholder.
+ */
 export default function PriceWatchingCard() {
   const priceAlerts = usePriceAlertsStore((s) => s.alerts);
   const unsubscribe = usePriceAlertsStore((s) => s.unsubscribe);
