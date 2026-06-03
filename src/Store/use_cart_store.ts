@@ -15,6 +15,7 @@ export interface CartItem extends DealCardType {
   selectedStoreId?: string;
   internalId?: string;
   isLocked?: boolean;
+  cartItemId?: string;
 }
 
 export interface CartState {
@@ -56,14 +57,22 @@ export const useCartStore = create<CartState>()(
         (o: any) => o.store_id === (product as any).selectedStoreId
       ) ?? (product as any).offers?.[0];
 
+      const resolveAndAdd = (offerId: string) => {
+        getCartApi().addCartItem({ offerId, quantity: 1 }).then(res => {
+          set(state => ({
+            items: state.items.map(i =>
+              isSameProduct(i, product) ? { ...i, cartItemId: res.cartItemId } : i
+            )
+          }));
+        }).catch(console.error);
+      };
+
       if (selectedOffer?.offerId) {
-        getCartApi().addCartItem({ offerId: selectedOffer.offerId, quantity: 1 }).catch(console.error);
+        resolveAndAdd(selectedOffer.offerId);
       } else if (product.id) {
         getProductsApi().getProductCard(product.id).then(card => {
           const firstOffer = card.topOffers[0];
-          if (firstOffer) {
-            getCartApi().addCartItem({ offerId: firstOffer.id, quantity: 1 }).catch(console.error);
-          }
+          if (firstOffer) resolveAndAdd(firstOffer.id);
         }).catch(console.error);
       }
 
@@ -81,15 +90,27 @@ export const useCartStore = create<CartState>()(
       }
     },
 
-      removeItem: (id) => set({
-        items: get().items.filter((i) => i.id !== id && i.internalId !== id)
-      }),
+      removeItem: (id) => {
+        const item = get().items.find((i) => i.id === id || i.internalId === id);
+        if (item?.cartItemId) {
+          getCartApi().deleteCartItem(item.cartItemId).catch(console.error);
+        }
+        set({ items: get().items.filter((i) => i.id !== id && i.internalId !== id) });
+      },
 
-      updateQuantity: (id, delta) => set({
-        items: get().items.map((i) =>
-          (i.id === id || i.internalId === id) ? { ...i, cartQuantity: Math.max(1, i.cartQuantity + delta) } : i
-        )
-      }),
+      updateQuantity: (id, delta) => {
+        const items = get().items;
+        const item = items.find((i) => i.id === id || i.internalId === id);
+        if (item?.cartItemId) {
+          const newQty = Math.max(1, item.cartQuantity + delta);
+          getCartApi().updateCartItemQuantity(item.cartItemId, { quantity: newQty }).catch(console.error);
+        }
+        set({
+          items: items.map((i) =>
+            (i.id === id || i.internalId === id) ? { ...i, cartQuantity: Math.max(1, i.cartQuantity + delta) } : i
+          )
+        });
+      },
 
       updateSelectedStore: (itemId, storeId) => set({
         items: get().items.map((i) =>
