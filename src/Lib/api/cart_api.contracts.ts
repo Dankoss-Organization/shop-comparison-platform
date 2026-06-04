@@ -6,8 +6,7 @@
 export interface CartOfferProduct {
   productId: string;
   canonicalName: string;
-  mainImage: string;
-  media?: string;
+  media: string;
 }
 
 export interface CartOfferStore {
@@ -37,7 +36,6 @@ export interface CartResponse {
   items: CartItem[];
   sum: number;
   discountSum: number;
-  totalPayable: number;
   currency: string;
 }
 

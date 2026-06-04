@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/Components/Layout/header";
 import Footer from "@/Components/Layout/footer";
@@ -22,17 +22,30 @@ export default function FavoritesPage() {
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const { isAuthenticated } = useUserStore();
   const openProfileWithLoginHint = useUIStore((state) => state.openProfileWithLoginHint);
-  
+
   const [isMounted, setIsMounted] = useState(false);
+  const [isSynced, setIsSynced] = useState(false);
   const [favoriteItems, setFavoriteItems] = useState<DealCard[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+  const favoriteIdsKey = useMemo(() => favoriteIds.join(","), [favoriteIds]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!isMounted || !isAuthenticated) return;
+    if (!isMounted || !isAuthenticated || isSynced) return;
+
+    const timer = setTimeout(async () => {
+      await useFavoritesStore.getState().syncWithBackend();
+      setIsSynced(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [isMounted, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isMounted || !isAuthenticated || !isSynced) return;
 
     if (favoriteIds.length === 0) {
       setFavoriteItems([]);
@@ -67,7 +80,7 @@ export default function FavoritesPage() {
     return () => {
       isCancelled = true;
     };
-  }, [isMounted, isAuthenticated, favoriteIds]);
+  }, [isMounted, isAuthenticated, isSynced, favoriteIdsKey]);
 
   const handleSignInHint = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -90,25 +103,17 @@ export default function FavoritesPage() {
           </div>
         </div>
       </div>
-
       <div className="flex flex-col gap-4 max-w-[420px]">
         <h2 className="text-3xl font-light tracking-wide text-text-main">Sign in to view favorites</h2>
         <p className="text-[16px] text-text-muted leading-relaxed font-light">
           Create a free account to view your wishlist, sync your saved items across devices, and never lose track of a deal.
         </p>
       </div>
-
       <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
-        <button
-          onClick={handleSignInHint}
-          className="flex h-[48px] min-w-[180px] items-center justify-center rounded-full bg-brand-orange text-[15px] font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-95"
-        >
+        <button onClick={handleSignInHint} className="flex h-[48px] min-w-[180px] items-center justify-center rounded-full bg-brand-orange text-[15px] font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-95">
           Sign In / Register
         </button>
-        <button
-          onClick={() => router.push("/")}
-          className="flex h-[48px] min-w-[180px] items-center justify-center rounded-full border border-glass/10 bg-bg-elevated text-[15px] font-medium text-text-muted backdrop-blur-md transition-all hover:border-brand-orange/40 hover:text-brand-orange active:scale-95 shadow-sm"
-        >
+        <button onClick={() => router.push("/")} className="flex h-[48px] min-w-[180px] items-center justify-center rounded-full border border-glass/10 bg-bg-elevated text-[15px] font-medium text-text-muted backdrop-blur-md transition-all hover:border-brand-orange/40 hover:text-brand-orange active:scale-95 shadow-sm">
           Browse Catalog
         </button>
       </div>
@@ -128,10 +133,7 @@ export default function FavoritesPage() {
           Explore the catalog and tap the heart icon on items you want to save for later.
         </p>
       </div>
-      <button
-        onClick={() => router.push("/")}
-        className="mt-4 flex h-[48px] min-w-[200px] items-center justify-center rounded-full bg-brand-orange text-[15px] font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-95"
-      >
+      <button onClick={() => router.push("/")} className="mt-4 flex h-[48px] min-w-[200px] items-center justify-center rounded-full bg-brand-orange text-[15px] font-bold text-white shadow-md transition-all hover:brightness-110 active:scale-95">
         Go to Catalog
       </button>
     </div>
@@ -140,12 +142,8 @@ export default function FavoritesPage() {
   return (
     <main className="min-h-screen bg-bg-main font-sans text-text-main transition-colors duration-500">
       <Header />
-
       <div className="mx-auto max-w-[1440px] px-4 py-10 md:px-8 xl:px-[40px] min-h-[70vh]">
-        <button
-          onClick={() => router.push("/")}
-          className="group mb-10 flex items-center gap-2 text-sm font-medium text-text-muted transition-colors hover:text-brand-orange"
-        >
+        <button onClick={() => router.push("/")} className="group mb-10 flex items-center gap-2 text-sm font-medium text-text-muted transition-colors hover:text-brand-orange">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:-translate-x-1">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
@@ -155,9 +153,7 @@ export default function FavoritesPage() {
 
         <div className="mb-10 flex items-end justify-between border-b border-glass/10 pb-6">
           <div>
-            <h1 className="text-[2.5rem] font-black tracking-[0.05em] text-text-main uppercase leading-none">
-              Favorites
-            </h1>
+            <h1 className="text-[2.5rem] font-black tracking-[0.05em] text-text-main uppercase leading-none">Favorites</h1>
             <p className="mt-3 text-[15px] text-text-muted font-light">
               {!isMounted || isFetching
                 ? "Loading…"
@@ -168,14 +164,8 @@ export default function FavoritesPage() {
                 : `${favoriteItems.length} saved item${favoriteItems.length !== 1 ? "s" : ""}`}
             </p>
           </div>
-
           <div className="hidden sm:flex items-center justify-center h-14 w-14 rounded-full border border-glass/5 bg-bg-surface shadow-sm">
-            <svg 
-              width="26" height="26" viewBox="0 0 24 24" 
-              fill={isMounted && isAuthenticated && favoriteItems.length > 0 ? "currentColor" : "none"} 
-              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-              className="text-brand-orange"
-            >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill={isMounted && isAuthenticated && favoriteItems.length > 0 ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-brand-orange">
               <path d="M12 21C11.7 21 11.4 20.9 11.2 20.7C7.8 17.8 5.5 15.7 4 13.9C2.5 12.1 1.75 10.4 1.75 8.45C1.75 6.85 2.28333 5.5 3.35 4.4C4.41667 3.3 5.75 2.75 7.35 2.75C8.25 2.75 9.10833 2.94167 9.925 3.325C10.7417 3.70833 11.4333 4.25 12 4.95C12.5667 4.25 13.2583 3.70833 14.075 3.325C14.8917 2.94167 15.75 2.75 16.65 2.75C18.25 2.75 19.5833 3.3 20.65 4.4C21.7167 5.5 22.25 6.85 22.25 8.45C22.25 10.4 21.5 12.1 20 13.9C18.5 15.7 16.2 17.8 12.8 20.7C12.6 20.9 12.3 21 12 21Z" />
             </svg>
           </div>
@@ -204,7 +194,6 @@ export default function FavoritesPage() {
           </div>
         )}
       </div>
-
       <Footer />
     </main>
   );
