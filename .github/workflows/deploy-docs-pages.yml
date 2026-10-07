@@ -1,0 +1,13 @@
+name: Deploy docs page
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  call-devops-workflow:
+    uses: Dankoss-Organization/devops-ecosystem/.github/workflows/deploy-docs-template.yml@main
+    with:
+      language: 'node'
+      node-version: '20'
+      build-command: 'npm run docs'
+      docs-dir: './docs'
