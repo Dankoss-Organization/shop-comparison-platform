@@ -27,7 +27,7 @@ import BasketDetailsModal from "@/app/profile/_components/modals/basket_details_
  * @param {React.ReactNode} props.children - The elements to render inside the portal.
  * @returns {React.ReactPortal | null} The rendered portal, or null if rendering on the server.
  */
-export function PortalWrapper({ children }: { children: React.ReactNode }) {
+function PortalWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
