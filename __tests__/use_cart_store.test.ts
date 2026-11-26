@@ -89,7 +89,7 @@ describe('useCartStore', () => {
       store.addItem(mockItem1);
       store.addItem(mockItem2);
       
-      expect(store.items).toHaveLength(2);
+      expect(useCartStore.getState().items).toHaveLength(2);
 
       store.removeItem('prod-1');
       

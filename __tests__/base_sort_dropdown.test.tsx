@@ -29,7 +29,7 @@ describe('BaseSortDropdown Component', () => {
       />
     );
 
-    expect(screen.getByText('Price: High to Low')).toBeInTheDocument();
+    expect(screen.getAllByText('Price: High to Low')[0]).toBeInTheDocument();
   });
 
   test('should render fallback label if value does not match any option', () => {
@@ -54,7 +54,7 @@ describe('BaseSortDropdown Component', () => {
       />
     );
 
-    const toggleButton = screen.getByText('Top Rated').closest('button');
+    const toggleButton = screen.getAllByText('Top Rated')[0].closest('button');
     expect(toggleButton).toBeInTheDocument();
 
     const dropdownMenu = toggleButton?.nextElementSibling;
@@ -80,7 +80,7 @@ describe('BaseSortDropdown Component', () => {
       />
     );
 
-    const toggleButton = screen.getByText('Top Rated').closest('button');
+    const toggleButton = screen.getAllByText('Top Rated')[0].closest('button');
     const dropdownMenu = toggleButton?.nextElementSibling;
 
     fireEvent.click(toggleButton!);
@@ -105,7 +105,7 @@ describe('BaseSortDropdown Component', () => {
       </div>
     );
 
-    const toggleButton = screen.getByText('Top Rated').closest('button');
+    const toggleButton = screen.getAllByText('Top Rated')[0].closest('button');
     const dropdownMenu = toggleButton?.nextElementSibling;
     const outsideElement = screen.getByTestId('outside');
 

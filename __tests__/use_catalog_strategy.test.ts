@@ -12,15 +12,17 @@ vi.mock('@/Data/home_data', () => ({
   ]
 }));
 
-const mockGetRecipes = vi.fn();
-const mockGetProducts = vi.fn();
+const { mockGetRecipes, mockGetProducts, mockSearch } = vi.hoisted(() => ({
+  mockGetRecipes: vi.fn(),
+  mockGetProducts: vi.fn(),
+  mockSearch: vi.fn(),
+}));
 
 vi.mock('@/Lib/api/index', () => ({
   getRecipesApi: () => ({ getRecipes: mockGetRecipes }),
   getProductsApi: () => ({ getProducts: mockGetProducts })
 }));
 
-const mockSearch = vi.fn();
 vi.mock('@/Lib/api/search_api.client', () => ({
   searchApi: { search: mockSearch }
 }));

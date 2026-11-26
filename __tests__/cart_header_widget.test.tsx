@@ -4,7 +4,7 @@ import { CartHeaderWidget } from '../src/Components/Layout/Header/cart_header_wi
 import * as cartStore from '../src/Store/use_cart_store';
 import '@testing-library/jest-dom';
 
-vi.mock('../src/store/use_cart_store');
+vi.mock('../src/Store/use_cart_store');
 vi.mock('next/image', () => ({ default: (props: any) => <img {...props} /> }));
 
 describe('CartHeaderWidget UI Logic', () => {
@@ -22,7 +22,7 @@ describe('CartHeaderWidget UI Logic', () => {
 
     render(<CartHeaderWidget />);
 
-    expect(screen.getByText(/\$24\.50/i)).toBeInTheDocument();
+    expect(screen.getByText(/₴24\.50/i)).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button'));

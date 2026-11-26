@@ -99,7 +99,8 @@ describe('DealCard Component', () => {
   test('should call toggleFavorite when Heart icon is clicked', () => {
     render(<DealCardFactory item={mockItem} />);
     
-    const favoriteButton = screen.getByTestId('smart-image').parentElement?.nextElementSibling?.querySelector('button:last-child');
+    const overlayButtons = screen.getByTestId('smart-image').parentElement?.nextElementSibling?.querySelectorAll('button');
+    const favoriteButton = overlayButtons?.[overlayButtons.length - 1];
     
     fireEvent.click(favoriteButton!);
     
