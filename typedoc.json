@@ -14,11 +14,7 @@
     "**/node_modules/**",
     "**/*.css"
   ],
-  "modifierTags": [
-    "@file",
-    "@description",
-    "@brief"
-  ],
+  "modifierTags": ["@file", "@description", "@brief"],
   "compilerOptions": {
     "jsx": "react-jsx"
   }
