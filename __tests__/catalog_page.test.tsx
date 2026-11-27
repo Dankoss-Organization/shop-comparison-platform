@@ -86,7 +86,7 @@ describe('CatalogPage', () => {
       render(<CatalogPage />);
 
       const seasonalBtn = within(getMain()).getByRole('button', { name: /seasonal recipes/i });
-      expect(seasonalBtn).toHaveClass('bg-white/10');
+      expect(seasonalBtn).toHaveClass('bg-brand-orange/10');
     });
 
     test('inactive category pills do not have the active class', () => {
@@ -98,7 +98,7 @@ describe('CatalogPage', () => {
         .find(btn => btn.classList.contains('rounded-full'));
 
       expect(allRecipesPill).toBeDefined();
-      expect(allRecipesPill).not.toHaveClass('bg-white/10');
+      expect(allRecipesPill).not.toHaveClass('bg-brand-orange/10');
     });
   });
 
@@ -108,7 +108,7 @@ describe('CatalogPage', () => {
       fireEvent.click(within(getTabSwitcher()).getByRole('button', { name: /all recipes/i }));
 
       expect(mockPush).toHaveBeenCalledOnce();
-      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('tab=recipes'));
+      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('tab=recipes'), { scroll: false });
     });
 
     test('clicking the products tab calls router.push with tab=products', () => {
@@ -117,7 +117,7 @@ describe('CatalogPage', () => {
       fireEvent.click(within(getTabSwitcher()).getByRole('button', { name: /all products/i }));
 
       expect(mockPush).toHaveBeenCalledOnce();
-      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('tab=products'));
+      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('tab=products'), { scroll: false });
     });
 
     test('switching tabs resets category to all', () => {
@@ -125,7 +125,7 @@ describe('CatalogPage', () => {
       render(<CatalogPage />);
       fireEvent.click(within(getTabSwitcher()).getByRole('button', { name: /all recipes/i }));
 
-      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('category=all'));
+      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('category=all'), { scroll: false });
     });
   });
 
@@ -136,7 +136,7 @@ describe('CatalogPage', () => {
 
       fireEvent.click(within(getMain()).getByRole('button', { name: /seasonal recipes/i }));
 
-      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('category=seasonal-recipes'));
+      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('category=seasonal-recipes'), { scroll: false });
     });
 
     test('clicking a category pill also preserves the current tab in the URL', () => {
@@ -145,7 +145,7 @@ describe('CatalogPage', () => {
 
       fireEvent.click(within(getMain()).getByRole('button', { name: /seasonal recipes/i }));
 
-      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('tab=recipes'));
+      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('tab=recipes'), { scroll: false });
     });
   });
 

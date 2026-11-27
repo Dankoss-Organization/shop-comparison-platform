@@ -56,9 +56,9 @@ describe('CartItemUI Interactions', () => {
 
     const buttons = screen.getAllByRole('button');
     
-    const removeBtn = buttons[0];
-    const decreaseBtn = buttons[1];
-    const increaseBtn = buttons[2];
+    const removeBtn = buttons[1];
+    const decreaseBtn = screen.getByRole('button', { name: '-' });
+    const increaseBtn = screen.getByRole('button', { name: '+' });
 
     fireEvent.click(increaseBtn);
     expect(onIncrease).toHaveBeenCalledTimes(1);

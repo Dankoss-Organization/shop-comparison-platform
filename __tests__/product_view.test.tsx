@@ -31,7 +31,7 @@ vi.mock('@/Lib/utils', () => ({
   formatCurrency: (val: number, currency: string) => `${val} ${currency}`,
 }));
 
-vi.mock('./smart_image', () => ({
+vi.mock('@/Components/UI/smart_image', () => ({
   default: ({ alt }: { alt: string }) => <img alt={alt} data-testid="smart-image" />
 }));
 

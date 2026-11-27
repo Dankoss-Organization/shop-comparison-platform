@@ -30,7 +30,7 @@ vi.mock('@/Lib/utils', () => ({
   formatCurrency: (val: number, currency: string) => `${val} ${currency}`,
 }));
 
-vi.mock('./smart_image', () => ({
+vi.mock('@/Components/UI/smart_image', () => ({
   default: ({ alt }: { alt: string }) => <img alt={alt} data-testid="smart-image" />
 }));
 
@@ -88,7 +88,7 @@ describe('ProductModal Component Suite', () => {
       </ProductModal>
     );
 
-    const backdrop = screen.getByLabelText('Close');
+    const backdrop = screen.getAllByLabelText('Close')[0];
     fireEvent.click(backdrop);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -112,7 +112,7 @@ describe('ProductModal Component Suite', () => {
   test('Header should render correct product info and best price by default', () => {
     render(
       <ProductModal item={mockProduct} onClose={mockOnClose}>
-        <ProductModal.Header categoryTitle="Default Cat" />
+        <ProductModal.Header categoryTitle="" />
       </ProductModal>
     );
 

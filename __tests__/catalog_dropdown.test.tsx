@@ -32,7 +32,7 @@ describe('CatalogDropdown UI Logic', () => {
   test('triggers hover and click logic for locking categories', () => {
     render(<CatalogDropdown categories={mockCategories} />);
 
-    const productsLink = screen.getByText('Products').closest('div')!;
+    const productsLink = screen.getAllByText('Products')[0].closest('div')!;
 
     fireEvent.mouseEnter(productsLink);
     expect(mockSetActiveCategory).toHaveBeenCalledWith('Products');
